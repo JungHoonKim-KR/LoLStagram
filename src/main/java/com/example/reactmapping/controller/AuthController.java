@@ -1,8 +1,8 @@
 package com.example.reactmapping.controller;
 
 import com.example.reactmapping.config.jwt.TokenDto;
+import com.example.reactmapping.dto.JoinDTO;
 import com.example.reactmapping.dto.LoginRequest;
-import com.example.reactmapping.dto.MemberJoinRequest;
 import com.example.reactmapping.entity.Member;
 import com.example.reactmapping.service.AuthService;
 
@@ -22,7 +22,6 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/member")
 public class AuthController {
     private final AuthService authService;
     private final OAuth2Service oAuth2Service;
@@ -30,7 +29,7 @@ public class AuthController {
 
     @Operation(summary = "회원가입",description = "새로운 회원 등록")
     @PostMapping("/join")
-    public ResponseEntity<Member> join(@RequestBody @Parameter(name = "변수",description = "회원 이메일, 비밀번호, 이름") MemberJoinRequest dto){
+    public ResponseEntity<Member> join(@RequestBody @Parameter(name = "변수",description = "회원 이메일, 비밀번호, 이름") JoinDTO dto){
         Member member = authService.join(dto);
         return ResponseEntity.ok().body(member);
     }
@@ -47,7 +46,7 @@ public class AuthController {
         return "로그아웃";
     }
 
-    @GetMapping("/login/oauth2/code/google")
+    @GetMapping("/oauth2/login/google")
     public String test(){
 
         return "완료";

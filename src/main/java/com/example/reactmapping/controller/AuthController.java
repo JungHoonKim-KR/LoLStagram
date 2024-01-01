@@ -11,14 +11,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,27 +23,28 @@ public class AuthController {
     private final OAuth2Service oAuth2Service;
 
 
-    @Operation(summary = "회원가입",description = "새로운 회원 등록")
+    @Operation(summary = "회원가입", description = "새로운 회원 등록")
     @PostMapping("/join")
-    public ResponseEntity<Member> join(@RequestBody @Parameter(name = "변수",description = "회원 이메일, 비밀번호, 이름") JoinDTO dto){
+    public ResponseEntity<Member> join(@RequestBody @Parameter(name = "변수", description = "회원 이메일, 비밀번호, 이름") JoinDTO dto) {
         Member member = authService.join(dto);
         return ResponseEntity.ok().body(member);
     }
 
     @Operation(summary = "로그인")
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login( LoginRequest dto, HttpServletResponse httpServletResponse){
+    public ResponseEntity<TokenDto> login(@RequestBody LoginRequest dto, HttpServletResponse httpServletResponse) {
         TokenDto tokenDto = authService.login(httpServletResponse, dto);
         return ResponseEntity.ok().body(tokenDto);
     }
-
+    @ResponseBody
     @PostMapping("/logout")
-    public String logout(HttpServletRequest request){
+    public String logout(HttpServletRequest request) {
+
         return "로그아웃";
     }
 
     @GetMapping("/oauth2/login/google")
-    public String test(){
+    public String test() {
 
         return "완료";
     }

@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
+//개별 수정을 위해 setter를 사용했다.
 @Data
 @Builder
 @AllArgsConstructor

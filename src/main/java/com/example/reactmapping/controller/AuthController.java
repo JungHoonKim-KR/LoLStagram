@@ -2,7 +2,8 @@ package com.example.reactmapping.controller;
 
 import com.example.reactmapping.config.jwt.TokenDto;
 import com.example.reactmapping.dto.JoinDTO;
-import com.example.reactmapping.dto.LoginRequest;
+import com.example.reactmapping.dto.LoginRequestDto;
+import com.example.reactmapping.dto.LoginResponseDto;
 import com.example.reactmapping.entity.Member;
 import com.example.reactmapping.service.AuthService;
 
@@ -31,10 +32,11 @@ public class AuthController {
     }
 
     @Operation(summary = "로그인")
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody LoginRequest dto, HttpServletResponse httpServletResponse) {
-        TokenDto tokenDto = authService.login(httpServletResponse, dto);
-        return ResponseEntity.ok().body(tokenDto);
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto, HttpServletResponse httpServletResponse) {
+        LoginResponseDto responseDto = authService.login(httpServletResponse, dto);
+        return ResponseEntity.ok().body(responseDto);
     }
     @ResponseBody
     @PostMapping("/logout")
@@ -42,6 +44,7 @@ public class AuthController {
 
         return "로그아웃";
     }
+
 
     @GetMapping("/oauth2/login/google")
     public String test() {

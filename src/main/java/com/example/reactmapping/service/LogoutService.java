@@ -41,7 +41,6 @@ public class LogoutService implements LogoutHandler {
             log.info("refreshToken 삭제");
 
         }
-
         String accessToken = request.getHeader("ACCESS");
         String userEmail = jwtUtil.getUserEmail(accessToken, "ACCESS");
 

@@ -14,9 +14,9 @@ import lombok.NoArgsConstructor;
 @Entity
 //개별 수정을 위해 setter를 사용했다.
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(toBuilder = true)
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,5 +30,8 @@ public class Member {
     @Schema(description = "권한")
     private String role;
 
+    public void updateName(String username){
+        this.username=username;
+    }
 
 }

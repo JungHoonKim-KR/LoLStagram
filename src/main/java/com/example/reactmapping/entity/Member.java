@@ -6,17 +6,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-//개별 수정을 위해 setter를 사용했다.
-@Data
+@Getter
+@Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder(toBuilder = true)
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,8 +26,5 @@ public class Member {
     @Schema(description = "권한")
     private String role;
 
-    public void updateName(String username){
-        this.username=username;
-    }
 
 }

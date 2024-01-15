@@ -48,19 +48,23 @@ public class AuthService {
         }
     }
 
-    public LoginResponseDto login(HttpServletResponse response, LoginRequestDto dto) {
-        Optional<Member> findMember = memberRepository.findMemberByEmailId(dto.getEmailId());
-        Member member;
+    public LoginResponseDto login(HttpServletResponse response, String requestEmail, String requestPassword,String authenticationCode) {
+        Member member = null;
+        Optional<Member> findMember = memberRepository.findMemberByEmailId(requestEmail);
         //존재하는 회원인지
         if (findMember.isPresent()) {
             member = findMember.get();
             //비밀번호 확인
-            if (!bCryptPasswordEncoder.matches(dto.getPassword(), member.getPassword())) {
-                throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+            if(authenticationCode == null) {
+                if (!bCryptPasswordEncoder.matches(requestPassword, member.getPassword())) {
+                    throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+                }
+
             }
-        } else throw new AppException(ErrorCode.NOTFOUND, dto.getEmailId() + "논 존재하지 않습니다.");
+        }
+        else throw new AppException(ErrorCode.NOTFOUND, requestEmail+ "논 존재하지 않습니다.");
         //토큰 발급
-        TokenDto tokenDto = jwtService.login(dto.getEmailId(), dto.getPassword());
+        TokenDto tokenDto = jwtService.login(requestEmail);
 
         //존재하는 회원이라면 refresh 토큰 확인
         Optional<RefreshToken> findRefreshToken = refreshTokenRepository.findRefreshTokenByEmailId(member.getEmailId());
@@ -105,7 +109,8 @@ public class AuthService {
     //이건 헤더에 직접적으로 토큰을 부여하는게 아니라 프론트엔드에게 전달할 응답값에 토큰을 넣는 것임.
     //request : 클라이언트의 요청값, response: 백 -> 프론트 전달값
     private void setHeader(HttpServletResponse response, LoginResponseDto loginResponseDto) {
-        response.setHeader("Access-Control-Expose-Headers", "ACCESS, REFRESH");
+        //클라이언트에 다음 header에 접근할 수 있게 함
+//        response.setHeader("Access-Control-Expose-Headers", "ACCESS,REFRESH");
         response.setHeader("ACCESS", loginResponseDto.getTokenDto().getAccessToken());
         response.setHeader("REFRESH", loginResponseDto.getTokenDto().getRefreshToken());
     }

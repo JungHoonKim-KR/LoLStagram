@@ -11,5 +11,7 @@ public class JoinDTO {
     private String emailId;
     private String password;
     private String username;
+    private String riotIdGameName;
+    private String riotIdTagline;
 
 }

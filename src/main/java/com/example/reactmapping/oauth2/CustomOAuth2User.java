@@ -1,4 +1,4 @@
-package com.example.reactmapping;
+package com.example.reactmapping.oauth2;
 
 import com.nimbusds.oauth2.sdk.Role;
 import lombok.Getter;

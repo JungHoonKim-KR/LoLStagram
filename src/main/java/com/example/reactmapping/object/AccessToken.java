@@ -1,6 +1,5 @@
-package com.example.reactmapping.entity;
+package com.example.reactmapping.object;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;

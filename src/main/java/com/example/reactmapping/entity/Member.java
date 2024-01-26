@@ -32,7 +32,6 @@ public class Member {
     private String riotIdTagline;
     @Schema(description = "소환사 아이디")
     private String summonerId;
-    private String puuId;
 
 
 }

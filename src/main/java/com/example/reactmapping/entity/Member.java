@@ -2,12 +2,13 @@ package com.example.reactmapping.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -17,6 +18,7 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "memberId")
     private Long id;
     @Schema(description = "회원 이메일")
     private String emailId;
@@ -32,6 +34,15 @@ public class Member {
     private String riotIdTagline;
     @Schema(description = "소환사 아이디")
     private String summonerId;
+    @Schema(description = "프로필 사진")
+    @Nullable
+    private String profileImg;
+    @OneToMany(mappedBy = "member")
+    private List<Post> postList = new ArrayList<>();
 
+    public void addPostList(Post post){
+        this.postList.add(post);
+        post.toBuilder().member(this);
+    }
 
 }

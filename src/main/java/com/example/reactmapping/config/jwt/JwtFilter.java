@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,7 +29,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
+        HttpSession session = request.getSession();
         String userEmail;
         final String authorization = request.getHeader("Authorization");
         log.info("authorization: {}", authorization);
@@ -38,11 +39,23 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        // OAuth2 로그인 요청 URL
+        String oauth2LoginUrl = "/oauthLogin";
+        // 요청 URL 확인
+        String requestUrl = request.getRequestURI();
+        log.info(requestUrl);
+        // 요청이 OAuth2 로그인 요청이면 필터의 처리를 건너뛰고 다음 필터로 이동
+        if (requestUrl.equals(oauth2LoginUrl)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         //Token 추출
-        String token = authorization.split(" ")[1];
-        userEmail = jwtUtil.getUserEmail(token, "ACCESS");
+        String accessToken = authorization.split(" ")[1];
+        userEmail= (String) session.getAttribute(accessToken);
+
         //AccessToken expired 여부
-        if (jwtUtil.isExpired(token, "ACCESS")) {
+        if (jwtUtil.isExpired(accessToken, "ACCESS")) {
             log.error("AccessToken 만료");
 
             //refreshToken이 유효한지
@@ -53,6 +66,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     //accessToken 재발급하면 db에도 accessToken 업데이트 해야하는데 filter에 service 기능이 들어가야 하는게 마음에 안듬....
                     String newAccessToken = jwtUtil.createToken(userEmail, "ACCESS");
                     log.info("재발급 AccessToken : " + newAccessToken);
+                    session.setAttribute(newAccessToken,userEmail);
                     response.setHeader("ACCESS", newAccessToken);
                     setAuthentication(userEmail, request, response, filterChain);
             }else{
@@ -62,7 +76,7 @@ public class JwtFilter extends OncePerRequestFilter {
         //AccessToken이 정상적이라면
         else {
             log.info("AccessToken 정상");
-            userEmail = jwtUtil.getUserEmail(token, "ACCESS");
+            userEmail = jwtUtil.getUserEmail(accessToken, "ACCESS");
 
             //로그인 토큰이라면 권한 부여
             setAuthentication(userEmail, request, response, filterChain);

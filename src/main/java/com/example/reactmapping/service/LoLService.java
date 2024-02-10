@@ -3,6 +3,8 @@ package com.example.reactmapping.service;
 import com.example.reactmapping.dto.CompareDto;
 import com.example.reactmapping.entity.MatchInfo;
 import com.example.reactmapping.entity.Member;
+import com.example.reactmapping.exception.AppException;
+import com.example.reactmapping.exception.ErrorCode;
 import com.example.reactmapping.norm.LOL;
 import com.example.reactmapping.object.MostChampion;
 import com.example.reactmapping.entity.SummonerInfo;
@@ -45,6 +47,9 @@ public class LoLService {
         Map block = createWebClient(BaseUrlAsia, "/riot/account/v1/accounts/by-riot-id/" + riotIdGameName + "/" + riotIdTagline)
                 .bodyToMono(new ParameterizedTypeReference<Map>() {
                 }).block();
+        if(block == null) {
+            throw new AppException(ErrorCode.NOTFOUND,"검색 결과가 없습니다."); // NotFoundException은 custom exception입니다.
+        }
         return  block.get("puuid").toString();
     }
 

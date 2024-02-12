@@ -30,7 +30,8 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        String userEmail;
+        String userEmail ;
+        String accessToken;
         final String authorization = request.getHeader("Authorization");
         log.info("authorization: {}", authorization);
         if (authorization == null || !authorization.startsWith("Bearer ")) {
@@ -38,12 +39,16 @@ public class JwtFilter extends OncePerRequestFilter {
             // 다음 filter로 넘어가야 다음 filter로 넘어감, permit URL인 경우엔 여기서 걸려도 doFilter를 해야 넘어감
             filterChain.doFilter(request, response);
             return;
+        }else{
+            accessToken = authorization.split(" ")[1];
+            userEmail= (String) session.getAttribute(accessToken);
+            log.info("요청자: "+ userEmail);
         }
         // OAuth2 로그인 요청 URL
         String oauth2LoginUrl = "/oauthLogin";
         // 요청 URL 확인
         String requestUrl = request.getRequestURI();
-        log.info(requestUrl);
+        log.info("요청 url: "+requestUrl);
         // 요청이 OAuth2 로그인 요청이면 필터의 처리를 건너뛰고 다음 필터로 이동
         if (requestUrl.equals(oauth2LoginUrl)) {
             filterChain.doFilter(request, response);
@@ -51,13 +56,13 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         //Token 추출
-        String accessToken = authorization.split(" ")[1];
-        userEmail= (String) session.getAttribute(accessToken);
+
+//        userEmail= (String) session.getAttribute(accessToken);
 
         //AccessToken expired 여부
         if (jwtUtil.isExpired(accessToken, "ACCESS")) {
             log.error("AccessToken 만료");
-
+            log.info("유저 아이디: "+ userEmail);
             //refreshToken이 유효한지
             if (refreshTokenRepository.findById(userEmail,"refreshToken").isPresent()) {
                 //refreshToken이 정상적이라면

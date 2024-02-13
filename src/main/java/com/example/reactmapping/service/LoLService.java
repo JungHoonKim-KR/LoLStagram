@@ -2,7 +2,6 @@ package com.example.reactmapping.service;
 
 import com.example.reactmapping.dto.CompareDto;
 import com.example.reactmapping.entity.MatchInfo;
-import com.example.reactmapping.entity.Member;
 import com.example.reactmapping.exception.AppException;
 import com.example.reactmapping.exception.ErrorCode;
 import com.example.reactmapping.norm.LOL;
@@ -39,7 +38,6 @@ public class LoLService {
     private String RiotIdGameName="riotIdGameName";
     private String RiotIdTagline="riotIdTagline";
     private final MatchRepository matchRepository;
-    private final SummonerInfoRepository SummonerInfoRepository;
 
 
     // 소환사를 등록할 때 puuId를 가져와 DB에 저장
@@ -90,8 +88,10 @@ public class LoLService {
         List<MatchInfo> matchList = new LinkedList<>();
         ObjectMapper mapper = new ObjectMapper();
         List <String> matches = callMatches(summonerInfo.getPuuId(),startGame,count);
-        DecimalFormat df = new DecimalFormat("0.0");
+        DecimalFormat df = getDecimalFormat();
 
+
+        long totalkill=0,totaldeath=0,totalassist=0;
         for (String matchId : matches) {
             String origin = createWebClient(BaseUrlAsia,"/lol/match/v5/matches/" + matchId)
                     .bodyToMono(String.class)
@@ -128,12 +128,15 @@ public class LoLService {
                             .filter(p::has)
                             .map(key -> p.path(key).asInt())
                             .collect(Collectors.toList());
+                    long kills = p.path("kills").asLong();
+                    long deaths = p.path("deaths").asLong();
+                    long assists = p.path("assists").asLong();
                     MatchInfo build = MatchInfo.builder()
                             .matchId(matchId)
                             .gameStartTimestamp(gameStartTimestamp)
-                            .kills(p.path("kills").asLong())
-                            .deaths(p.path("deaths").asLong())
-                            .assists(p.path("assists").asLong())
+                            .kills(kills)
+                            .deaths(deaths)
+                            .assists(assists)
                             .championName(p.path("championName").asText())
                             .mainRune(mainRune)
                             .subRune(subRune)
@@ -145,7 +148,9 @@ public class LoLService {
                             .kda(kda)
                             .itemList(itemList).summonerSpellList(summonerSpellList).build();
                     matchList.add(build);
-
+                    totalkill +=kills;
+                    totalassist += assists;
+                    totaldeath+=deaths;
                 }
             }
         }
@@ -154,7 +159,13 @@ public class LoLService {
         //굳이 따로 뺴서 매서드를 쓰는 게 부자연스럽다고 생각해서 양방향 매핑 메서드를 사용하지 않았음
         //Match를 만드는 기능이지만 양방향 매핑 때문에 어쩔 수 없이 summoner까지 save해야 했음
         Long win = calWin(matchList);
-        summonerInfo = summonerInfo.toBuilder().recentWins(win).recentLosses(LOL.INFO.getGameCount()-win).matchList(matchList).build();
+        System.out.println("kill :"+ totalkill);
+        System.out.println("assists: " + totalassist);
+        System.out.println("death: "+ totaldeath);
+
+        double totalKda = Double.parseDouble(df.format(((double) totalkill + totalassist) / ((double) totaldeath)));
+        System.out.println(totalKda);
+        summonerInfo = summonerInfo.toBuilder().totalKda(totalKda).recentWins(win).recentLosses(LOL.INFO.getGameCount()-win).matchList(matchList).build();
         return summonerInfo;
     }
 
@@ -169,12 +180,15 @@ public class LoLService {
 
     //이번 시즌 랭크정보 가져오기
     public SummonerInfo callSummonerProfile(String summonerId, String tag) throws JsonProcessingException {
+        DecimalFormat df = getDecimalFormat();
         ObjectMapper mapper = new ObjectMapper();
         String block = createWebClient(BaseUrlKR, "/lol/league/v4/entries/by-summoner/" + summonerId)
                 .bodyToMono(String.class).block();
         JsonNode jsonNode = mapper.readTree(block).get(0);
         Map map = mapper.convertValue(jsonNode, Map.class);
-
+        Long win = Long.valueOf(map.get("wins").toString());
+        Long loss = Long.valueOf(map.get("losses").toString());
+        double totalAvgOfWin= Double.parseDouble(df.format( (double)win /((double) win + (double) loss) * 100));
         return SummonerInfo.builder()
                 .leagueId(map.get("leagueId").toString())
                 .tier(map.get("tier").toString())
@@ -183,13 +197,14 @@ public class LoLService {
                 .summonerName(map.get("summonerName").toString())
                 .summonerTag(tag)
                 .leaguePoints(Long.valueOf(map.get("leaguePoints").toString()))
-                .totalWins(Long.valueOf(map.get("wins").toString()))
-                .totalLosses(Long.valueOf(map.get("losses").toString()))
+                .totalWins(win)
+                .totalLosses(loss)
+                .totalAvgOfWin(totalAvgOfWin)
                 .build();
     }
 
     public List<MostChampion> calcMostChampion(List<MatchInfo> matchInfoList){
-        DecimalFormat df = new DecimalFormat("0.0");
+        DecimalFormat df = getDecimalFormat();
 
 
         Map<String, List<MatchInfo>> sortedChampionList = matchInfoList.stream().collect(Collectors.groupingBy(MatchInfo::getChampionName));
@@ -226,6 +241,12 @@ public class LoLService {
                             .build();
                 }).collect(Collectors.toList());
     }
+
+    private static DecimalFormat getDecimalFormat() {
+        DecimalFormat df = new DecimalFormat("0.0");
+        return df;
+    }
+
     private WebClient.ResponseSpec createWebClient(String baseUrl, String url) {
         WebClient webClient = WebClient.create(baseUrl);
         return webClient.get()

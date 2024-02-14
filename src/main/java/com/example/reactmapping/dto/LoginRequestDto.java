@@ -1,5 +1,6 @@
 package com.example.reactmapping.dto;
 
+import com.example.reactmapping.entity.Member;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

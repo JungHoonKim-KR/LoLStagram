@@ -78,7 +78,7 @@ public class LoLService {
             // 업데이트는 개수로 처리하기 때문에 0이 아니라면 인덱스 +1을 해줘야함
             if(result !=0) result++;
         }
-        log.info("겹치는 경기", result);
+        log.info("겹치는 경기"+ result);
         return new CompareDto(result,matchInfo);
     }
 
@@ -141,30 +141,23 @@ public class LoLService {
                             .mainRune(mainRune)
                             .subRune(subRune)
                             .result(p.path("win").asText())
-                            .SummonerInfo(summonerInfo)
+                            .summonerInfo(summonerInfo)
                             .build();
+
                     String kda = (build.getDeaths() == 0 ) ? "perfect" : df.format((double)(build.getKills() + build.getAssists())/build.getDeaths());
                     build= build.toBuilder()
                             .kda(kda)
                             .itemList(itemList).summonerSpellList(summonerSpellList).build();
                     matchList.add(build);
+
                     totalkill +=kills;
                     totalassist += assists;
                     totaldeath+=deaths;
                 }
             }
         }
-        //원래라면 양방향 매핑 메서드로 한번에 매핑을 시키는데
-        //createMatch를 하는 과정에서 builder패턴으로 match.SummonerInfo = SummonerInfo를 할 수 있는데
-        //굳이 따로 뺴서 매서드를 쓰는 게 부자연스럽다고 생각해서 양방향 매핑 메서드를 사용하지 않았음
-        //Match를 만드는 기능이지만 양방향 매핑 때문에 어쩔 수 없이 summoner까지 save해야 했음
         Long win = calWin(matchList);
-        System.out.println("kill :"+ totalkill);
-        System.out.println("assists: " + totalassist);
-        System.out.println("death: "+ totaldeath);
-
         double totalKda = Double.parseDouble(df.format(((double) totalkill + totalassist) / ((double) totaldeath)));
-        System.out.println(totalKda);
         summonerInfo = summonerInfo.toBuilder().totalKda(totalKda).recentWins(win).recentLosses(LOL.INFO.getGameCount()-win).matchList(matchList).build();
         return summonerInfo;
     }

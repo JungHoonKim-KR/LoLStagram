@@ -37,7 +37,7 @@ public class Member {
     @Schema(description = "프로필 사진")
     @Nullable
     private String profileImg;
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
     private List<Post> postList = new ArrayList<>();
 
     public void addPostList(Post post){

@@ -3,8 +3,9 @@ import "../css/Box1.css"
 import axios from "axios";
 import Box3 from "./Box3";
 import { BeatLoader } from 'react-spinners';
-
+import { useNavigate } from 'react-router-dom';
     const Box1 = () => {
+        const navigate = useNavigate();
         const [searchResult, setSearchResult] = useState(null);
         const [isSearchVisible, setIsSearchVisible] = useState(false);
         const [isProfileVisible, setIsProfileVisible] = useState(false);
@@ -45,7 +46,6 @@ import { BeatLoader } from 'react-spinners';
         const writeVisibility= ()=>{
             setIsWriteVisible(!isWriteVisible)
             if(!isWriteVisible){
-
             }
         }
 
@@ -65,39 +65,37 @@ import { BeatLoader } from 'react-spinners';
                         headers: {"Authorization": `Bearer ${token}`},
                         withCredentials: true // 쿠키를 포함하여 요청을 보냄
                     })
-
                     setSearchResult(result.data)
                     localStorage.setItem("searchedSummonerInfo", JSON.stringify(result.data))
                 } catch (error) {
-                    console.error("API 요청 중 에러 발생:", error);
-                    alert('API 요청 중에 문제가 발생했습니다. 다시 시도해주세요.');
+                    alert(error.response.data);
                 } finally {
                     setIsSearchLoading(false)
                 }
             }
         }
-
         const handleProfile = async () => {
             if ( !summonerNameProfile || !summonerTagProfile) {
                 alert('모든 필드를 입력해주세요.');
                 return;
             } else {
+                try {
+                    await axios.post('/profileUpdate', {
+                        id: memberInfo.id,
+                        summonerName: summonerNameProfile,
+                        summonerTag: summonerTagProfile
+                    }, {
+                        headers: {'Authorization': `Bearer ${token}`},
+                        withCredentials:true
+                    })
+                        .then((res) => {
+                            alert("변경이 완료되었습니다. 로그인 페이지로 이동합니다.")
+                            navigate('/')
 
-                // try {
-                //     await axios.post('/profileUpdate', {
-                //         userName: username,
-                //         summonerName: name,
-                //         summonerTag: tag
-                //     }, {
-                //         headers: {'Authorization': `Bearer ${token}`}
-                //     })
-                //         .then((res) => {
-                //             navigate('/')
-                //
-                //         })
-                // } catch (error) {
-                //     console.log(error)
-                // }
+                        })
+                } catch (error) {
+                    console.log(error.response.data)
+                }
             }
         }
         const handleWrite = async ()=>{
@@ -116,10 +114,29 @@ import { BeatLoader } from 'react-spinners';
                         headers: {'Authorization': `Bearer ${token}`},
                         withCredentials: true, // 쿠키를 포함하여 요청을 보냄
                     })
+
                     alert("작성 완료")
                     window.location.reload()
                 }catch (error){
-                    console.log(error)
+                    console.log(error.response.data)
+                }
+            }
+        }
+        const handleLogout=async ()=> {
+            if (window.confirm("로그아웃 하시겠습니까?")) {
+                try {
+                    await axios.post('/logout',
+                        {}, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'emailId':summonerInfo.emailId
+                            }
+                        })
+                    localStorage.clear()
+                    alert("로그아웃 되었습니다.")
+                    navigate('/')
+                } catch (error) {
+                    alert(error.response.data)
                 }
             }
         }
@@ -180,7 +197,7 @@ import { BeatLoader } from 'react-spinners';
                             </div>
                         )
                         }
-                        <li>로그아웃</li>
+                        <li onClick={handleLogout}>로그아웃</li>
                     </ul>
                 </div>
             </div>

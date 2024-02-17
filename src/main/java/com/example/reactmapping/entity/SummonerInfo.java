@@ -26,15 +26,17 @@ public class SummonerInfo implements Persistable<String> {
     private String leagueId;
     private String tier;
     private Long tierRank;
+    private double totalKda;
     private String summonerName;
     private String summonerTag;
     private Long leaguePoints;
     private String puuId;
     private Long totalWins;
     private Long totalLosses;
+    private double totalAvgOfWin;
     private Long recentWins;
     private Long recentLosses;
-    @OneToMany(mappedBy = "SummonerInfo")
+    @OneToMany(mappedBy = "summonerInfo" )
     @JsonManagedReference
     @OrderBy("gameStartTimestamp DESC")
     private List<MatchInfo> matchList = new ArrayList<>();
@@ -46,7 +48,7 @@ public class SummonerInfo implements Persistable<String> {
 
     public void addMatchList(MatchInfo matchInfo){
         matchList.add(matchInfo);
-        matchInfo.toBuilder().SummonerInfo(this);
+        matchInfo.toBuilder().summonerInfo(this);
     }
 
     @PrePersist

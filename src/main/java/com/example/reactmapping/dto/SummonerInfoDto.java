@@ -18,12 +18,14 @@ public class SummonerInfoDto {
     private String leagueId;
     private String tier;
     private Long tierRank;
+    private double totalKda;
     private String summonerName;
     private String summonerTag;
     private Long leaguePoints;
     private String puuId;
     private Long totalWins;
     private Long totalLosses;
+    private double totalAvgOfWin;
     private Long recentWins;
     private Long recentLosses;
     private List<MostChampion> mostChampionList;
@@ -38,6 +40,7 @@ public class SummonerInfoDto {
                 .leagueId(summonerInfo.getLeagueId())
                 .tier(summonerInfo.getTier())
                 .tierRank(summonerInfo.getTierRank())
+                .totalKda(summonerInfo.getTotalKda())
                 .summonerName(summonerInfo.getSummonerName())
                 .summonerTag(summonerInfo.getSummonerTag())
                 .leaguePoints(summonerInfo.getLeaguePoints())
@@ -46,6 +49,7 @@ public class SummonerInfoDto {
                 .totalLosses(summonerInfo.getTotalLosses())
                 .recentWins(summonerInfo.getRecentWins())
                 .recentLosses(summonerInfo.getRecentLosses())
+                .totalAvgOfWin(summonerInfo.getTotalAvgOfWin())
                 .matchList(matchInfoDtoList) // MatchInfoDto 리스트를 설정
                 .mostChampionList(summonerInfo.getMostChampionList())
                 .build();
@@ -56,12 +60,14 @@ public class SummonerInfoDto {
                 .leagueId(summonerInfoDto.getLeagueId())
                 .tier(summonerInfoDto.getTier())
                 .tierRank(summonerInfoDto.getTierRank())
+                .totalKda(summonerInfoDto.getTotalKda())
                 .summonerName(summonerInfoDto.getSummonerName())
                 .summonerTag(summonerInfoDto.getSummonerTag())
                 .leaguePoints(summonerInfoDto.getLeaguePoints())
                 .puuId(summonerInfoDto.getPuuId())
                 .totalWins(summonerInfoDto.getTotalWins())
                 .totalLosses(summonerInfoDto.getTotalLosses())
+                .totalAvgOfWin(summonerInfoDto.getTotalAvgOfWin())
                 .recentWins(summonerInfoDto.getRecentWins())
                 .recentLosses(summonerInfoDto.getRecentLosses())
                 .build();

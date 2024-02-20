@@ -4,29 +4,23 @@ import com.example.reactmapping.config.jwt.JwtFilter;
 import com.example.reactmapping.config.jwt.JwtUtil;
 import com.example.reactmapping.handler.OAuth2LoginFailureHandler;
 import com.example.reactmapping.handler.OAuth2SuccessHandler;
-import com.example.reactmapping.repository.BlackListRepository;
 import com.example.reactmapping.repository.RefreshTokenRepository;
+import com.example.reactmapping.service.CustomOauth2UserService;
 import com.example.reactmapping.service.LogoutService;
-import com.example.reactmapping.service.OAuth2Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -37,7 +31,7 @@ public class SecurityConfig {
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
     private final LogoutService logoutService;
-    private final OAuth2Service oAuth2Service;
+    private final CustomOauth2UserService customOauth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
 
@@ -51,11 +45,10 @@ public class SecurityConfig {
                 httpSecurity
                         .cors(cors -> cors.configurationSource(request -> {
                             var corsConfiguration = new CorsConfiguration();
-                            if (request.getRequestURI().startsWith("/write")) {
                                 corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
                                 corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                                 corsConfiguration.setAllowedHeaders(List.of("*"));
-                            }
+                                corsConfiguration.setAllowCredentials(true);
                             return corsConfiguration;
                         }))
                         .csrf((auth) -> auth.disable())
@@ -65,7 +58,9 @@ public class SecurityConfig {
                         .sessionManagement((sessionManagement)->sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         //접근 권한 관리
                         .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/","/login","/swagger-ui/**","/join","/api-docs/**").permitAll()
+                                //react 라우터들에 대한 접근 권한 허용
+                                .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                                .requestMatchers("","/","/login","/oauthLogin","/swagger-ui/**","/join","/api-docs/**","/question","/test","/static/**").permitAll()
                                 .requestMatchers("/admin").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                         )
@@ -81,14 +76,12 @@ public class SecurityConfig {
                                     response.setCharacterEncoding("UTF-8");
                                     response.getWriter().write("{\"message\":\"로그아웃 합니다.\"}");
                                 });
-
                         })
-                        .oauth2Login(oauth -> oauth
-                                .successHandler(oAuth2SuccessHandler)
-                                .failureHandler(oAuth2LoginFailureHandler)
-                                .userInfoEndpoint(EndPoint -> EndPoint.userService(oAuth2Service))
-                        )
-
+//                        .oauth2Login(oauth -> oauth
+//                                .successHandler(oAuth2SuccessHandler)
+//                                .failureHandler(oAuth2LoginFailureHandler)
+//                                .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOauth2UserService)))
+//                        )
                         .build();
 
     }

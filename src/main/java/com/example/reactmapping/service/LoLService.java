@@ -46,7 +46,7 @@ public class LoLService {
                 .bodyToMono(new ParameterizedTypeReference<Map>() {
                 }).block();
         if(block == null) {
-            throw new AppException(ErrorCode.NOTFOUND,"검색 결과가 없습니다."); // NotFoundException은 custom exception입니다.
+            throw new AppException(ErrorCode.NOTFOUND,"라이엇 이름 또는 태그가 일치하지 않습니다."); // NotFoundException은 custom exception입니다.
         }
         return  block.get("puuid").toString();
     }
@@ -55,6 +55,8 @@ public class LoLService {
         Map block = createWebClient(BaseUrlKR, "/lol/summoner/v4/summoners/by-puuid/" + puuId)
                 .bodyToMono(new ParameterizedTypeReference<Map>() {
                 }).block();
+        if(block ==null)
+            throw new AppException(ErrorCode.NOTFOUND,"소환사 아이디를 찾을 수 없습니다. 라이엇 이름이나 태그를 확인해주세요.");
         return block.get("id").toString();
 
     }
@@ -198,8 +200,6 @@ public class LoLService {
 
     public List<MostChampion> calcMostChampion(List<MatchInfo> matchInfoList){
         DecimalFormat df = getDecimalFormat();
-
-
         Map<String, List<MatchInfo>> sortedChampionList = matchInfoList.stream().collect(Collectors.groupingBy(MatchInfo::getChampionName));
         List<String> topThreeChampions = sortedChampionList.entrySet().stream()
                 .sorted(Comparator.comparingInt((Map.Entry<String, List<MatchInfo>> entry) -> entry.getValue().size()).reversed())

@@ -46,10 +46,14 @@ public class SummonerInfo implements Persistable<String> {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createTime;
 
-    public void addMatchList(MatchInfo matchInfo){
+    public void addMatchInfo(MatchInfo matchInfo) {
+        if (matchList == null) {
+            matchList = new ArrayList<>();
+        }
+        matchInfo= matchInfo.toBuilder().summonerInfo(this).build();
         matchList.add(matchInfo);
-        matchInfo.toBuilder().summonerInfo(this);
     }
+
 
     @PrePersist
     protected void onCreate() {
@@ -65,6 +69,7 @@ public class SummonerInfo implements Persistable<String> {
     public String getId() {
         return summonerId;
     }
+
 
 
 }

@@ -16,13 +16,16 @@ import java.time.LocalDateTime;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "post_id")
     private Long id;
     private String title;
     private String content;
-//    private String img;
     private LocalDateTime createTime=LocalDateTime.now();
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId")
     private Member member;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="image_id")
+    private Image image;
 }

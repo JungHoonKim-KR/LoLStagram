@@ -1,10 +1,7 @@
 package com.example.reactmapping.dto;
 
-import com.example.reactmapping.entity.Member;
+import com.example.reactmapping.entity.Image;
 import com.example.reactmapping.entity.Post;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class PostDto {
     private String title;
     private String content;
-//    private MultipartFile img;
+    private MultipartFile serverImg;
+    private String frontImage;
     private Long memberId;
     private String memberName;
 
@@ -28,6 +26,7 @@ public class PostDto {
               .content(post.getContent())
               .memberId(post.getMember().getId())
               .memberName(post.getMember().getUsername())
+              .frontImage(post.getImage().getFileUrl())
               .build();
   }
 }

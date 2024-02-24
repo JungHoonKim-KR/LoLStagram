@@ -186,8 +186,6 @@ public class AuthService {
 
             // 바로 저장
             if(compare.getResult()==-1){
-                log.info(String.valueOf(summonerProfile.getRecentWins()));
-                log.info(String.valueOf(summonerProfile.getMatchList().get(0).getSummonerInfo().getRecentWins()));
                 matchRepository.saveAll(summonerProfile.getMatchList());
             }
             else{

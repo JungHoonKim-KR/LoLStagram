@@ -1,10 +1,12 @@
 package com.example.reactmapping.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class JoinDTO {
@@ -13,5 +15,6 @@ public class JoinDTO {
     private String username;
     private String summonerName;
     private String summonerTag;
+    private MultipartFile img;
 
 }

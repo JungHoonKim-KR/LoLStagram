@@ -1,18 +1,22 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
-import {useNavigate} from 'react-router-dom';
+import {useNavigate,useLocation} from 'react-router-dom';
 import "../css/Join.css"
 
 function Join(){
-    const urlParams = new URLSearchParams(window.location.search);
+    // const urlParams = new URLSearchParams(window.location.search);
+    const location = useLocation();
+    const urlParams = new URLSearchParams(location.search)
     const [emailId, setEmailId] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
     const [summonerName,setSummonerName] = useState('');
     const [summonerTag,setSummonerTag] = useState('');
+    const [img, setImg] = useState('')
     const navigate = useNavigate(); // 추가
 
     useEffect(()=> {
+
         if (urlParams.has('emailId') && urlParams.has('username')) {
             setEmailId(urlParams.get('emailId'))
             setUsername(urlParams.get('username'))
@@ -22,20 +26,30 @@ function Join(){
     const joinHandler  = async(e)=>{
         e.preventDefault();
         try {
-            await axios.post("/join",{
-                emailId: emailId,
-                password: password,
-                username:username,
-                summonerName:summonerName,
-                summonerTag:summonerTag
-            }).then((res)=>{
+            const formData = new FormData();
+            formData.append("joinDto", new Blob([JSON.stringify({
+                emailId: emailId.trim(),
+                password: password.trim(),
+                username: username.trim(),
+                summonerName: summonerName.trim(),
+                summonerTag: summonerTag.trim()
+            })], {
+                type: "application/json"
+            }));
+            formData.append("image", img);  // file 객체 추가
+            await axios.post("/join",
+                formData,
+                {
+
+                }
+            ).then((res)=>{
                 alert("회원가입이 완료되었습니다.")
                 navigate('/')
                 }
             )
 
         }catch (error){
-            alert(error.response.data)
+            alert(error.response.data.errorMessage)
         }
     }
     return(
@@ -61,6 +75,13 @@ function Join(){
                     라이엇 태그:
                     <input type="text" value={summonerTag} onChange={e => setSummonerTag(e.target.value)} required />
                 </label>
+                <label>
+                    프로필 사진:
+                    <input type="file" onChange={(e)=>setImg(e.target.files[0])}/>
+                </label>
+
+
+
                 <button type="submit">회원가입</button>
             </form>
         </div>

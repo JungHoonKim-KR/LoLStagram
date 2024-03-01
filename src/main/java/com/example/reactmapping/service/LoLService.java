@@ -1,6 +1,7 @@
 package com.example.reactmapping.service;
 
 import com.example.reactmapping.dto.CompareDto;
+import com.example.reactmapping.dto.CreateSummonerInfoDto;
 import com.example.reactmapping.entity.MatchInfo;
 import com.example.reactmapping.exception.AppException;
 import com.example.reactmapping.exception.ErrorCode;
@@ -42,21 +43,26 @@ public class LoLService {
 
     // 소환사를 등록할 때 puuId를 가져와 DB에 저장
     public String callPuuId(String riotIdGameName, String riotIdTagline) {
+        log.info("요청 닉네임: "+riotIdGameName+ " 요청 태그: "+riotIdTagline);
         Map block = createWebClient(BaseUrlAsia, "/riot/account/v1/accounts/by-riot-id/" + riotIdGameName + "/" + riotIdTagline)
                 .bodyToMono(new ParameterizedTypeReference<Map>() {
-                }).block();
-        if(block == null) {
-            throw new AppException(ErrorCode.NOTFOUND,"라이엇 이름 또는 태그가 일치하지 않습니다."); // NotFoundException은 custom exception입니다.
-        }
+                })
+                .onErrorResume(e -> {
+                    throw new AppException(ErrorCode.NOTFOUND, "라이엇 이름 또는 태그가 일치하지 않습니다.");
+                })
+                .block();
         return  block.get("puuid").toString();
     }
 
     public String callSummonerId(String puuId){
         Map block = createWebClient(BaseUrlKR, "/lol/summoner/v4/summoners/by-puuid/" + puuId)
                 .bodyToMono(new ParameterizedTypeReference<Map>() {
-                }).block();
-        if(block ==null)
-            throw new AppException(ErrorCode.NOTFOUND,"소환사 아이디를 찾을 수 없습니다. 라이엇 이름이나 태그를 확인해주세요.");
+                })
+                .onErrorResume(e -> {
+                    throw new AppException(ErrorCode.NOTFOUND, "소환사 아이디를 찾을 수 없습니다. 라이엇 이름 또는 태그가 일치하지 않습니다.");
+                })
+                .block();
+
         return block.get("id").toString();
 
     }
@@ -71,6 +77,7 @@ public class LoLService {
     public CompareDto compare(String puuId, String summonerId){
         int result =-1;
         String targetMatchId = callMatches(puuId, LOL.INFO.getGameCount()-1, 1).get(0);
+        log.info(targetMatchId);
         List<MatchInfo> matchInfo = matchRepository.findAllBySummonerId(summonerId);
         if(!matchInfo.isEmpty()) {
             result = IntStream.range(0, matchInfo.size())
@@ -85,13 +92,12 @@ public class LoLService {
     }
 
 
-    public SummonerInfo createSummonerInfo(String riotIdGameName,String riotIdTagline, SummonerInfo summonerInfo, int startGame, int count) throws JsonProcessingException {
+    public CreateSummonerInfoDto createSummonerInfo(String riotIdGameName, String riotIdTagline, SummonerInfo summonerInfo, int startGame, int count) throws JsonProcessingException {
 
         List<MatchInfo> matchList = new LinkedList<>();
         ObjectMapper mapper = new ObjectMapper();
         List <String> matches = callMatches(summonerInfo.getPuuId(),startGame,count);
         DecimalFormat df = getDecimalFormat();
-
 
         long totalkill=0,totaldeath=0,totalassist=0;
         for (String matchId : matches) {
@@ -101,6 +107,30 @@ public class LoLService {
             JsonNode data = mapper.readTree(origin);
             JsonNode info = data.path("info");
             long gameStartTimestamp = info.path("gameStartTimestamp").asLong();
+
+            // CLASSIC, URF, ARAM
+            String gameMode = String.valueOf(info.path("gameMode"));
+            String gameType = null;
+            log.info(gameMode);
+            System.out.println(gameMode.equals("CLASSIC"));
+            if(gameMode.equals("\"CLASSIC\"")){
+                // 솔랭: 420, 빠대: 490, 칼바람: 450
+                String queueId = String.valueOf(info.path("queueId"));
+                if(queueId.equals("420"))
+                    gameType = "솔랭";
+                else if(queueId.equals("490"))
+                    gameType = "빠른 대전";
+                else gameType = "자유 랭크";
+            }
+            else{
+                if(gameMode.equals("\"URF\""))
+                    gameType = "URF";
+                else if(gameMode.equals("\"ARAM\""))
+                    gameType = "무작위 총력전";
+            }
+            // 사설 아니면 다 MATCHED_GAME
+//            log.info(String.valueOf(info.path("gameType")));
+            log.info(gameType);
             JsonNode path = info.path("participants");
             for (JsonNode p : path) {
                 //원하는 소환사의 정보를 찾았을 때
@@ -142,6 +172,7 @@ public class LoLService {
                             .championName(p.path("championName").asText())
                             .mainRune(mainRune)
                             .subRune(subRune)
+                            .gameType(gameType)
                             .result(p.path("win").asText())
                             .summonerInfo(summonerInfo)
                             .build();
@@ -159,16 +190,17 @@ public class LoLService {
             }
         }
         Long win = calWin(matchList);
-        double totalKda = Double.parseDouble(df.format(((double) totalkill + totalassist) / ((double) totaldeath)));
-        summonerInfo = summonerInfo.toBuilder().totalKda(totalKda).recentWins(win).recentLosses(LOL.INFO.getGameCount()-win).matchList(matchList).build();
-        return summonerInfo;
+        double totalKda = Double.parseDouble(df.format(((double) (totalkill + totalassist)) / ((double) totaldeath)));
+        summonerInfo = summonerInfo.toBuilder().totalKda(totalKda).recentWins(win).recentLosses(LOL.INFO.getGameCount()-win).build();
+        return new CreateSummonerInfoDto(summonerInfo,matchList);
     }
 
     public Long calWin(List<MatchInfo> matchInfoList){
         Long win=0L;
         for (MatchInfo matchInfo :matchInfoList ) {
-            if(matchInfo.getResult().equals("true"))
+            if(matchInfo.getResult().equals("true")) {
                 win++;
+            }
         }
         return win;
     }
@@ -178,9 +210,17 @@ public class LoLService {
         DecimalFormat df = getDecimalFormat();
         ObjectMapper mapper = new ObjectMapper();
         String block = createWebClient(BaseUrlKR, "/lol/league/v4/entries/by-summoner/" + summonerId)
-                .bodyToMono(String.class).block();
+                .bodyToMono(String.class)
+                .onErrorResume(e -> {
+                    throw new AppException(ErrorCode.NOTFOUND, "소환사 아이디를 찾을 수 없습니다. 라이엇 이름 또는 태그가 일치하지 않습니다.");
+                })
+                .block();
+
         JsonNode jsonNode = mapper.readTree(block).get(0);
         Map map = mapper.convertValue(jsonNode, Map.class);
+        if (map == null) {
+            throw new AppException(ErrorCode.NOTFOUND, "최근 랭크게임 전적이 없는 소환사는 이용할 수 없습니다.");
+        }
         Long win = Long.valueOf(map.get("wins").toString());
         Long loss = Long.valueOf(map.get("losses").toString());
         double totalAvgOfWin= Double.parseDouble(df.format( (double)win /((double) win + (double) loss) * 100));
@@ -217,7 +257,7 @@ public class LoLService {
                     long winCount = matchInfos.stream().filter(match -> "true".equals(match.getResult())).count();
                     long lossCount = count - winCount;
 
-                    String kda = (totalDeaths == 0) ? "perfect" : df.format((double)(totalKills + totalAssists) / totalDeaths);
+                    String kda = (totalDeaths == 0) ? "PF" : df.format((double)(totalKills + totalAssists) / totalDeaths);
 
                     double avgOfWin = Double.parseDouble(df.format( (double)winCount / count * 100));
 

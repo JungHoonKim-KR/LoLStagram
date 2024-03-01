@@ -6,9 +6,7 @@ import { BeatLoader } from 'react-spinners';
 import Compare from './Compare';
 const Box3 = (searchResult)=>{
     const [isUpdateLoading,setIsUpdateLoading] = useState(false)
-    const [isCompareLoading, setIsCompareLoading] = useState(false)
-    const [summonerInfo, setSummonerInfo] = useState(searchResult.summerInfo);
-    console.log(searchResult.summerInfo)
+    const [summonerInfo, setSummonerInfo] = useState(JSON.parse(localStorage.getItem("mySummonerInfo")))
     const [type, setType] = useState(searchResult.type)
     const token = localStorage.getItem('accessToken');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -16,8 +14,6 @@ const Box3 = (searchResult)=>{
         let storedSummonerInfo
         if(type == "search"){
              storedSummonerInfo = JSON.parse(localStorage.getItem("searchedSummonerInfo"));
-        }else {
-             storedSummonerInfo = JSON.parse(localStorage.getItem("mySummonerInfo"));
         }
         if (storedSummonerInfo) {
             setSummonerInfo(storedSummonerInfo);
@@ -38,7 +34,7 @@ const Box3 = (searchResult)=>{
             setSummonerInfo(promise.data)
             localStorage.setItem("summonerInfo", JSON.stringify(promise.data))
         }catch (error){
-            console.log(error)
+            console.log(error.response.data)
         }finally {
             setIsUpdateLoading(false)
         }
@@ -100,7 +96,7 @@ const Box3 = (searchResult)=>{
                     </div>
 
                     <div className="mostChampionList">
-                        <ul >
+                        <ul>
                             {summonerInfo.mostChampionList.map((mostChampion, index) => (
                                 <li key={mostChampion.kda} className={index === 0 ? 'first champion' : 'champion'}>
                                     <img src={require(`../images/champion/${mostChampion.championName}.png`)} />

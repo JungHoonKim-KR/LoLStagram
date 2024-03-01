@@ -17,17 +17,18 @@ import { useNavigate } from 'react-router-dom';
         const [memberInfo, setMemberInfo] = useState(JSON.parse(localStorage.getItem("member")))
         let summonerNameSearch = useRef()
         let summonerTagSearch = useRef()
-        const [summonerNameProfile,setSummonerNameProfile] = useState('')
-        const [summonerTagProfile,setSummonerTagProfile] = useState('')
-        const [title,setTitle] = useState('')
-        const [content,setContent] = useState('')
-        const [img,setImg] = useState('')
+        const [summonerNameProfile,setSummonerNameProfile] = useState(null)
+        const [summonerTagProfile,setSummonerTagProfile] = useState(null)
+        const [title,setTitle] = useState(null)
+        const [content,setContent] = useState(null)
+        const [img,setImg] = useState(null)
         useEffect(() => {
             if(summonerInfo) {
                 setSummonerNameProfile(summonerInfo.summonerName)
                 setSummonerTagProfile(summonerInfo.summonerTag)
             }
         }, [summonerInfo]);
+
         const searchVisibility = () => {
             setIsSearchVisible(!isSearchVisible);
             if (!isSearchVisible) {
@@ -51,8 +52,8 @@ import { useNavigate } from 'react-router-dom';
 
         const handleSearch = async () => {
             setIsSearchLoading(true)
-            const name = summonerNameSearch.current.value
-            const tag = summonerTagSearch.current.value
+            const name = summonerNameSearch.current.value.trim()
+            const tag = summonerTagSearch.current.value.trim()
             if (!name || !tag) {
                 alert('모든 필드를 입력해주세요.');
                 return;
@@ -60,69 +61,99 @@ import { useNavigate } from 'react-router-dom';
                 try {
                     const result = await axios.post('/update', {
                         summonerName: name,
-                        summonerTag: tag
+                        summonerTag: tag,
                     }, {
                         headers: {"Authorization": `Bearer ${token}`},
-                        withCredentials: true // 쿠키를 포함하여 요청을 보냄
+                        withCredentials: true
                     })
                     setSearchResult(result.data)
                     localStorage.setItem("searchedSummonerInfo", JSON.stringify(result.data))
                 } catch (error) {
-                    alert(error.response.data);
+                    if(error.response.data.errorCode == "TOKEN_EXPIRED"){
+                        alert("토큰 만료. 로그인 화면으로 이동합니다.")
+                        navigate("/")
+                    }
+                    else{
+                        alert(error.response.data.errorMessage)
+                    }
                 } finally {
                     setIsSearchLoading(false)
                 }
             }
         }
+
         const handleProfile = async () => {
-            if ( !summonerNameProfile || !summonerTagProfile) {
+            if (!summonerNameProfile.trim() || !summonerTagProfile.trim()) {
                 alert('모든 필드를 입력해주세요.');
                 return;
             } else {
                 try {
-                    await axios.post('/profileUpdate', {
+                    const formData = new FormData()
+                    formData.append("profileDto", new Blob([JSON.stringify({
                         id: memberInfo.id,
-                        summonerName: summonerNameProfile,
-                        summonerTag: summonerTagProfile
-                    }, {
+                        summonerName: summonerNameProfile.trim(),
+                        summonerTag: summonerTagProfile.trim()
+                    })]))
+                    await axios.post('/profileUpdate', {}, {
                         headers: {'Authorization': `Bearer ${token}`},
                         withCredentials:true
                     })
                         .then((res) => {
                             alert("변경이 완료되었습니다. 로그인 페이지로 이동합니다.")
                             navigate('/')
-
                         })
                 } catch (error) {
-                    console.log(error.response.data)
+                    if(error.response.data.errorCode == "TOKEN_EXPIRED"){
+                        alert("토큰 만료. 로그인 화면으로 이동합니다.")
+                        navigate("/")
+                    }
+                    else{
+                        alert(error.response.data.errorMessage)
+                    }
                 }
             }
         }
-        const handleWrite = async ()=>{
-            if(!title || !content){
+
+        const handleWrite = async () => {
+            if(!title.trim() || !content.trim()){
                 alert("모든 필드를 입력해주세요.")
                 return;
             }
             else{
                 try{
-                    await axios.post('/write',{
-                        title:title,
-                        content:content,
-                        // img:img,
-                        memberId:memberInfo.id
-                    },{
-                        headers: {'Authorization': `Bearer ${token}`},
-                        withCredentials: true, // 쿠키를 포함하여 요청을 보냄
-                    })
-
+                    const formData = new FormData()
+                    formData.append("postDto", new Blob([JSON.stringify({
+                        title: title.trim(),
+                        content: content.trim(),
+                        memberId: memberInfo.id,
+                        memberName: memberInfo.username
+                    })], {
+                        type:'application/json'
+                    }))
+                    formData.append("image", img)
+                    await axios.post('/write',
+                        formData,
+                        {
+                            headers: {'Authorization': `Bearer ${token}`},
+                            withCredentials: true,
+                        })
                     alert("작성 완료")
                     window.location.reload()
                 }catch (error){
-                    console.log(error.response.data)
+                    if(error.response.data.errorCode == "TOKEN_EXPIRED"){
+                        alert("토큰 만료. 로그인 화면으로 이동합니다.")
+                        navigate("/")
+                    }
+                    else{
+                        alert(error.response.data.errorMessage)
+                    }
+                }finally {
+                    setImg(null)
                 }
             }
         }
-        const handleLogout=async ()=> {
+
+        const handleLogout = async () => {
             if (window.confirm("로그아웃 하시겠습니까?")) {
                 try {
                     await axios.post('/logout',
@@ -136,10 +167,17 @@ import { useNavigate } from 'react-router-dom';
                     alert("로그아웃 되었습니다.")
                     navigate('/')
                 } catch (error) {
-                    alert(error.response.data)
+                    if(error.response && error.response.status == 403){
+                        alert("토큰이 만료되었습니다. 로그인 페이지로 이동합니다.")
+                        navigate("/")
+                    }
+                    else{
+                        alert(error.response.data.errorMessage)
+                    }
                 }
             }
         }
+
 
         useEffect(() => {
             if (searchResult) {
@@ -171,7 +209,7 @@ import { useNavigate } from 'react-router-dom';
                                     </button>
                                 </div>
                                 {showBox3 && (
-                                    <Box3 summerInfo={searchResult} type="search" label="searchResult"/>
+                                    <Box3 key={searchResult.leagueId} summerInfo={searchResult} type="search" label="searchResult"/>
                                 )}
                             </div>
                         )}
@@ -191,7 +229,7 @@ import { useNavigate } from 'react-router-dom';
                                 <div id="writeArea">
                                     <input type="text" placeholder="제목" onChange={(e)=>setTitle(e.target.value)}/>
                                     <textarea onChange={(e)=>setContent(e.target.value)} />
-                                    {/*<input type="file" onChange={(e)=>setImg(e.target.files[0])}/>*/}
+                                    <input type="file" onChange={(e)=>setImg(e.target.files[0])}/>
                                     <button type="submit" id="writeBtn" onClick={handleWrite}>작성</button>
                                 </div>
                             </div>

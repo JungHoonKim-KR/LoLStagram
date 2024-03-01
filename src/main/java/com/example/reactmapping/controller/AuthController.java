@@ -63,6 +63,8 @@ public class AuthController {
             return ResponseEntity.ok().body(responseDto);
         }
         else {
+            log.info(authenticationDto.getCode());
+            log.info(dto.getAuthenticationCode());
             AppException exception = new AppException(ErrorCode.ACCESS_ERROR,"인증 코드 불일치입니다.");
             return new ResponseEntity<>(exception, HttpStatus.UNAUTHORIZED);
         }

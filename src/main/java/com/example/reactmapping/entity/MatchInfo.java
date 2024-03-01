@@ -30,15 +30,16 @@ public class MatchInfo implements Persistable<String> {
     private String championName;
     private Long mainRune;
     private Long subRune;
+    private String gameType;
     @Convert(converter = StringListConverter.class)
     private List<Integer> itemList = new ArrayList<>();
     @Convert(converter = StringListConverter.class)
     private List<Integer> summonerSpellList = new ArrayList<>();
     private String result;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "summoner_id")
     @JsonBackReference
-    private SummonerInfo SummonerInfo;
+    private SummonerInfo summonerInfo;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createTime;

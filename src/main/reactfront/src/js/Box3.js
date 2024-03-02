@@ -116,7 +116,8 @@ const Box3 = (searchResult)=>{
             <div className="recentMatchList">
                 <ul>
                     {summonerInfo.matchList.map((match,index) =>(
-                        <li id="matchList" key={index+100} className={match.result}>
+                        <li className={`matchList ${match.result}`} key={index+100} >
+                            <div className={`${match.result} gameType`}>{match.gameType}</div>
                             <div className="summonerList">
                                 <img className="championImg" src={require(`../images/champion/${match.championName}.png`)} />
                                 <div className="matchInfo">
@@ -136,7 +137,7 @@ const Box3 = (searchResult)=>{
                                         <span id="deaths">{match.deaths}</span>/
                                         <span id="assists">{match.assists}</span>
                                         <span id="kda"> ( KDA: {match.kda} )</span>
-                                        <span id={match.result}>{match.result=="true" ? "승리" : "패배"}</span>
+                                        <span className={match.result}>{match.result=="true" ? "승리" : "패배"}</span>
                                     </div>
                                 </div>
                             </div>

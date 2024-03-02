@@ -26,6 +26,7 @@ public class MatchInfoDto {
     private String championName;
     private Long mainRune;
     private Long subRune;
+    private String gameType;
     @Convert(converter = StringListConverter.class)
     private List<Integer> itemList = new ArrayList<>();
     @Convert(converter = StringListConverter.class)
@@ -44,6 +45,7 @@ public class MatchInfoDto {
                                     .championName(matchInfo.getChampionName())
                                     .mainRune(matchInfo.getMainRune())
                                     .subRune(matchInfo.getSubRune())
+                                    .gameType(matchInfo.getGameType())
                                     .result(matchInfo.getResult())
                                     .build();
                             return build.toBuilder().itemList(matchInfo.getItemList()).summonerSpellList(matchInfo.getSummonerSpellList()).build();

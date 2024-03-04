@@ -10,6 +10,14 @@ const Box3 = (searchResult)=>{
     const [type, setType] = useState(searchResult.type)
     const token = localStorage.getItem('accessToken');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    console.log(summonerInfo.rank)
+    const callMatchInfo =(callType)=>{
+        summonerInfo.matchList.map((match)=>{
+            if(match.gameType==callType)
+                console.log(match)
+        })
+    }
+
     useEffect(() => {
         let storedSummonerInfo
         if(type == "search"){
@@ -42,7 +50,12 @@ const Box3 = (searchResult)=>{
 
 
     const handleClick = () => {
-        setIsModalOpen(!isModalOpen);
+        if(summonerInfo.tier==null) {
+            alert("랭크 정보가 없는 소환사와 비교할 수 없습니다.")
+        }
+        else{
+            setIsModalOpen(!isModalOpen);
+        }
     };
     const handleCloseModal = () => {
         setIsModalOpen(false);
@@ -54,7 +67,7 @@ const Box3 = (searchResult)=>{
 
                 <div className="contentContainer">
                     <div className="tier-image">
-                        <img src={require(`../images/tierImage/${summonerInfo.tier}.png`)} />
+                        {summonerInfo.tier?<img src={require(`../images/tierImage/${summonerInfo.tier}.png`)}/>:'undefined' }
 
                     </div>
                     <div className="summoner">
@@ -81,13 +94,17 @@ const Box3 = (searchResult)=>{
                         {type == "search" &&
                             <button  onClick={handleClick} >비교하기
                                 {isModalOpen && <Compare isOpen={isModalOpen} onClose={setIsModalOpen} />}</button>}
-
-
                     </div>
                 </div>
             </div>
             <div className="recentMatch">
                 <div className="title">최근전적 (10 게임)</div>
+                {/*<div>*/}
+                {/*    <button onClick={callMatchInfo("빠른 대전")}>버튼1</button>*/}
+                {/*    <button>버튼2</button>*/}
+                {/*    <button>버튼3</button>*/}
+                {/*    <button>버튼4</button>*/}
+                {/*</div>*/}
                 <p>Most 3</p>
                 <div className="contentContainer">
                     <div className="donut-chart">

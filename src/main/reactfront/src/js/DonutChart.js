@@ -7,7 +7,7 @@ function DonutChart({ percentage,text =''   }) {
     const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
     return (
-        <svg width="200px" viewBox="0 0 250 250"> {/* SVG의 크기를 늘립니다. */}
+        <svg width="170px" viewBox="0 0 250 250"> {/* SVG의 크기를 늘립니다. */}
             <circle
                 stroke="#f0f0f0"
                 strokeWidth={strokeWidth}

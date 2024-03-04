@@ -4,7 +4,10 @@ import '../css/Box3.css';
 import axios from "axios";
 import { BeatLoader } from 'react-spinners';
 import Compare from './Compare';
+import { useNavigate } from 'react-router-dom';
+
 const Box3 = (searchResult)=>{
+    const navigate = useNavigate();
     const [isUpdateLoading,setIsUpdateLoading] = useState(false)
     const [summonerInfo, setSummonerInfo] = useState(JSON.parse(localStorage.getItem("mySummonerInfo")))
     const [type, setType] = useState(searchResult.type)
@@ -42,7 +45,13 @@ const Box3 = (searchResult)=>{
             setSummonerInfo(promise.data)
             localStorage.setItem("summonerInfo", JSON.stringify(promise.data))
         }catch (error){
-            console.log(error.response.data)
+            if(error.response.data.errorCode == "TOKEN_EXPIRED"){
+                alert("토큰 만료. 로그인 화면으로 이동합니다.")
+                navigate("/")
+            }
+            else{
+                alert(error.response.data.errorMessage)
+            }
         }finally {
             setIsUpdateLoading(false)
         }

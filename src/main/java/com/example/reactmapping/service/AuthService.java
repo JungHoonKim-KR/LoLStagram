@@ -139,7 +139,7 @@ public class AuthService {
         summonerId = loLService.callSummonerId(puuId);
         //리그 정보 가져오기
         SummonerInfo summonerProfile = loLService.callSummonerProfile(summonerId,tag);
-        summonerProfile = summonerProfile.toBuilder().puuId(puuId).summonerName(riotGameName).build();
+        summonerProfile = summonerProfile.toBuilder().puuId(puuId).summonerId(summonerId).summonerName(riotGameName).build();
         //최근 전적 가져오기
         CompareDto compare = loLService.compare(puuId, summonerId);
 

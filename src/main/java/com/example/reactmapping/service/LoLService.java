@@ -219,7 +219,8 @@ public class LoLService {
         JsonNode jsonNode = mapper.readTree(block).get(0);
         Map map = mapper.convertValue(jsonNode, Map.class);
         if (map == null) {
-            throw new AppException(ErrorCode.NOTFOUND, "최근 랭크게임 전적이 없는 소환사는 이용할 수 없습니다.");
+            log.info("랭크 정보 없음.");
+            return new SummonerInfo();
         }
         Long win = Long.valueOf(map.get("wins").toString());
         Long loss = Long.valueOf(map.get("losses").toString());
@@ -228,7 +229,6 @@ public class LoLService {
                 .leagueId(map.get("leagueId").toString())
                 .tier(map.get("tier").toString())
                 .tierRank(convertRomanToArabic(map.get("rank").toString()))
-                .summonerId(map.get("summonerId").toString())
                 .summonerName(map.get("summonerName").toString())
                 .summonerTag(tag)
                 .leaguePoints(Long.valueOf(map.get("leaguePoints").toString()))

@@ -19,6 +19,9 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,16 +53,18 @@ public class AuthController {
     @Operation(summary = "로그인")
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(HttpSession httpSession,@RequestBody LoginRequestDto dto, HttpServletResponse httpServletResponse) throws JsonProcessingException {
-        LoginResponseDto responseDto = authService.login(httpSession,httpServletResponse,dto.getEmailId(),dto.getPassword(),dto.getAuthenticationCode());
+    public ResponseEntity<LoginResponseDto> login(HttpSession httpSession,@RequestBody LoginRequestDto dto, HttpServletResponse httpServletResponse
+                                ,@PageableDefault(size = 10,direction = Sort.Direction.DESC) Pageable pageable) throws JsonProcessingException {
+        LoginResponseDto responseDto = authService.login(httpSession,httpServletResponse,dto.getEmailId(),dto.getPassword(),dto.getAuthenticationCode(),pageable,dto.getType());
         return ResponseEntity.ok().body(responseDto);
     }
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/oauthLogin")
-    public ResponseEntity<?> oauthLogin(HttpSession httpSession,@RequestBody LoginRequestDto dto, HttpSession session, HttpServletResponse httpServletResponse) throws JsonProcessingException {
+    public ResponseEntity<?> oauthLogin(HttpSession httpSession,@RequestBody LoginRequestDto dto, HttpSession session, HttpServletResponse httpServletResponse
+            ,@PageableDefault(size = 10,direction = Sort.Direction.DESC) Pageable pageable) throws JsonProcessingException {
         AuthenticationDto authenticationDto = (AuthenticationDto) session.getAttribute("AuthenticationDto");
         if(authenticationDto.getCode().equals(dto.getAuthenticationCode())){
-            LoginResponseDto responseDto = authService.login(httpSession,httpServletResponse,authenticationDto.getEmailId(),dto.getPassword(),dto.getAuthenticationCode());
+            LoginResponseDto responseDto = authService.login(httpSession,httpServletResponse,authenticationDto.getEmailId(),dto.getPassword(),dto.getAuthenticationCode(),pageable,dto.getType());
             return ResponseEntity.ok().body(responseDto);
         }
         else {

@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final SummonerInfoRepository summonerInfoRepository;
     private final MatchRepository matchRepository;
+    private final MatchService matchService;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final LoLService loLService;
@@ -71,7 +73,7 @@ public class AuthService {
         return member;
     }
 
-    public LoginResponseDto login(HttpSession httpSession,HttpServletResponse response, String requestEmail, String requestPassword, String authenticationCode) throws JsonProcessingException {
+    public LoginResponseDto login(HttpSession httpSession, HttpServletResponse response, String requestEmail, String requestPassword, String authenticationCode, Pageable pageable,String type) throws JsonProcessingException {
         Member member = null;
         Optional<Member> findMember = memberRepository.findMemberByEmailId(requestEmail);
         //존재하는 회원인지
@@ -100,25 +102,28 @@ public class AuthService {
             //존재한다면 갱신
             refreshToken = findRefreshToken.get().updateToken(tokenDto.getRefreshToken());
         } else {
-            //없다면 새로 생성
-            refreshToken = new RefreshToken(tokenDto.getUserEmail(), tokenDto.getRefreshToken());
-        }
+        //없다면 새로 생성
+        refreshToken = new RefreshToken(tokenDto.getUserEmail(), tokenDto.getRefreshToken());
+    }
         refreshTokenRepository.save(refreshToken);
-        SummonerInfo summonerInfo = summonerInfoRepository.findBySummonerId(member.getSummonerId()).get();
 
+        SummonerInfo summonerInfo = summonerInfoRepository.findBySummonerId(member.getSummonerId()).get();
+        //Get MatchList
+        List<MatchInfoDto> matchList = matchService.getMatchList(pageable, type,summonerInfo.getSummonerId());
         MemberDto memberDto = new MemberDto(member.getId(),member.getEmailId(), member.getUsername(), member.getProfileImg());
+
         //반환 값
         LoginResponseDto loginResponseDto = LoginResponseDto.builder()
                 .accessToken(tokenDto.getAccessToken())
                 .username(member.getUsername())
                 .summonerInfoDto(SummonerInfoDto.entityToDto(summonerInfo))
                 .memberDto(memberDto)
+                .matchInfoDtoList(matchList)
                 .build();
         setHeader(response, loginResponseDto);
         return loginResponseDto;
 
     }
-
 
     //응답에 access 토큰 부여
     //이건 헤더에 직접적으로 토큰을 부여하는게 아니라 프론트엔드에게 전달할 응답값에 토큰을 넣는 것임.
@@ -144,7 +149,7 @@ public class AuthService {
         CompareDto compare = loLService.compare(puuId, summonerId);
 
         //9라면 이미 최신 상태임
-        if(compare.getResult() == 9) {
+        if(compare.getResult() == LOL.INFO.getGameCount()-1) {
             Long win = loLService.calWin(compare.getMatchInfoList());
             List<MostChampion> mostChampionList = loLService.calcMostChampion(compare.getMatchInfoList());
             summonerProfile = summonerProfile.toBuilder()
@@ -170,6 +175,7 @@ public class AuthService {
                 Collections.reverse(originMatchList);
                 for(int i = 0; i< LOL.INFO.getGameCount()-compare.getResult();i++){
                     MatchInfo matchInfo = matchInfoList.get(i);
+                    //originMatchList 정보를 일부 활용하기 때문에 예외적으로 Repo에 직접 접근 허용
                     matchRepository.updateAll(matchInfo.getMatchId(),matchInfo.getGameStartTimestamp(),matchInfo.getKills()
                             ,matchInfo.getDeaths(),matchInfo.getAssists(),matchInfo.getKda(),matchInfo.getChampionName(),matchInfo.getMainRune(),matchInfo.getSubRune()
                             ,matchInfo.getItemList(),matchInfo.getSummonerSpellList(),matchInfo.getResult()
@@ -186,7 +192,7 @@ public class AuthService {
 
             // 바로 저장
             if(compare.getResult()==-1){
-                matchRepository.saveAll(summonerProfile.getMatchList());
+                matchService.matchSaveAll(summonerProfile.getMatchList());
             }
             else{
                 summonerInfoRepository.updateAll(summonerId, summonerProfile.getLeagueId(), summonerProfile.getTier(), summonerProfile.getTierRank(),

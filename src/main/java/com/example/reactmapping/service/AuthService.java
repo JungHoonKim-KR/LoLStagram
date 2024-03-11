@@ -109,7 +109,7 @@ public class AuthService {
 
         SummonerInfo summonerInfo = summonerInfoRepository.findBySummonerId(member.getSummonerId()).get();
         //Get MatchList
-        List<MatchInfoDto> matchList = matchService.getMatchList(pageable, type,summonerInfo.getSummonerId());
+        List<MatchInfoDto> matchList = matchService.getMatchList(pageable, type,summonerInfo.getSummonerId()).getMatchInfoDtoList();
         MemberDto memberDto = new MemberDto(member.getId(),member.getEmailId(), member.getUsername(), member.getProfileImg());
 
         //반환 값

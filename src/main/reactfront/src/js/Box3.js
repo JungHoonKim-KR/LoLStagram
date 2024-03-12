@@ -5,22 +5,73 @@ import axios from "axios";
 import { BeatLoader } from 'react-spinners';
 import Compare from './Compare';
 import { useNavigate } from 'react-router-dom';
+import addImg from "../images/더보기.png";
 
 const Box3 = (searchResult)=>{
     const navigate = useNavigate();
     const [isUpdateLoading,setIsUpdateLoading] = useState(false)
     const [summonerInfo, setSummonerInfo] = useState(JSON.parse(localStorage.getItem("mySummonerInfo")))
+    const [matchList, setMatchList] = useState(summonerInfo.matchList)
     const [type, setType] = useState(searchResult.type)
-    const token = localStorage.getItem('accessToken');
+    const [token,setToken] = useState(localStorage.getItem('accessToken'));
     const [isModalOpen, setIsModalOpen] = useState(false);
-    console.log(summonerInfo.rank)
-    const callMatchInfo =(callType)=>{
-        summonerInfo.matchList.map((match)=>{
-            if(match.gameType==callType)
-                console.log(match)
-        })
-    }
+    const [page,setPage] = useState(1)
+    const [callType, setCallType] = useState(null);
+    const [isLast,setIsLast]=useState(true)
+    useEffect(() => {
+        if (page === 0 && matchList.length === 0 && callType) {
+            callMatchInfo(callType);
+        }
+    }, [page, matchList, callType]);
 
+    const updateMatchInfo = async (callType)=>{
+        setPage(0)
+        setMatchList([])
+        await callMatchInfo((callType))
+    }
+    const callMatchInfo =async(callType)=>{
+        try{
+            const promise = await axios.post('/matchUpdate',{
+                summonerId : summonerInfo.summonerId,
+                type : callType,
+                page:page
+                },{
+                    headers: {'Authorization': `Bearer ${token}`},
+                    withCredentials: true, // 쿠키를 포함하여 요청을 보냄
+                }
+            )
+            if(promise.headers.access){
+                localStorage.setItem('accessToken', promise.headers.access);
+                setToken(promise.headers.access)
+            }
+            if(promise.data.matchInfoDtoList.length ==0){
+                console.log("결과가 없습니다.")
+            }
+            else {
+                setPage(page + 1)
+                setMatchList(prevState => [...prevState, ...promise.data.matchInfoDtoList])
+                setIsLast(promise.isLast)
+            }
+        }catch (error){
+            console.log(error)
+            if(error)console.log("dwdwda")
+            else if(error.response.data.errorCode == "TOKEN_EXPIRED"){
+                alert("토큰 만료. 로그인 화면으로 이동합니다.")
+                navigate("/")
+            }
+            else{
+                alert(error.response.data.errorMessage)
+            }
+
+        }
+
+    }
+    useEffect(() => {
+        setSummonerInfo(prevState => ({
+            ...prevState,
+            matchList: matchList,
+        }));
+    }, [matchList]);
     useEffect(() => {
         let storedSummonerInfo
         if(type == "search"){
@@ -41,7 +92,10 @@ const Box3 = (searchResult)=>{
                     headers: {'Authorization': `Bearer ${token}`},
                     withCredentials: true, // 쿠키를 포함하여 요청을 보냄
                 });
-
+            if(promise.headers.access){
+                localStorage.setItem('accessToken', promise.headers.access);
+                setToken(promise.headers.access)
+            }
             setSummonerInfo(promise.data)
             localStorage.setItem("summonerInfo", JSON.stringify(promise.data))
         }catch (error){
@@ -107,13 +161,27 @@ const Box3 = (searchResult)=>{
                 </div>
             </div>
             <div className="recentMatch">
-                <div className="title">최근전적 (10 게임)</div>
-                {/*<div>*/}
-                {/*    <button onClick={callMatchInfo("빠른 대전")}>버튼1</button>*/}
-                {/*    <button>버튼2</button>*/}
-                {/*    <button>버튼3</button>*/}
-                {/*    <button>버튼4</button>*/}
-                {/*</div>*/}
+                <div className="title">최근전적 (20 게임)</div>
+                <div>
+                    <button onClick={()=>{
+                        updateMatchInfo("솔랭")
+                    }}>버튼1</button>
+                    <button onClick={()=>{
+                        setPage(0)
+                        setMatchList([])
+                        setCallType("자유 랭크")
+                    }}>버튼2</button>
+                    <button onClick={()=>{
+                        setPage(0)
+                        setMatchList([])
+                        setCallType("무작위 총력전")
+                    }}>버튼3</button>
+                    <button onClick={()=>{
+                        setPage(0)
+                        setMatchList([])
+                        setCallType("URF")
+                    }}>버튼4</button>
+                </div>
                 <p>Most 3</p>
                 <div className="contentContainer">
                     <div className="donut-chart">
@@ -140,46 +208,58 @@ const Box3 = (searchResult)=>{
             </div>
 
             <div className="recentMatchList">
-                <ul>
-                    {summonerInfo.matchList.map((match,index) =>(
-                        <li className={`matchList ${match.result}`} key={index+100} >
-                            <div className={`${match.result} gameType`}>{match.gameType}</div>
-                            <div className="summonerList">
-                                <img className="championImg" src={require(`../images/champion/${match.championName}.png`)} />
-                                <div className="matchInfo">
-                                    <div className="summonerImg">
-                                        <div className="runeImg">
-                                            <img id="mainRune" src={require(`../images/rune/${match.mainRune}.png`)}/>
-                                            <img id="subRune" src={require(`../images/rune/${match.subRune}.png`)}/>
+                {
+                    summonerInfo.matchList.length === 0 ? (
+                        <div>결과가 없습니다.</div>
+                    ) : (
+                        <ul>
+                            {summonerInfo.matchList.map((match, index) => (
+                                <li className={`matchList ${match.result}`} key={index + 100}>
+                                    <div className={`${match.result} gameType`}>{match.gameType}</div>
+                                    <div className="summonerList">
+                                        <img className="championImg" src={require(`../images/champion/${match.championName}.png`)} alt={match.championName} />
+                                        <div className="matchInfo">
+                                            <div className="summonerImg">
+                                                <div className="runeImg">
+                                                    <img id="mainRune" src={require(`../images/rune/${match.mainRune}.png`)} alt="mainRune"/>
+                                                    <img id="subRune" src={require(`../images/rune/${match.subRune}.png`)} alt="subRune"/>
+                                                </div>
+                                                <div className="spellImg">
+                                                    {match.summonerSpellList.map((spell, spellIndex) => (
+                                                        <img key={spellIndex} src={require(`../images/spell/${spell}.png`)} alt={spell}/>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div className="kda">
+                                                <span id="kills">{match.kills}</span>/
+                                                <span id="deaths">{match.deaths}</span>/
+                                                <span id="assists">{match.assists}</span>
+                                                <span id="kda"> ( KDA: {match.kda} )</span>
+                                                <span className={match.result}>{match.result === "true" ? "승리" : "패배"}</span>
+                                            </div>
                                         </div>
-                                        <div className="spellImg">
-                                            {match.summonerSpellList.map(spell =>(
-                                                <img src={require(`../images/spell/${spell}.png`)}/>
+                                    </div>
+                                    <div className="itemList">
+                                        <ul>
+                                            {match.itemList.map((item, itemIndex) => (
+                                                <li key={itemIndex}>
+                                                    <img src={require(`../images/item/${item}.png`)} alt={item}></img>
+                                                </li>
                                             ))}
-                                        </div>
+                                        </ul>
                                     </div>
-                                    <div className="kda">
-                                        <span id="kills">{match.kills}</span>/
-                                        <span id="deaths">{match.deaths}</span>/
-                                        <span id="assists">{match.assists}</span>
-                                        <span id="kda"> ( KDA: {match.kda} )</span>
-                                        <span className={match.result}>{match.result=="true" ? "승리" : "패배"}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="itemList">
-                                <ul>
-                                    {match.itemList.map(item =>(
-                                        <li key={item}>
-                                            <img src={require(`../images/item/${item}.png`)}></img>
-                                        </li>
-                                    ))}
-                                </ul>
+                                </li>
+                            ))}
+                        </ul>
+                    )
+                }
+                {!isLast &&(
+                    <button  id="addPostBtn" onClick={callMatchInfo}>
+                        <img src={addImg} alt="Add post" />
+                    </button>
 
-                            </div>
-                        </li>
-                    ))}
-                </ul>
+                )}
+
             </div>
 
         </div>

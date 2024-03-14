@@ -56,9 +56,6 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         //Token 추출
-
-//        userEmail= (String) session.getAttribute(accessToken);
-
         //AccessToken expired 여부
         if (jwtUtil.isExpired(accessToken, "ACCESS")) {
             log.error("AccessToken 만료");
@@ -75,7 +72,7 @@ public class JwtFilter extends OncePerRequestFilter {
                     response.setHeader("ACCESS", newAccessToken);
                     setAuthentication(userEmail, request, response, filterChain);
             }else{
-                throw new AppException(ErrorCode.ACCESS_ERROR,"재로그인 필요");
+                throw new AppException(ErrorCode.TOKEN_EXPIRED,"토큰 만료");
             }
         }
         //AccessToken이 정상적이라면

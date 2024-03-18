@@ -13,6 +13,7 @@ public class LoginRequestDto {
     private String emailId;
     @Nullable
     private String password;
+    private String type;
     @Nullable
     private String authenticationCode;
 }

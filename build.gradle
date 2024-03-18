@@ -34,7 +34,8 @@ dependencies {
     implementation group: 'commons-io', name: 'commons-io', version: '2.6'
 //    implementation 'org.springframework.boot:spring-boot-devtools'
 
-
+// https://mvnrepository.com/artifact/com.github.ulisesbocchio/jasypt-spring-boot-starter
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
     //OAuth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     //Redis

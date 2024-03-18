@@ -1,7 +1,7 @@
 package com.example.reactmapping.norm;
 
 public enum LOL {
-    INFO(10);
+    INFO(20);
     private final int gameCount;
 
 

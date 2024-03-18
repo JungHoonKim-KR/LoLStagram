@@ -112,7 +112,6 @@ public class LoLService {
             String gameMode = String.valueOf(info.path("gameMode"));
             String gameType = null;
             log.info(gameMode);
-            System.out.println(gameMode.equals("CLASSIC"));
             if(gameMode.equals("\"CLASSIC\"")){
                 // 솔랭: 420, 빠대: 490, 칼바람: 450
                 String queueId = String.valueOf(info.path("queueId"));
@@ -127,6 +126,8 @@ public class LoLService {
                     gameType = "URF";
                 else if(gameMode.equals("\"ARAM\""))
                     gameType = "무작위 총력전";
+                else if(gameMode.equals("\"CHERRY\""))
+                    gameType="아레나";
             }
             // 사설 아니면 다 MATCHED_GAME
 //            log.info(String.valueOf(info.path("gameType")));

@@ -26,10 +26,13 @@ function Login() {
         try {
             const response = await axios.post('/login', {
                 emailId: emailId,
-                password: password
+                password: password,
+                type:"솔랭",
+                page:0
             },{
                 withCredentials:true
             });
+
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('userName',response.data.username)
             localStorage.setItem('mySummonerInfo', JSON.stringify(response.data.summonerInfoDto));

@@ -6,7 +6,6 @@ import '../css/Main.css'; // 이 부분은 css 파일 경로에 따라 변경해
 import { useNavigate } from 'react-router-dom';
 import defaultImg from '../images/tierImage/CHALLENGER.png'
 import addImg from '../images/더보기.png'
-import mainImg from '../images/post/defalut.png'
 const Main = () => {
     const navigate = useNavigate();
     const[page,setPage]=useState(0)
@@ -17,9 +16,8 @@ const Main = () => {
     const [commenter] = useState(['uuu', 'pdds', 'hooe', 'ddwwe']);
     const [postReviewBtnColor, setPostReviewBtnColor] = useState("rgb(199, 235, 245)");
     const [postList, setPostList] = useState([])
-    const token = localStorage.getItem('accessToken');
+    const [token,setToken] = useState(localStorage.getItem('accessToken'));
     const [member,setMember] = useState(JSON.parse(localStorage.getItem('member')))
-    let summonerInfo =JSON.parse(localStorage.getItem('summonerInfo'));
     const fetchData = async (page) => {
         try {
             const res = await axios.get("/postList",{
@@ -30,6 +28,11 @@ const Main = () => {
                 headers: {'Authorization': `Bearer ${token}`},
                 withCredentials: true, // 쿠키를 포함하여 요청을 보냄
             });
+            if(res.headers.access){
+                localStorage.setItem('accessToken', res.headers.access);
+                setToken(res.headers.access)
+            }
+
             setPostList(prevState => [...prevState,...res.data.postDtoList])
             setIsLast(res.data.isLast)
         } catch (error) {
@@ -148,11 +151,12 @@ const Main = () => {
                 <button  id="addPostBtn" onClick={addPost}>
                     <img src={addImg} alt="Add post" />
                 </button>
+
                 )}
             </div>
 
             <div className="box3">
-           <Box3 summerInfo = {summonerInfo} type="main" ></Box3>
+           <Box3 type="main" ></Box3>
             </div>
         </div>
     );

@@ -4,6 +4,7 @@ import Login from "./Login"
 import Main from "./Main"
 import Join from "./Join"
 import Oauth from "./Oauth";
+import Info from "./Info"
 function App() {
 
 

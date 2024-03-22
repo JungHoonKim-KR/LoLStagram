@@ -1,4 +1,6 @@
 package com.example.reactmapping.controller;
+import com.example.reactmapping.config.JasyptConfig;
+import com.example.reactmapping.config.JasyptUtil;
 import com.example.reactmapping.dto.*;
 import com.example.reactmapping.entity.MatchInfo;
 import com.example.reactmapping.entity.Member;
@@ -41,6 +43,7 @@ import java.util.Map;
 public class AuthController {
     private final AuthService authService;
     private final LogoutService logoutService;
+    private final JasyptUtil jasyptUtil;
     @Operation(summary = "회원가입", description = "새로운 회원 등록")
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestPart("joinDto") @Parameter(name = "변수", description = "회원 이메일, 비밀번호, 이름") JoinDTO dto
@@ -56,6 +59,7 @@ public class AuthController {
     public ResponseEntity<LoginResponseDto> login(HttpSession httpSession,@RequestBody LoginRequestDto dto, HttpServletResponse httpServletResponse
                                 ,@PageableDefault(size = 10,direction = Sort.Direction.DESC) Pageable pageable) throws JsonProcessingException {
         LoginResponseDto responseDto = authService.login(httpSession,httpServletResponse,dto.getEmailId(),dto.getPassword(),dto.getAuthenticationCode(),pageable,dto.getType());
+        String encrypt = jasyptUtil.encrypt(dto.getEmailId());
         return ResponseEntity.ok().body(responseDto);
     }
     @CrossOrigin(origins = "http://localhost:3000")

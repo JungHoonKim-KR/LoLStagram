@@ -95,6 +95,9 @@ li.champion{
 .matchList .gameType,.summonerList,.itemList{
     padding: 5px;
 }
+.matchList{
+    position: relative;
+}
 
 .summonerList{
     display: flex;
@@ -125,6 +128,8 @@ li.false{
 }
 #mainRune{
     width: 25px;
+    height: 25px;
+
 }
 #subRune{
     width: 19px;
@@ -137,7 +142,9 @@ li.false{
 }
 .spellImg img{
     width: 25px;
+    height: 25px;
     margin-left: 5px;
+    position: relative;
 }
 
 .kda{
@@ -152,6 +159,7 @@ li.false{
 
 .itemList img{
     width: 25px;
+    height: 25px;
 }
 .itemList ul{
     display: flex;  /* 또는 display: inline-block; */

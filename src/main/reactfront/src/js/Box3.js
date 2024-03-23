@@ -1,6 +1,7 @@
 import DonutChart from "./DonutChart";
 import React, {useEffect, useState} from "react";
 import '../css/Box3.css';
+import Info from "./Info";
 import axios from "axios";
 import { BeatLoader } from 'react-spinners';
 import Compare from './Compare';
@@ -18,6 +19,8 @@ const Box3 = (searchResult)=>{
     const [page,setPage] = useState(1)
     const [callType, setCallType] = useState(null);
     const [isLast,setIsLast]=useState(true)
+    const [mouseOverId, setMouseOverId] = useState(null);
+    const [objectId,setObjectId] = useState(null);
     useEffect(() => {
         if (page === 0 && matchList.length === 0 && callType) {
             callMatchInfo(callType);
@@ -221,12 +224,22 @@ const Box3 = (searchResult)=>{
                                         <div className="matchInfo">
                                             <div className="summonerImg">
                                                 <div className="runeImg">
-                                                    <img id="mainRune" src={require(`../images/rune/${match.mainRune}.png`)} alt="mainRune"/>
+                                                    <div className="mouseOn"
+                                                        onMouseEnter={()=> {setMouseOverId(match.matchId); setObjectId(match.mainRune)}}
+                                                        onMouseLeave={()=> setMouseOverId(null)}>
+                                                        <img id="mainRune" key={match.matchId} src={require(`../images/rune/${match.mainRune}.png`)} alt="mainRune"
+                                                        />
+                                                        {mouseOverId ===match.matchId && objectId === match.mainRune &&<Info type="rune" id ={match.mainRune}></Info>}
+                                                    </div>
                                                     <img id="subRune" src={require(`../images/rune/${match.subRune}.png`)} alt="subRune"/>
                                                 </div>
                                                 <div className="spellImg">
                                                     {match.summonerSpellList.map((spell, spellIndex) => (
-                                                        <img key={spellIndex} src={require(`../images/spell/${spell}.png`)} alt={spell}/>
+                                                        <span  onMouseEnter={()=> {setMouseOverId(match.matchId); setObjectId(spell)}}
+                                                               onMouseLeave={()=> setMouseOverId(null)}>
+                                                            <img key={spellIndex} src={require(`../images/spell/${spell}.png`)} alt={spell}/>
+                                                            {mouseOverId ===match.matchId && objectId === spell &&<Info type="spell" id ={spell}></Info>}
+                                                        </span>
                                                     ))}
                                                 </div>
                                             </div>

@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 public class MemberDto {
     private Long id;
+    private String emailId;
     private String username;
     @Nullable
     private String profileImg;

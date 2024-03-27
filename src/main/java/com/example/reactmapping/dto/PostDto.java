@@ -19,14 +19,18 @@ public class PostDto {
     private String frontImage;
     private Long memberId;
     private String memberName;
+    private Boolean isLast;
 
   public static PostDto entityToDto(Post post){
-      return PostDto.builder()
+      PostDto build = PostDto.builder()
               .title(post.getTitle())
               .content(post.getContent())
               .memberId(post.getMember().getId())
               .memberName(post.getMember().getUsername())
-              .frontImage(post.getImage().getFileUrl())
               .build();
+      if(post.getImage()!=null){
+           build=build.toBuilder().frontImage(post.getImage().getFileUrl()).build();
+       }
+      return build;
   }
 }

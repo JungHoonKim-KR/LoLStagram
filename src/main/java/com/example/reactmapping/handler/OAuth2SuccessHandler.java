@@ -1,30 +1,21 @@
 package com.example.reactmapping.handler;
 
-import com.example.reactmapping.config.jwt.JwtService;
 import com.example.reactmapping.config.jwt.JwtUtil;
 import com.example.reactmapping.dto.AuthenticationDto;
-import com.example.reactmapping.dto.JoinDTO;
 import com.example.reactmapping.dto.OAuth2.CustomOAuth2User;
 import com.example.reactmapping.entity.Member;
 import com.example.reactmapping.repository.MemberRepository;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.mapping.Join;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -33,7 +24,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final MemberRepository memberRepository;
-    private final JwtUtil jwtUtil;
     //loaduser()를 통해 Authentication에 유저 정보가 들어감
     //여기서 유저 정보를 이용해 토큰을 만들어서 클라이언트에게 전달해야함
     @Override
@@ -46,19 +36,19 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("유저 이메일: "+ emailId);
         log.info("유저 이름: "+ username);
 
-        // 기존 회원인지 검증
+        // 신규 화원인 경우
         Optional<Member> memberByEmailId = memberRepository.findMemberByEmailId(emailId);
         if(!memberByEmailId.isPresent()){
             String encodedEmail = URLEncoder.encode(emailId, StandardCharsets.UTF_8);
             String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8);
-            response.sendRedirect("http://localhost:3000/join?emailId="+encodedEmail + "&username="+encodedUsername);
+            response.sendRedirect("http://localhost:8080/#/join?emailId="+encodedEmail + "&username="+encodedUsername);
             return;
         }
         HttpSession session = request.getSession();
         String authenticationCode = UUID.randomUUID().toString();
 
         session.setAttribute("AuthenticationDto", new AuthenticationDto(emailId,authenticationCode));
-        response.sendRedirect("http://localhost:3000/oauth/callback?authenticationCode=" + authenticationCode);
+        response.sendRedirect("http://localhost:8080/#/oauth/callback?authenticationCode=" + authenticationCode);
 
 //        HTTP 응답 헤더에 토큰을 포함시키는 것은 가능하지만, 이 방법을 사용하면 클라이언트가 토큰을 받아올 수 없는 상황이 발생할 수 있습니다.
 //                웹 브라우저 환경에서는 JavaScript가 아닌 사용자의 브라우저를 통해 리다이렉트를 수행하는 경우, 브라우저는 리다이렉트 대상 페이지로 이동하면서 응답 헤더를 무시합니다.

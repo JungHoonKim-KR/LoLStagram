@@ -20,8 +20,8 @@ public class RedisConfig {
     private String redisHost;
     @Value("${spring.data.redis.port}")
     private int redisPort;
-//    @Value("${spring.data.redis.password}")
-//    private String redisPassword;
+    @Value("${spring.data.redis.password}")
+    private String redisPassword;
 
     // RedisProperties로 yaml에 저장한 host, post를 연결
     @Bean
@@ -29,7 +29,7 @@ public class RedisConfig {
         RedisStandaloneConfiguration redisConfiguration = new RedisStandaloneConfiguration();
         redisConfiguration.setHostName(redisHost);
         redisConfiguration.setPort(redisPort);
-//        redisConfiguration.setPassword(redisPassword);
+        redisConfiguration.setPassword(redisPassword);
         LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory(redisConfiguration);
         return lettuceConnectionFactory;
     }

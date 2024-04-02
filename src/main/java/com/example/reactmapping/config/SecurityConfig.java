@@ -77,11 +77,11 @@ public class SecurityConfig {
                                     response.getWriter().write("{\"message\":\"로그아웃 합니다.\"}");
                                 });
                         })
-//                        .oauth2Login(oauth -> oauth
-//                                .successHandler(oAuth2SuccessHandler)
-//                                .failureHandler(oAuth2LoginFailureHandler)
-//                                .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOauth2UserService)))
-//                        )
+                        .oauth2Login(oauth -> oauth
+                                .successHandler(oAuth2SuccessHandler)
+                                .failureHandler(oAuth2LoginFailureHandler)
+                                .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOauth2UserService)))
+                        )
                         .build();
 
     }

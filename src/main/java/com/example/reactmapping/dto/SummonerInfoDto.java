@@ -33,6 +33,7 @@ public class SummonerInfoDto {
 
     // SummonerInfo 엔티티를 SummonerInfoDto로 변환하는 메서드
     public static SummonerInfoDto entityToDto(SummonerInfo summonerInfo) {
+        //match를 페이징 처리 하려면 제거
         List<MatchInfoDto> matchInfoDtoList = MatchInfoDto.entityToDto(summonerInfo.getMatchList());
 
         return SummonerInfoDto.builder()

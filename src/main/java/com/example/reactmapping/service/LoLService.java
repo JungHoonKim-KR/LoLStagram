@@ -230,7 +230,8 @@ public class LoLService {
                 .leagueId(map.get("leagueId").toString())
                 .tier(map.get("tier").toString())
                 .tierRank(convertRomanToArabic(map.get("rank").toString()))
-                .summonerName(map.get("summonerName").toString())
+                // error point
+//                .summonerName(map.get("summonerName").toString())
                 .summonerTag(tag)
                 .leaguePoints(Long.valueOf(map.get("leaguePoints").toString()))
                 .totalWins(win)

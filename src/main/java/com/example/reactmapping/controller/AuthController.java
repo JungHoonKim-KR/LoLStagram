@@ -1,44 +1,30 @@
 package com.example.reactmapping.controller;
-import com.example.reactmapping.config.JasyptConfig;
 import com.example.reactmapping.config.JasyptUtil;
 import com.example.reactmapping.dto.*;
-import com.example.reactmapping.entity.MatchInfo;
 import com.example.reactmapping.entity.Member;
 import com.example.reactmapping.exception.AppException;
 import com.example.reactmapping.exception.ErrorCode;
-import com.example.reactmapping.repository.MatchRepository;
 import com.example.reactmapping.service.AuthService;
-import com.example.reactmapping.service.LoLService;
 import com.example.reactmapping.service.LogoutService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
-
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @RestController
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;

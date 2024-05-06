@@ -21,6 +21,7 @@ const Box3 = (searchResult)=>{
     const [isLast,setIsLast]=useState(true)
     const [mouseOverId, setMouseOverId] = useState(null);
     const [objectId,setObjectId] = useState(null);
+
     useEffect(() => {
         if (page === 0 && matchList.length === 0 && callType) {
             callMatchInfo(callType);
@@ -34,7 +35,7 @@ const Box3 = (searchResult)=>{
     }
     const callMatchInfo =async(callType)=>{
         try{
-            const promise = await axios.post('/matchUpdate',{
+            const promise = await axios.put('/update/match',{
                 summonerId : summonerInfo.summonerId,
                 type : callType,
                 page:page
@@ -87,7 +88,7 @@ const Box3 = (searchResult)=>{
     const updateHandler = async () => {
         setIsUpdateLoading(true)
         try {
-            const promise = await axios.post('/update',     {
+            const promise = await axios.put('/update/summoner',     {
                     summonerName: summonerInfo.summonerName,
                     summonerTag: summonerInfo.summonerTag
                 },

@@ -15,6 +15,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/post")
 public class PostController {
     private final PostService postService;
 

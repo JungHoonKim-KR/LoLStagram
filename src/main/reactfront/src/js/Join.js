@@ -4,7 +4,6 @@ import {useNavigate,useLocation} from 'react-router-dom';
 import "../css/Join.css"
 
 function Join(){
-    // const urlParams = new URLSearchParams(window.location.search);
     const location = useLocation();
     const urlParams = new URLSearchParams(location.search)
     const [emailId, setEmailId] = useState('');
@@ -37,7 +36,7 @@ function Join(){
                 type: "application/json"
             }));
             formData.append("image", img);  // file 객체 추가
-            await axios.post("/join",
+            await axios.post("/auth/join",
                 formData,
                 {
 

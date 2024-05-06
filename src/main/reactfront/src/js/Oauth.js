@@ -10,7 +10,7 @@ function Oauth(){
         const fetchData =async ()=>{
 
         try {
-            const response = await axios.post("/oauthLogin", {
+            const response = await axios.post("/auth/oauthLogin", {
                 authenticationCode: authenticationCode
             })
             localStorage.setItem('accessToken', response.data.accessToken);

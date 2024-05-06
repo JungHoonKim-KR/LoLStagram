@@ -60,7 +60,7 @@ const Box1 = () => {
             return;
         } else {
             try {
-                const result = await axios.post('/update', {
+                const result = await axios.put('/update/summoner', {
                     summonerName: name,
                     summonerTag: tag,
                 }, {
@@ -98,7 +98,7 @@ const Box1 = () => {
                     summonerName: summonerNameProfile.trim(),
                     summonerTag: summonerTagProfile.trim()
                 })]))
-                await axios.post('/profileUpdate', {}, {
+                await axios.put('/update/profile', {}, {
                     headers: {'Authorization': `Bearer ${token}`},
                     withCredentials: true
                 })
@@ -133,7 +133,7 @@ const Box1 = () => {
                     type: 'application/json'
                 }))
                 formData.append("image", img)
-                await axios.post('/write',
+                await axios.post('/post/write',
                     formData,
                     {
                         headers: {'Authorization': `Bearer ${token}`},
@@ -164,7 +164,7 @@ const Box1 = () => {
     const handleLogout = async () => {
         if (window.confirm("로그아웃 하시겠습니까?")) {
             try {
-                await axios.post('/logout',
+                await axios.post('/auth/logout',
                     {}, {
                         headers: {
                             'Authorization': `Bearer ${token}`,

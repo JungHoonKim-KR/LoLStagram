@@ -20,7 +20,7 @@ const Main = () => {
     const [member,setMember] = useState(JSON.parse(localStorage.getItem('member')))
     const fetchData = async (page) => {
         try {
-            const res = await axios.get("/postList",{
+            const res = await axios.get("/post/postList",{
                 params:{
                     page:page
                 }

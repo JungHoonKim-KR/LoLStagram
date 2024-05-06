@@ -19,12 +19,12 @@ function Login() {
     const [password, setPassword] = useState('')
     const navigate = useNavigate(); // 추가
     const joinHandler = ()=>{
-        navigate('/join')
+        navigate('/auth/join')
     }
     const loginHandler = async (e) => {
         e.preventDefault()
         try {
-            const response = await axios.post('/login', {
+            const response = await axios.post('/auth/login', {
                 emailId: emailId,
                 password: password,
                 type:"솔랭",

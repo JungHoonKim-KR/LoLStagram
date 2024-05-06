@@ -16,24 +16,25 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/update")
 //@CrossOrigin(origins = "http://localhost:3000", exposedHeaders = "Authorization")
 public class UpdateController {
     private final AuthService authService;
     private final MatchService matchService;
-    @PostMapping("/update")
+    @PutMapping("/summoner")
     public SummonerInfoDto update(@RequestBody SummonerNameAndTagDto summonerNameAndTagDto) throws JsonProcessingException {
         CallSummonerInfoResponse callSummonerInfoResponse = authService.callSummonerInfo(summonerNameAndTagDto.getSummonerName(), summonerNameAndTagDto.getSummonerTag());
         return SummonerInfoDto.entityToDto(callSummonerInfoResponse.getSummonerInfo());
     }
 
-    @PostMapping("/profileUpdate")
+    @PutMapping("/profile")
     public void profileUpdate(@RequestPart("profileDto") ProfileUpdateDto profileUpdateDto
                                , @RequestPart("image")MultipartFile img) throws IOException {
         profileUpdateDto.setImg(img);
         authService.updateProfile(profileUpdateDto);
     }
 
-    @PostMapping("/matchUpdate")
+    @PutMapping("/match")
     public MatchInfoResultDto matchUpdate(@RequestBody MatchInfoRequestDto matchInfoRequestDto, @PageableDefault(size =10) Pageable pageable){
         return matchService.getMatchList(pageable,matchInfoRequestDto.getType(), matchInfoRequestDto.getSummonerId());
     }

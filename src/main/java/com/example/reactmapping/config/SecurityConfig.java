@@ -23,7 +23,6 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
 
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -46,7 +45,6 @@ public class SecurityConfig {
                         .cors(cors -> cors.configurationSource(request -> {
                             var corsConfiguration = new CorsConfiguration();
                                 corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
-                                corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                                 corsConfiguration.setAllowedHeaders(List.of("*"));
                                 corsConfiguration.setAllowCredentials(true);
                             return corsConfiguration;
@@ -60,7 +58,7 @@ public class SecurityConfig {
                         .authorizeHttpRequests(auth -> auth
                                 //react 라우터들에 대한 접근 권한 허용
                                 .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                                .requestMatchers("","/","/login","/oauthLogin","/swagger-ui/**","/join","/api-docs/**","/question","/test","/static/**").permitAll()
+                                .requestMatchers("","/","/auth/**","/oauthLogin","/swagger-ui/**","/api-docs/**","/question","/test","/static/**").permitAll()
                                 .requestMatchers("/admin").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                         )

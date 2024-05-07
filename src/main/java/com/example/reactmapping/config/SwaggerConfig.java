@@ -14,7 +14,7 @@ public class SwaggerConfig {
     public GroupedOpenApi publicApi() {
         return GroupedOpenApi.builder()
                 .group("public")
-                .pathsToMatch("/member/**")
+                .pathsToMatch("/auth/**")
                 .addOpenApiCustomizer(apiKeyOpenApiCustomiser())
                 .build();
     }
@@ -23,7 +23,7 @@ public class SwaggerConfig {
     public GroupedOpenApi privateApi() {
         return GroupedOpenApi.builder()
                 .group("private")
-                .pathsToMatch("/write/**")
+                .pathsToMatch("/post/**","/update/**")
                 .addOpenApiCustomizer(apiKeyOpenApiCustomiser())
                 .build();
     }

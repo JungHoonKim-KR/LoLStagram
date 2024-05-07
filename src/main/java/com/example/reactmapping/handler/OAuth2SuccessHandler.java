@@ -43,7 +43,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
             String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8);
             response.sendRedirect("http://localhost:8080/#/join?emailId="+encodedEmail + "&username="+encodedUsername);
             return;
-        }
+    }
         HttpSession session = request.getSession();
         String authenticationCode = UUID.randomUUID().toString();
 

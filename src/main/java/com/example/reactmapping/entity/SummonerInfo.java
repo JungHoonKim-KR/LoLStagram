@@ -39,9 +39,9 @@ public class SummonerInfo implements Persistable<String> {
     @OneToMany(mappedBy = "summonerInfo" )
     @JsonManagedReference
     @OrderBy("gameStartTimestamp DESC")
-    private List<MatchInfo> matchList = new ArrayList<>();
+    private List<MatchInfo> matchList;
     @Convert(converter = StringListConverter.class)
-    private List<MostChampion> mostChampionList= new ArrayList<>();
+    private List<MostChampion> mostChampionList;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createTime;

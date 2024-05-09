@@ -36,8 +36,7 @@ public class Member {
     @Nullable
     private String profileImg;
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
-    private List<Post> postList = new ArrayList<>();
-
+    private List<Post> postList;
     public void addPostList(Post post){
         this.postList.add(post);
         post.toBuilder().member(this);

@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.domain.Persistable;
 
 import java.time.LocalDateTime;
@@ -32,9 +31,9 @@ public class MatchInfo implements Persistable<String> {
     private Long subRune;
     private String gameType;
     @Convert(converter = StringListConverter.class)
-    private List<Integer> itemList = new ArrayList<>();
+    private List<Integer> itemList;
     @Convert(converter = StringListConverter.class)
-    private List<Integer> summonerSpellList = new ArrayList<>();
+    private List<Integer> summonerSpellList;
     private String result;
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "summoner_id")

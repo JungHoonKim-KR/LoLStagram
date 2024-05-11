@@ -36,9 +36,9 @@ const Box3 = (searchResult)=>{
     const callMatchInfo =async(callType)=>{
         try{
             const promise = await axios.put('/update/match',{
-                summonerId : summonerInfo.summonerId,
-                type : callType,
-                page:page
+                    summonerId : summonerInfo.summonerId,
+                    type : callType,
+                    page:page
                 },{
                     headers: {'Authorization': `Bearer ${token}`},
                     withCredentials: true, // 쿠키를 포함하여 요청을 보냄
@@ -79,7 +79,7 @@ const Box3 = (searchResult)=>{
     useEffect(() => {
         let storedSummonerInfo
         if(type == "search"){
-             storedSummonerInfo = JSON.parse(localStorage.getItem("searchedSummonerInfo"));
+            storedSummonerInfo = JSON.parse(localStorage.getItem("searchedSummonerInfo"));
         }
         if (storedSummonerInfo) {
             setSummonerInfo(storedSummonerInfo);
@@ -156,7 +156,7 @@ const Box3 = (searchResult)=>{
                     </div>
                     <div className="update">
                         <button onClick={updateHandler} disabled={isUpdateLoading}>
-                        {isUpdateLoading ? <BeatLoader size={10} color={"#123abc"} loading={isUpdateLoading} /> : '갱신하기'}
+                            {isUpdateLoading ? <BeatLoader size={10} color={"#123abc"} loading={isUpdateLoading} /> : '갱신하기'}
                         </button >
                         {type == "search" &&
                             <button  onClick={handleClick} >비교하기
@@ -226,8 +226,8 @@ const Box3 = (searchResult)=>{
                                             <div className="summonerImg">
                                                 <div className="runeImg">
                                                     <div className="mouseOn"
-                                                        onMouseEnter={()=> {setMouseOverId(match.matchId); setObjectId(match.mainRune)}}
-                                                        onMouseLeave={()=> setMouseOverId(null)}>
+                                                         onMouseEnter={()=> {setMouseOverId(match.matchId); setObjectId(match.mainRune)}}
+                                                         onMouseLeave={()=> setMouseOverId(null)}>
                                                         <img id="mainRune" key={match.matchId} src={require(`../images/rune/${match.mainRune}.png`)} alt="mainRune"
                                                         />
                                                         {mouseOverId ===match.matchId && objectId === match.mainRune &&<Info type="rune" id ={match.mainRune}></Info>}

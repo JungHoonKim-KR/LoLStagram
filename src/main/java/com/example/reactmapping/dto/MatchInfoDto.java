@@ -28,9 +28,9 @@ public class MatchInfoDto {
     private Long subRune;
     private String gameType;
     @Convert(converter = StringListConverter.class)
-    private List<Integer> itemList = new ArrayList<>();
+    private List<Integer> itemList ;
     @Convert(converter = StringListConverter.class)
-    private List<Integer> summonerSpellList = new ArrayList<>();
+    private List<Integer> summonerSpellList;
     private String result;
 
     public static List<MatchInfoDto> entityToDto(List<MatchInfo> matchInfoList){

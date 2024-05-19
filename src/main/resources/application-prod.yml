@@ -32,7 +32,6 @@ spring:
     redis:
       host: ${redisHost}
       port: 6379
-      # 로컬에서는 비밀번호 필요 없음
       password: ${redisPassword}
   web:
     resources:

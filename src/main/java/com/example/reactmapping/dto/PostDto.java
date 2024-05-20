@@ -1,12 +1,18 @@
 package com.example.reactmapping.dto;
 
+import com.example.reactmapping.controller.PostController;
 import com.example.reactmapping.entity.Image;
 import com.example.reactmapping.entity.Post;
+import com.example.reactmapping.entity.PostComment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Builder(toBuilder = true)
@@ -19,15 +25,21 @@ public class PostDto {
     private String frontImage;
     private Long memberId;
     private String memberName;
+    private List<PostCommentDto> commentList;
     private Boolean isLast;
 
   public static PostDto entityToDto(Post post){
+      List<PostCommentDto> postCommentDtos = post.getCommentList() != null
+              ? post.getCommentList().stream().map(PostCommentDto::entityToDto).collect(Collectors.toList())
+              : new ArrayList<>();
       PostDto build = PostDto.builder()
               .title(post.getTitle())
               .content(post.getContent())
               .memberId(post.getMember().getId())
               .memberName(post.getMember().getUsername())
+              .commentList(postCommentDtos)
               .build();
+
       if(post.getImage()!=null){
            build=build.toBuilder().frontImage(post.getImage().getFileUrl()).build();
        }

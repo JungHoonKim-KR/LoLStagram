@@ -1,8 +1,14 @@
 package com.example.reactmapping.repository;
 
+import com.example.reactmapping.entity.PostComment;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestPart;
+import java.util.List;
 
 @Repository
-public interface PostCommentRepository {
+public interface PostCommentRepository extends JpaRepository<PostComment,Long> {
+    @Query("select pc from PostComment pc where pc.post.id in :postIds")
+    List<PostComment>findAllComments(@Param("postIds") List<Long>postIds);
 }

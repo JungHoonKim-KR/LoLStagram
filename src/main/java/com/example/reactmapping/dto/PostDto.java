@@ -1,9 +1,6 @@
 package com.example.reactmapping.dto;
 
-import com.example.reactmapping.controller.PostController;
-import com.example.reactmapping.entity.Image;
 import com.example.reactmapping.entity.Post;
-import com.example.reactmapping.entity.PostComment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,6 +16,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostDto {
+    private Long postId;
     private String title;
     private String content;
     private MultipartFile serverImg;
@@ -33,6 +31,7 @@ public class PostDto {
               ? post.getCommentList().stream().map(PostCommentDto::entityToDto).collect(Collectors.toList())
               : new ArrayList<>();
       PostDto build = PostDto.builder()
+              .postId(post.getId())
               .title(post.getTitle())
               .content(post.getContent())
               .memberId(post.getMember().getId())

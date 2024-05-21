@@ -38,7 +38,6 @@ public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
     private final ImgService imgService;
-    private final SummonerInfoRepository summonerInfoRepository;
     private final PostCommentRepository postCommentRepository;
 
     public void savePost(PostDto postDto) throws IOException {
@@ -82,11 +81,12 @@ public class PostService {
     public void saveComment(PostCommentDto postCommentDto){
         Post post = postRepository.findById(postCommentDto.postId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOTFOUND, "게시글을 찾지 못했습니다."));
-        SummonerInfo writer = summonerInfoRepository.findBySummonerId(postCommentDto.writerId)
-                .orElseThrow(() -> new AppException(ErrorCode.NOTFOUND, "회원을 찾지 못했습니다."));
 
+        Member writer = memberRepository.findMemberById(postCommentDto.writeId)
+                .orElseThrow(()-> new AppException(ErrorCode.NOTFOUND,"회원을 찾지 못했습니다."));
         PostComment postComment = new PostComment().toBuilder()
-                .writerId(writer.getId())
+                .writeId(writer.getId())
+                .writerName(writer.getUsername())
                 .comment(postCommentDto.comment)
                 .build();
         post.addComment(postComment);

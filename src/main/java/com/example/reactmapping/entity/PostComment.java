@@ -16,7 +16,8 @@ public class PostComment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "postComment_id")
     private Long id;
-    private String writerId;
+    private Long writeId;
+    private String writerName;
     private String comment;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Post")

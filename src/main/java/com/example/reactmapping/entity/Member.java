@@ -38,8 +38,8 @@ public class Member {
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
     private List<Post> postList;
     public void addPostList(Post post){
-        this.postList.add(post);
-        post.toBuilder().member(this);
+        Post updatedPost = post.toBuilder().member(this).build();
+        this.postList.add(updatedPost);
     }
 
 }

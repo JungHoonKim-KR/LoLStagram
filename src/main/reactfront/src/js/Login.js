@@ -19,7 +19,7 @@ function Login() {
     const [password, setPassword] = useState('')
     const navigate = useNavigate(); // 추가
     const joinHandler = ()=>{
-        navigate('/auth/join')
+        navigate('/join')
     }
     const loginHandler = async (e) => {
         e.preventDefault()

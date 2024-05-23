@@ -1,12 +1,16 @@
-
 :root {
     --percent: 50;
 }
 * {
     font-weight: bold;
 }
-ul{
+ul {
     list-style-type: none;
+    padding: 0;
+}
+li {
+    list-style-type: none;
+    padding: 0;
 }
 .box1 {
     flex: 3.5;
@@ -29,7 +33,7 @@ ul{
     font-family: 'Helvetica', sans-serif;
     border: 1px solid #dbdbdb;
     background: white;
-    flex:6;
+    flex: 6;
 }
 .feed__contents img {
     width: 100%;
@@ -133,11 +137,16 @@ ul{
     align-items: center;
     border-top: 1px solid #dbdbdb;
     padding: 16px;
+    background: #fafafa;
 }
 
 .feed__comment-input {
     flex-grow: 1;
     border: none;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: 1px solid #dbdbdb;
+    margin-right: 10px;
 }
 
 .feed__comment-submit {
@@ -145,6 +154,27 @@ ul{
     font-weight: 600;
     cursor: pointer;
 }
+
+.comment-list {
+    padding: 0 16px;
+    width: 100%; /* 전체 너비 사용 */
+}
+
+.comment {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-top: 1px solid #dbdbdb; /* 댓글 간 구분선 추가 */
+}
+
+.comment p {
+    margin: 0;
+}
+
+.comment strong {
+    margin-right: 5px;
+}
+
 .feed__contents img {
     max-width: 100%;
     height: auto;
@@ -153,13 +183,15 @@ ul{
 .comment-text {
     text-align: left;
 }
-#addPostBtn{
+
+#addPostBtn {
     margin-left: 300px;
     padding: 0;
     border: none;
     background: none;
 }
-#addPostBtn img{
+
+#addPostBtn img {
     height: 30px;
 }
 
@@ -171,4 +203,13 @@ ul{
     margin-right: 10px;
     margin-top: 50px;
     flex: 3;
+}
+
+ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+li.comment-text {
+    margin-bottom: 10px;
 }

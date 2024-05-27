@@ -41,14 +41,14 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         if(!memberByEmailId.isPresent()){
             String encodedEmail = URLEncoder.encode(emailId, StandardCharsets.UTF_8);
             String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8);
-            response.sendRedirect("http://localhost:8080/#/join?emailId="+encodedEmail + "&username="+encodedUsername);
+            response.sendRedirect("http://13.209.191.38:8080/#/join?emailId="+encodedEmail + "&username="+encodedUsername);
             return;
     }
         HttpSession session = request.getSession();
         String authenticationCode = UUID.randomUUID().toString();
 
         session.setAttribute("AuthenticationDto", new AuthenticationDto(emailId,authenticationCode));
-        response.sendRedirect("http://localhost:8080/#/oauth/callback?authenticationCode=" + authenticationCode);
+        response.sendRedirect("http://13.209.191.38:8080/#/oauth/callback?authenticationCode=" + authenticationCode);
 
 //        HTTP 응답 헤더에 토큰을 포함시키는 것은 가능하지만, 이 방법을 사용하면 클라이언트가 토큰을 받아올 수 없는 상황이 발생할 수 있습니다.
 //                웹 브라우저 환경에서는 JavaScript가 아닌 사용자의 브라우저를 통해 리다이렉트를 수행하는 경우, 브라우저는 리다이렉트 대상 페이지로 이동하면서 응답 헤더를 무시합니다.

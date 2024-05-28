@@ -12,7 +12,9 @@ function Oauth(){
         try {
             const response = await axios.post("/auth/oauthLogin", {
                 authenticationCode: authenticationCode
-            })
+            },{
+                withCredentials:true
+            });
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('userName',response.data.username)
             localStorage.setItem('mySummonerInfo', JSON.stringify(response.data.summonerInfoDto));
@@ -27,7 +29,6 @@ function Oauth(){
 
 
     },[])
-
 }
 
 export default Oauth;

@@ -2,6 +2,7 @@ package com.example.reactmapping.config;
 
 import com.example.reactmapping.config.jwt.JwtFilter;
 import com.example.reactmapping.config.jwt.JwtUtil;
+import com.example.reactmapping.exception.ExceptionManager;
 import com.example.reactmapping.handler.OAuth2LoginFailureHandler;
 import com.example.reactmapping.handler.OAuth2SuccessHandler;
 import com.example.reactmapping.repository.RefreshTokenRepository;
@@ -33,6 +34,7 @@ public class SecurityConfig {
     private final CustomOauth2UserService customOauth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final ExceptionManager exceptionManager;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -64,7 +66,7 @@ public class SecurityConfig {
                         )
                         //권한 불일치 -> login page로 이동
                         .formLogin(auth -> auth.disable())
-                        .addFilterBefore(new JwtFilter(jwtUtil,refreshTokenRepository), UsernamePasswordAuthenticationFilter.class)
+                        .addFilterBefore(new JwtFilter(jwtUtil,refreshTokenRepository,exceptionManager), UsernamePasswordAuthenticationFilter.class)
                         .logout(logoutConfig -> { logoutConfig
                                 .logoutUrl("/logout")
                                 .addLogoutHandler(logoutService)

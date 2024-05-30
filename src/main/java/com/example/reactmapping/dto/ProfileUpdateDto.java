@@ -13,6 +13,5 @@ public class ProfileUpdateDto {
     private Long id;
     private String summonerName;
     private String summonerTag;
-    private MultipartFile img;
 
 }

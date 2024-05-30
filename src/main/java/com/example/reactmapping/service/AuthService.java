@@ -13,6 +13,7 @@ import com.example.reactmapping.object.MostChampion;
 import com.example.reactmapping.object.RefreshToken;
 import com.example.reactmapping.repository.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.persistence.EntityManager;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -42,9 +43,9 @@ public class AuthService {
     private final LoLService loLService;
     private final ImgService imgService;
     private final ImageRepository imageRepository;
+    private final EntityManager entityManager;
 
     public Member join(JoinDTO dto) throws IOException {
-        // 회원 아이디가 이미 존재하는지
         if (memberRepository.findMemberByEmailId(dto.getEmailId()).isPresent()) {
             throw new AppException(ErrorCode.DUPLICATED, dto.getEmailId() + "는 이미 존재합니다.");
         }
@@ -67,9 +68,7 @@ public class AuthService {
         }
         else {
             memberRepository.save(member);
-
         }
-
         return member;
     }
 
@@ -84,7 +83,6 @@ public class AuthService {
                 if (!bCryptPasswordEncoder.matches(requestPassword, member.getPassword())) {
                     throw new AppException(ErrorCode.ACCESS_ERROR, "비밀번호가 일치하지 않습니다.");
                 }
-
             }
         } else throw new AppException(ErrorCode.NOTFOUND, requestEmail + "는 존재하지 않습니다.");
         //토큰 발급
@@ -106,7 +104,6 @@ public class AuthService {
         refreshToken = new RefreshToken(tokenDto.getUserEmail(), tokenDto.getRefreshToken());
     }
         refreshTokenRepository.save(refreshToken);
-
         SummonerInfo summonerInfo = summonerInfoRepository.findBySummonerId(member.getSummonerId()).get();
         //Get MatchList
         List<MatchInfoDto> matchList = matchService.getMatchList(pageable, type,summonerInfo.getSummonerId()).getMatchInfoDtoList();
@@ -124,7 +121,6 @@ public class AuthService {
         return loginResponseDto;
 
     }
-
     //응답에 access 토큰 부여
     //이건 헤더에 직접적으로 토큰을 부여하는게 아니라 프론트엔드에게 전달할 응답값에 토큰을 넣는 것임.
     //request : 클라이언트의 요청값, response: 백 -> 프론트 전달값
@@ -149,56 +145,52 @@ public class AuthService {
         CompareDto compare = loLService.compare(puuId, summonerId);
 
         //9라면 이미 최신 상태임
-        if(compare.getResult() == LOL.INFO.getGameCount()-1) {
-            Long win = loLService.calWin(compare.getMatchInfoList());
-            List<MostChampion> mostChampionList = loLService.calcMostChampion(compare.getMatchInfoList());
-            summonerProfile = summonerProfile.toBuilder()
-                    .matchList(compare.getMatchInfoList())
-                    .recentWins(win)
-                    .recentLosses(LOL.INFO.getGameCount()-win)
-                    .mostChampionList(mostChampionList)
-                    .build();
-
-        }
+        if(compare.getResult() != LOL.INFO.getGameCount()-1) {
         //최신 상태가 아니라면
-        else {
             CreateSummonerInfoDto summonerInfoAndMatchList = loLService.createSummonerInfo(riotGameName, tag, summonerProfile, 0, LOL.INFO.getGameCount());
             summonerProfile = summonerInfoAndMatchList.getSummonerInfo();
             List<MatchInfo> matchInfoList = summonerInfoAndMatchList.getMatchInfo();
 
-            // 신규 가입이 아닌 경우
+            // 신규 가입이 아닌 경우 기존 경기에 대한 수정작업 진행
             if(compare.getResult()!=-1){
                 List<MatchInfo> originMatchList = compare.getMatchInfoList();
 
                 // 중첩된 개수를 구한다.
-                // 기존 리스트를 뒤집는다.
-                Collections.reverse(originMatchList);
-                for(int i = 0; i< LOL.INFO.getGameCount()-compare.getResult();i++){
-                    MatchInfo matchInfo = matchInfoList.get(i);
-                    //originMatchList 정보를 일부 활용하기 때문에 예외적으로 Repo에 직접 접근 허용
+                int newGameCount = LOL.INFO.getGameCount() - compare.getResult();
+
+                for(int i = LOL.INFO.getGameCount()-1, j = 0; j<newGameCount;i--, j++){
+                    MatchInfo matchInfo = matchInfoList.get(j);
                     matchRepository.updateAll(matchInfo.getMatchId(),matchInfo.getGameStartTimestamp(),matchInfo.getKills()
                             ,matchInfo.getDeaths(),matchInfo.getAssists(),matchInfo.getKda(),matchInfo.getChampionName(),matchInfo.getMainRune(),matchInfo.getSubRune()
                             ,matchInfo.getItemList(),matchInfo.getSummonerSpellList(),matchInfo.getResult()
                     ,originMatchList.get(i).getMatchId());
                 }
             }
-            //mostchampion 설정
             List<MostChampion> mostChampionList = loLService.calcMostChampion(matchInfoList);
             summonerProfile = summonerProfile.toBuilder().mostChampionList(mostChampionList).build();
 
             for (MatchInfo matchInfo : matchInfoList) {
                 summonerProfile.addMatchInfo(matchInfo);
             }
-
             // 바로 저장
             if(compare.getResult()==-1){
+                // match save -> dirty checking : summonerInfo save
                 matchService.matchSaveAll(summonerProfile.getMatchList());
             }
             else{
-                summonerInfoRepository.updateAll(summonerId, summonerProfile.getLeagueId(), summonerProfile.getTier(), summonerProfile.getTierRank(),
-                        summonerProfile.getLeaguePoints(), summonerProfile.getTotalWins(),
-                        summonerProfile.getTotalLosses(), summonerProfile.getRecentWins(),
-                        summonerProfile.getRecentLosses(), summonerProfile.getMostChampionList());
+                // 기존 회원이라면 이미 match, summonerInfo가 영속성 컨텍스트에 포함됨
+                // 이 때 신규회원과 통일시키기 위해 match를 update하는 방식을 사용하면 구현이 복잡함.
+                // 그래서 summonerInfo를 update하여 match update를 JPA에게 맡김
+                // 영속성 컨텍스트에 저장된 summonerInfo 객체를 추적하기 어려워 직접 찾아서 사용
+                SummonerInfo existingSummonerInfo = entityManager.find(SummonerInfo.class, summonerProfile.getId());
+                if (existingSummonerInfo != null) {
+                    existingSummonerInfo.update(summonerProfile);
+                    // 명시적으로 병합하여 변경 사항을 반영
+                    entityManager.merge(existingSummonerInfo);
+                } else {
+                    log.warn("SummonerInfo is not in the persistence context.");
+                    throw new AppException(ErrorCode.NOTFOUND,"SummonerInfo is not in the persistence context.");
+                }
             }
         }
         return new CallSummonerInfoResponse(summonerProfile,summonerId);
@@ -213,13 +205,6 @@ public class AuthService {
                 .riotIdTagline(profileUpdateDto.getSummonerTag())
                 .summonerId(callSummonerInfoResponse.getSummonerId())
                 .build();
-
-        if(profileUpdateDto.getImg() != null){
-            Image image = imageRepository.findProfileImg(member.getEmailId(), String.valueOf(ImageType.ProfileType))
-                    .orElseThrow(() -> new AppException(ErrorCode.NOTFOUND, "이미지를 찾을 수 없습니다."));
-            Image updateImg = imgService.updateImg(image, member.getEmailId(), null, profileUpdateDto.getImg());
-            member= member.toBuilder().profileImg(updateImg.getFileUrl()).build();
-        }
         memberRepository.save(member);
     }
 

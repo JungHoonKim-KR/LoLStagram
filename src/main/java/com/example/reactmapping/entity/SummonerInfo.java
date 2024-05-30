@@ -70,6 +70,22 @@ public class SummonerInfo implements Persistable<String> {
         return summonerId;
     }
 
+    public void update(SummonerInfo summonerInfo) {
+        this.summonerId = summonerInfo.summonerId;
+        this.leagueId = summonerInfo.leagueId;
+        this.tier = summonerInfo.tier;
+        this.tierRank = summonerInfo.tierRank;
+        this.totalKda = summonerInfo.totalKda;
+        this.summonerName = summonerInfo.summonerName;
+        this.summonerTag = summonerInfo.summonerTag;
+        this.leaguePoints = summonerInfo.leaguePoints;
+        this.puuId = summonerInfo.puuId;
+        this.totalWins = summonerInfo.totalWins;
+        this.totalLosses = summonerInfo.totalLosses;
+        this.totalAvgOfWin = summonerInfo.totalAvgOfWin;
+        this.recentWins = summonerInfo.recentWins;
+        this.recentLosses = summonerInfo.recentLosses;
+    }
 
 
 }

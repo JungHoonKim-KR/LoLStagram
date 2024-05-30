@@ -1,13 +1,11 @@
 package com.example.reactmapping.service;
 
-import com.example.reactmapping.config.jwt.JwtUtil;
 import com.example.reactmapping.object.RefreshToken;
 import com.example.reactmapping.repository.RefreshTokenRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
@@ -19,7 +17,6 @@ import java.util.Optional;
 @Service
 public class LogoutService implements LogoutHandler {
     private final RefreshTokenRepository refreshTokenRepository;
-    private final JwtUtil jwtUtil;
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {

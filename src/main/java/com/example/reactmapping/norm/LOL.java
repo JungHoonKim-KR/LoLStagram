@@ -1,7 +1,7 @@
 package com.example.reactmapping.norm;
 
 public enum LOL {
-    INFO(20,"14.10.1");
+    INFO(20,"14.11.1");
     private final int gameCount;
     private final String version;
 

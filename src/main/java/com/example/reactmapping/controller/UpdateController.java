@@ -28,9 +28,8 @@ public class UpdateController {
     }
 
     @PutMapping("/profile")
-    public void profileUpdate(@RequestPart("profileDto") ProfileUpdateDto profileUpdateDto
-                               , @RequestPart("image")MultipartFile img) throws IOException {
-        profileUpdateDto.setImg(img);
+    public void profileUpdate(@RequestBody ProfileUpdateDto profileUpdateDto) throws IOException {
+        System.out.println(profileUpdateDto.getId());
         authService.updateProfile(profileUpdateDto);
     }
 

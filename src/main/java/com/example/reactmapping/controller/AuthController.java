@@ -40,15 +40,12 @@ public class AuthController {
     }
 
     @Operation(summary = "로그인")
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(HttpSession httpSession,@RequestBody LoginRequestDto dto, HttpServletResponse httpServletResponse
                                 ,@PageableDefault(size = 10,direction = Sort.Direction.DESC) Pageable pageable) throws JsonProcessingException {
         LoginResponseDto responseDto = authService.login(httpSession,httpServletResponse,dto.getEmailId(),dto.getPassword(),dto.getAuthenticationCode(),pageable,dto.getType());
-        String encrypt = jasyptUtil.encrypt(dto.getEmailId());
         return ResponseEntity.ok().body(responseDto);
     }
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/oauthLogin")
     public ResponseEntity<?> oauthLogin(HttpSession httpSession,@RequestBody LoginRequestDto dto, HttpSession session, HttpServletResponse httpServletResponse
             ,@PageableDefault(size = 10,direction = Sort.Direction.DESC) Pageable pageable) throws JsonProcessingException {

@@ -38,7 +38,7 @@ jobs:
           path: .
 
       - name: Copy files via SSH
-        uses: appleboy/scp-action@v0.1.10
+        uses: appleboy/scp-action@v0.0.15
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}

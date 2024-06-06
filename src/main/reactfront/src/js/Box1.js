@@ -92,24 +92,23 @@ const Box1 = () => {
             return;
         } else {
             try {
-                const formData = new FormData()
-                formData.append("profileDto", new Blob([JSON.stringify({
-                    id: memberInfo.id,
-                    summonerName: summonerNameProfile.trim(),
-                    summonerTag: summonerTagProfile.trim()
-                })]))
-                await axios.put('/update/profile', {}, {
-                    headers: {'Authorization': `Bearer ${token}`},
-                    withCredentials: true
-                })
+                await axios.put('/update/profile',
+                    {
+                        id: memberInfo.id,
+                        summonerName: summonerNameProfile.trim(),
+                        summonerTag: summonerTagProfile.trim()
+                    }, {
+                        headers: {'Authorization': `Bearer ${token}`},
+                        withCredentials: true
+                    })
                     .then((res) => {
                         alert("변경이 완료되었습니다. 로그인 페이지로 이동합니다.")
-                        navigate('')
+                        navigate("/")
                     })
             } catch (error) {
                 if (error.response.data.errorCode == "TOKEN_EXPIRED") {
                     alert("토큰 만료. 로그인 화면으로 이동합니다.")
-                    navigate("")
+                    navigate("/")
                 } else {
                     alert(error.response.data.errorMessage)
                 }
@@ -173,11 +172,11 @@ const Box1 = () => {
                     })
                 localStorage.clear()
                 alert("로그아웃 되었습니다.")
-                navigate('')
+                navigate("/")
             } catch (error) {
                 if (error.response && error.response.status == 403) {
                     alert("토큰이 만료되었습니다. 로그인 페이지로 이동합니다.")
-                    navigate("")
+                    navigate("/")
                 } else {
                     alert(error.response.data.errorMessage)
                 }

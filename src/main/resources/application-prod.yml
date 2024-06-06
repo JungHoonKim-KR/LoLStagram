@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${dbURL}
+    url: ${DB_URL}
     username: admin
-    password: ${dbPassword}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -13,7 +13,7 @@ spring:
         format_sql: true
     database: mysql
     defer-datasource-initialization: true
-    database-platform=org.hibernate.dialect: MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
   sql:
     init:
       mode: always
@@ -22,21 +22,20 @@ spring:
       client:
         registration:
           google:
-            client-id: ${google_client_id}
-            client-secret: ${google_client_secret}
-            redirect-uri: ${google_redirect_uri}
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
             scope:
               - email
               - profile
   data:
     redis:
-      host: ${redisHost}
+      host: ${REDIS_HOST}
       port: 6379
-      password: ${redisPassword}
+      password: ${REDIS_PASSWORD}
   web:
     resources:
       static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
-
 
 springdoc:
   swagger-ui:
@@ -47,17 +46,17 @@ springdoc:
   default-produces-media-type: application/json
 
 jwt:
-  accessKey: ${jwtAccessKey}
-  refreshKey: ${jwtRefreshKey}
+  accessKey: ${JWT_ACCESS_KEY}
+  refreshKey: ${JWT_REFRESH_KEY}
 
 cloud:
   aws:
     credentials:
-      access-key: ${awsAccessKey}
-      secret-key: ${awsSecretKey}
-    s3: #버킷이름
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
+    s3:
       bucket: pmm-s3-1
-    region: #S3 지역
+    region:
       static: ap-northeast-2
     stack:
       auto: false

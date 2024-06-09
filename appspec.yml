@@ -8,8 +8,8 @@ files:
 
 permissions:
   - object: /
-    owner: ubuntu
-    group: ubuntu
+    owner: admin
+    group: admin
 
 hooks:
   AfterInstall:

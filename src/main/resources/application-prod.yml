@@ -52,7 +52,7 @@ jwt:
 cloud:
   aws:
     credentials:
-      access-key: ${AWS_ACCESS_KEY}
+      access-key: ${AWS_ACCESS_KEY_ID}
       secret-key: ${AWS_SECRET_KEY}
     s3:
       bucket: pmm-s3-1

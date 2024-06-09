@@ -3,13 +3,13 @@ os: linux
 
 files:
   - source:  /
-    destination: /home/ubuntu/spring-github-action
+    destination: /home/admin/spring-github-action
     overwrite: yes
 
 permissions:
   - object: /
-    owner: ubuntu
-    group: ubuntu
+    owner: admin
+    group: admin
 
 hooks:
   AfterInstall:

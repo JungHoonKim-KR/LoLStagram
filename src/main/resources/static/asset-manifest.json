@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.5602b840.css",
-    "main.js": "/static/js/main.c423affe.js",
+    "main.css": "/static/css/main.b702c89d.css",
+    "main.js": "/static/js/main.f5ed9068.js",
     "static/js/787.de6ca2b5.chunk.js": "/static/js/787.de6ca2b5.chunk.js",
     "static/media/3330.png": "/static/media/3330.6df4af38b487777d91e5.png",
     "static/media/8005.png": "/static/media/8005.98cb26025eb47936c27a.png",
@@ -86,7 +86,7 @@
     "static/media/Neeko.png": "/static/media/Neeko.a1ee42684b12fca1e233.png",
     "static/media/Lissandra.png": "/static/media/Lissandra.07483a7e57bacaac1819.png",
     "static/media/Irelia.png": "/static/media/Irelia.188cd20349862edf4bcc.png",
-    "static/media/Fiddlesticks.png": "/static/media/Fiddlesticks.fd9c739c3f76e0d8bc32.png",
+    "static/media/FiddleSticks.png": "/static/media/FiddleSticks.fd9c739c3f76e0d8bc32.png",
     "static/media/Sivir.png": "/static/media/Sivir.87f0c561242b059134d5.png",
     "static/media/Lucian.png": "/static/media/Lucian.b9c33021d7202a5b900f.png",
     "static/media/MasterYi.png": "/static/media/MasterYi.20c3434e67124d17c403.png",
@@ -207,12 +207,12 @@
     "static/media/4402.png": "/static/media/4402.a6c3e8e6f1a6a495b9be.png",
     "static/media/447104.png": "/static/media/447104.a6c3e8e6f1a6a495b9be.png",
     "index.html": "/index.html",
-    "main.5602b840.css.map": "/static/css/main.5602b840.css.map",
-    "main.c423affe.js.map": "/static/js/main.c423affe.js.map",
+    "main.b702c89d.css.map": "/static/css/main.b702c89d.css.map",
+    "main.f5ed9068.js.map": "/static/js/main.f5ed9068.js.map",
     "787.de6ca2b5.chunk.js.map": "/static/js/787.de6ca2b5.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5602b840.css",
-    "static/js/main.c423affe.js"
+    "static/css/main.b702c89d.css",
+    "static/js/main.f5ed9068.js"
   ]
 }

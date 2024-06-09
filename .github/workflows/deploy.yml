@@ -1,5 +1,5 @@
 name: Build and Deploy Spring Boot to AWS EC2
-#
+
 on:
   push:
     branches: [ master ]
@@ -54,9 +54,9 @@ jobs:
         run: ./gradlew build
         shell: bash
         
-      - name: Make Zip File
-        run: zip -qq -r ./$GITHUB_SHA.zip .
-        shell: bash
+      # - name: Make Zip File
+      #   run: zip -qq -r ./$GITHUB_SHA.zip .
+      #   shell: bash
       
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1

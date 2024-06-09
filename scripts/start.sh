@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOT_PATH="/home/admin/spring-github-action"
+ROOT_PATH="/home/ubuntu/spring-github-action"
 JAR="$ROOT_PATH/application.jar"
 
 APP_LOG="$ROOT_PATH/application.log"

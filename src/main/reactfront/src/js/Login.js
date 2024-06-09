@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import "../css/Login.css"
 import google_btn from "../images/btn_login_google.png"
 //서버로 인증을 요청할 uri (서버의 webSecurityConfig의 base uri와 일치해야 한다)
-export const API_BASE_URL = 'http://ec2-13-209-191-38.ap-northeast-2.compute.amazonaws.com:8080';
+export const API_BASE_URL = 'http://localhost:8080';
 
 //서버에서 인증을 완료한 후에 프론트엔드로 돌아올 redirect uri (app.oauth2.authorized-redirect-uri와 일치해야 한다)
 export const OAUTH2_REDIRECT_URI = 'http://ec2-13-209-191-38.ap-northeast-2.compute.amazonaws.com:8080/oauth2/redirect';

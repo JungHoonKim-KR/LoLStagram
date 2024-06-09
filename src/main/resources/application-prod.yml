@@ -2,7 +2,7 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: ${DB_URL}
-    username: admin
+    username: ubuntu
     password: ${DB_PASSWORD}
   jpa:
     hibernate:
@@ -13,7 +13,7 @@ spring:
         format_sql: true
     database: mysql
     defer-datasource-initialization: true
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database-platform: org.hibernate.dialect.MySQL8Dialect
   sql:
     init:
       mode: always

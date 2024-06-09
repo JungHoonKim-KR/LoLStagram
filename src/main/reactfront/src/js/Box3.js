@@ -1,75 +1,71 @@
-import DonutChart from "./DonutChart";
-import React, {useEffect, useState} from "react";
-import '../css/Box3.css';
-import Info from "./Info";
+import React, { useCallback, useEffect, useState } from 'react';
 import axios from "axios";
-import { BeatLoader } from 'react-spinners';
-import Compare from './Compare';
 import { useNavigate } from 'react-router-dom';
+import DonutChart from "./DonutChart";
+import Info from "./Info";
+import Compare from './Compare';
+import '../css/Box3.css';
+import { BeatLoader } from 'react-spinners';
 import addImg from "../images/더보기.png";
 
-const Box3 = (searchResult)=>{
+const Box3 = (searchResult) => {
     const navigate = useNavigate();
-    const [isUpdateLoading,setIsUpdateLoading] = useState(false)
-    const [summonerInfo, setSummonerInfo] = useState(JSON.parse(localStorage.getItem("mySummonerInfo")))
-    const [matchList, setMatchList] = useState(summonerInfo.matchList)
-    const [type, setType] = useState(searchResult.type)
-    const [token,setToken] = useState(localStorage.getItem('accessToken'));
+    const [isUpdateLoading, setIsUpdateLoading] = useState(false);
+    const [summonerInfo, setSummonerInfo] = useState(JSON.parse(localStorage.getItem("mySummonerInfo")));
+    const [matchList, setMatchList] = useState(summonerInfo.matchList);
+    const [type] = useState(searchResult.type);
+    const [token, setToken] = useState(localStorage.getItem('accessToken'));
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [page,setPage] = useState(1)
+    const [page, setPage] = useState(1);
     const [callType, setCallType] = useState(null);
-    const [isLast,setIsLast]=useState(true)
+    const [isLast, setIsLast] = useState(true);
     const [mouseOverId, setMouseOverId] = useState(null);
-    const [objectId,setObjectId] = useState(null);
+    const [objectId, setObjectId] = useState(null);
+
+    const callMatchInfo = useCallback(async (callType) => {
+        try {
+            const promise = await axios.put('/update/match', {
+                summonerId: summonerInfo.summonerId,
+                type: callType,
+                page: page
+            }, {
+                headers: { 'Authorization': `Bearer ${token}` },
+                withCredentials: true,
+            });
+            if (promise.headers.access) {
+                localStorage.setItem('accessToken', promise.headers.access);
+                setToken(promise.headers.access);
+            }
+            if (promise.data.matchInfoDtoList.length === 0) {
+                console.log("No results found.");
+            } else {
+                setPage(prevPage => prevPage + 1);
+                setMatchList(prevState => [...prevState, ...promise.data.matchInfoDtoList]);
+                setIsLast(promise.data.isLast);
+            }
+        } catch (error) {
+            console.error(error);
+            if (error.response?.data?.errorCode === "TOKEN_EXPIRED") {
+                alert("Token expired. Redirecting to login page.");
+                navigate("/");
+            } else {
+                alert(error.response?.data?.errorMessage);
+            }
+        }
+    }, [summonerInfo.summonerId, token, page, navigate]);
 
     useEffect(() => {
         if (page === 0 && matchList.length === 0 && callType) {
             callMatchInfo(callType);
         }
-    }, [page, matchList, callType]);
+    }, [page, matchList, callType, callMatchInfo]);
 
-    const updateMatchInfo = async (callType)=>{
-        setPage(0)
-        setMatchList([])
-        await callMatchInfo((callType))
+    const updateMatchInfo = async (callType) => {
+        setPage(0);
+        setMatchList([]);
+        await callMatchInfo(callType);
     }
-    const callMatchInfo =async(callType)=>{
-        try{
-            const promise = await axios.put('/update/match',{
-                    summonerId : summonerInfo.summonerId,
-                    type : callType,
-                    page:page
-                },{
-                    headers: {'Authorization': `Bearer ${token}`},
-                    withCredentials: true, // 쿠키를 포함하여 요청을 보냄
-                }
-            )
-            if(promise.headers.access){
-                localStorage.setItem('accessToken', promise.headers.access);
-                setToken(promise.headers.access)
-            }
-            if(promise.data.matchInfoDtoList.length ==0){
-                console.log("결과가 없습니다.")
-            }
-            else {
-                setPage(page + 1)
-                setMatchList(prevState => [...prevState, ...promise.data.matchInfoDtoList])
-                setIsLast(promise.isLast)
-            }
-        }catch (error){
-            console.log(error)
-            if(error)console.log("dwdwda")
-            else if(error.response.data.errorCode == "TOKEN_EXPIRED"){
-                alert("토큰 만료. 로그인 화면으로 이동합니다.")
-                navigate("/")
-            }
-            else{
-                alert(error.response.data.errorMessage)
-            }
 
-        }
-
-    }
     useEffect(() => {
         setSummonerInfo(prevState => ({
             ...prevState,
@@ -78,13 +74,13 @@ const Box3 = (searchResult)=>{
     }, [matchList]);
     useEffect(() => {
         let storedSummonerInfo
-        if(type == "search"){
+        if(type === "search"){
             storedSummonerInfo = JSON.parse(localStorage.getItem("searchedSummonerInfo"));
         }
         if (storedSummonerInfo) {
             setSummonerInfo(storedSummonerInfo);
         }
-    }, []);
+    }, [type]);
     const updateHandler = async () => {
         setIsUpdateLoading(true)
         try {
@@ -103,7 +99,7 @@ const Box3 = (searchResult)=>{
             setSummonerInfo(promise.data)
             localStorage.setItem("summonerInfo", JSON.stringify(promise.data))
         }catch (error){
-            if(error.response.data.errorCode == "TOKEN_EXPIRED"){
+            if(error.response.data.errorCode === "TOKEN_EXPIRED"){
                 alert("토큰 만료. 로그인 화면으로 이동합니다.")
                 navigate("/")
             }
@@ -124,9 +120,9 @@ const Box3 = (searchResult)=>{
             setIsModalOpen(!isModalOpen);
         }
     };
-    const handleCloseModal = () => {
-        setIsModalOpen(false);
-    };
+    // const handleCloseModal = () => {
+    //     setIsModalOpen(false);
+    // };
     return(
         <div className="box3">
             <div className="myInfo">
@@ -134,7 +130,7 @@ const Box3 = (searchResult)=>{
 
                 <div className="contentContainer">
                     <div className="tier-image">
-                        {summonerInfo.tier?<img src={require(`../images/tierImage/${summonerInfo.tier}.png`)}/>:'undefined' }
+                        {summonerInfo.tier?<img src={require(`../images/tierImage/${summonerInfo.tier}.png`)} alt = "tier"/>:'undefined' }
 
                     </div>
                     <div className="summoner">
@@ -158,7 +154,7 @@ const Box3 = (searchResult)=>{
                         <button onClick={updateHandler} disabled={isUpdateLoading}>
                             {isUpdateLoading ? <BeatLoader size={10} color={"#123abc"} loading={isUpdateLoading} /> : '갱신하기'}
                         </button >
-                        {type == "search" &&
+                        {type === "search" &&
                             <button  onClick={handleClick} >비교하기
                                 {isModalOpen && <Compare isOpen={isModalOpen} onClose={setIsModalOpen} />}</button>}
                     </div>
@@ -197,7 +193,7 @@ const Box3 = (searchResult)=>{
                         <ul>
                             {summonerInfo.mostChampionList.map((mostChampion, index) => (
                                 <li key={mostChampion.kda} className={index === 0 ? 'first champion' : 'champion'}>
-                                    <img src={require(`../images/champion/${mostChampion.championName}.png`)} />
+                                    <img src={require(`../images/champion/${mostChampion.championName}.png`)} alt ="champion"/>
                                     <div className="championInfo">
                                         {mostChampion.championName} {mostChampion.count}판<br/>
                                         (승률:{mostChampion.avgOfWin}%)<br/>

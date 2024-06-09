@@ -1,4 +1,4 @@
-import React, { useState,useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Box1 from './Box1';
 import Box3 from './Box3';
@@ -13,10 +13,12 @@ const Main = () => {
     const [isLast, setIsLast] = useState(true);
     const [postList, setPostList] = useState([]);
     const [token, setToken] = useState(localStorage.getItem('accessToken'));
-    const [member, setMember] = useState(JSON.parse(localStorage.getItem('member')));
+    const [member] = useState(JSON.parse(localStorage.getItem('member')));
     const [activePostIndex, setActivePostIndex] = useState(null);
     const containerRef = useRef(null);
-    const fetchData = async (page) => {
+
+    // Use useCallback to memorize fetchData function
+    const fetchData = useCallback(async (page) => {
         try {
             const res = await axios.get("/post/postList", {
                 params: { page: page },
@@ -46,16 +48,15 @@ const Main = () => {
                 alert(error.response.data.errorMessage);
             }
         }
-    };
+    }, [token, navigate]);
 
     useEffect(() => {
         fetchData(0);
-    }, [token]);
+    }, [token, fetchData]);
 
     const handleInputChange = (e, index) => {
         const newPostList = [...postList];
         newPostList[index].newComment = e.target.value;
-        console.log(newPostList[index])
         newPostList[index].postReviewBtnColor = e.target.value.length > 0 ? "rgb(11, 159, 228)" : "rgb(199, 235, 245)";
         setPostList(newPostList);
     };
@@ -75,20 +76,19 @@ const Main = () => {
         };
     }, []);
 
-
     const uploadReview = async (index) => {
         const newPostList = [...postList];
         if (newPostList[index].newComment.length > 0) {
             try {
-                const res = await axios.post('/post/write/comment',{
-                    postId : newPostList[index].postId,
+                const res = await axios.post('/post/write/comment', {
+                    postId: newPostList[index].postId,
                     writeId: member.id,
-                    writerName : member.username,
-                    comment : newPostList[index].newComment
-                },{
-                    headers: {"Authorization": `Bearer ${token}`},
+                    writerName: member.username,
+                    comment: newPostList[index].newComment
+                }, {
+                    headers: { "Authorization": `Bearer ${token}` },
                     withCredentials: true
-                })
+                });
                 if (res.headers.access) {
                     localStorage.setItem('accessToken', res.headers.access);
                     setToken(res.headers.access)
@@ -103,7 +103,7 @@ const Main = () => {
                 newPostList[index].postReviewBtnColor = "rgb(199, 235, 245)";
                 setPostList(newPostList);
 
-            }catch (error){
+            } catch (error) {
                 console.error('댓글 추가 오류:', error);
                 if (error.response && error.response.data) {
                     if (error.response.data.errorCode === "TOKEN_EXPIRED") {
@@ -116,7 +116,6 @@ const Main = () => {
                     alert('댓글을 추가하는 중 오류가 발생했습니다.');
                 }
             }
-
         } else {
             alert('댓글을 입력해 주세요');
         }
@@ -128,11 +127,12 @@ const Main = () => {
         setPostList(newPostList);
     };
 
-    const pushHeart = (postIndex, commentIndex) => {
-        const newPostList = [...postList];
-        newPostList[postIndex].comments[commentIndex].liked = !newPostList[postIndex].comments[commentIndex].liked;
-        setPostList(newPostList);
-    };
+    // Currently commented out since 'pushHeart' is not used
+    // const pushHeart = (postIndex, commentIndex) => {
+    //     const newPostList = [...postList];
+    //     newPostList[postIndex].comments[commentIndex].liked = !newPostList[postIndex].comments[commentIndex].liked;
+    //     setPostList(newPostList);
+    // };
 
     const addPost = async () => {
         try {
@@ -158,7 +158,7 @@ const Main = () => {
                     <div className="feed" key={postIndex}>
                         <header className="feed__header">
                             <div className="feed__user-info">
-                                <img src={member.profileImg || defaultImg} alt="프로필 이미지" className="feed__user-img" />
+                                <img src={member.profileImg || defaultImg} alt="Profile" className="feed__user-img" />
                                 <div className="feed__user-details">
                                     <div className="feed__user-name">{post.memberName}</div>
                                     <div className="feed__user-location">Seoul, South Korea</div>
@@ -168,7 +168,7 @@ const Main = () => {
                         </header>
                         <div className="feed__contents">
                             {post.frontImage ? (
-                                <img src={post.frontImage} alt="Front Image" />
+                                <img src={post.frontImage} alt="Front of the post" />
                             ) : (
                                 <span></span>
                             )}
@@ -204,7 +204,7 @@ const Main = () => {
                                 ))}
                             </div>
                         )}
-                        <ul >
+                        <ul>
                             {post.comments.map((review, commentIndex) => (
                                 <li key={commentIndex} className="comment-text">
                                     <strong>{review.author} </strong>{review.text}
@@ -217,7 +217,7 @@ const Main = () => {
                 ))}
                 {!isLast && (
                     <button id="addPostBtn" onClick={addPost}>
-                        <img src={addImg} alt="Add post" />
+                        <img src={addImg} alt="Add more posts" />
                     </button>
                 )}
             </div>

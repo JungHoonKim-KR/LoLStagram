@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState,useMemo} from "react";
 import axios from "axios";
 import {useNavigate,useLocation} from 'react-router-dom';
 import "../css/Join.css"
 
 function Join(){
     const location = useLocation();
-    const urlParams = new URLSearchParams(location.search)
+    const urlParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
     const [emailId, setEmailId] = useState('');
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
@@ -20,7 +20,7 @@ function Join(){
             setEmailId(urlParams.get('emailId'))
             setUsername(urlParams.get('username'))
         }
-    },[])
+    },[urlParams])
 
     const joinHandler  = async(e)=>{
         e.preventDefault();

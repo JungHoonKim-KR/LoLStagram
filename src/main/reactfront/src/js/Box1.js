@@ -14,8 +14,8 @@ const Box1 = () => {
     const [isWriteVisible, setIsWriteVisible] = useState(false)
     const [showBox3, setShowBox3] = useState(false);
     const [token, setToken] = useState(localStorage.getItem('accessToken'));
-    const [summonerInfo, setSummonerInfo] = useState(JSON.parse(localStorage.getItem("mySummonerInfo")));
-    const [memberInfo, setMemberInfo] = useState(JSON.parse(localStorage.getItem("member")))
+    const [summonerInfo] = useState(JSON.parse(localStorage.getItem("mySummonerInfo")));
+    const [memberInfo] = useState(JSON.parse(localStorage.getItem("member")))
     let summonerNameSearch = useRef()
     let summonerTagSearch = useRef()
     const [summonerNameProfile, setSummonerNameProfile] = useState(null)
@@ -74,7 +74,7 @@ const Box1 = () => {
                 setSearchResult(result.data)
                 localStorage.setItem("searchedSummonerInfo", JSON.stringify(result.data))
             } catch (error) {
-                if (error.response.data.errorCode == "TOKEN_EXPIRED") {
+                if (error.response.data.errorCode === "TOKEN_EXPIRED") {
                     alert("토큰 만료. 로그인 화면으로 이동합니다.")
                     navigate("/")
                 } else {
@@ -106,7 +106,7 @@ const Box1 = () => {
                         navigate("/")
                     })
             } catch (error) {
-                if (error.response.data.errorCode == "TOKEN_EXPIRED") {
+                if (error.response.data.errorCode === "TOKEN_EXPIRED") {
                     alert("토큰 만료. 로그인 화면으로 이동합니다.")
                     navigate("/")
                 } else {
@@ -148,7 +148,7 @@ const Box1 = () => {
                 alert("작성 완료")
                 window.location.reload()
             } catch (error) {
-                if (error.response.data.errorCode == "TOKEN_EXPIRED") {
+                if (error.response.data.errorCode === "TOKEN_EXPIRED") {
                     alert("토큰 만료. 로그인 화면으로 이동합니다.")
                     navigate("/")
                 } else {
@@ -174,7 +174,7 @@ const Box1 = () => {
                 alert("로그아웃 되었습니다.")
                 navigate("/")
             } catch (error) {
-                if (error.response && error.response.status == 403) {
+                if (error.response && error.response.status === 403) {
                     alert("토큰이 만료되었습니다. 로그인 페이지로 이동합니다.")
                     navigate("/")
                 } else {

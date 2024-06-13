@@ -1,7 +1,7 @@
 package com.example.reactmapping.norm;
 
 public enum Token {
-    INFO(1 * 1000 * 60L, 30 * 1000 * 60L);
+    INFO(10 * 1000 * 60L, 60 * 1000 * 60L);
     private final Long accessExpiredTime;
     private final Long refreshExpiredTime;
 

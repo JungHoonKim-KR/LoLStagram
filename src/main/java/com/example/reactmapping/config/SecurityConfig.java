@@ -9,11 +9,14 @@ import com.example.reactmapping.repository.RefreshTokenRepository;
 import com.example.reactmapping.service.CustomOauth2UserService;
 import com.example.reactmapping.service.LogoutService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,6 +26,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
+
+import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
 
 @Configuration
 @EnableWebSecurity
@@ -40,14 +45,26 @@ public class SecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
     }
+    @Bean // Spring Security 무시시키기
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return new WebSecurityCustomizer() {
+            @Override
+            public void customize(WebSecurity web) {
+                // /error -> spring에서 기본제공하는 것
+                web.ignoring()
+                        .requestMatchers("/swagger-ui/**","/api-docs/**","/static/**");
+            }
+        };
+    }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return
                 httpSecurity
+                        //cors
                         .cors(cors -> cors.configurationSource(request -> {
                             var corsConfiguration = new CorsConfiguration();
                                 corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
-                                corsConfiguration.setAllowedHeaders(List.of("*"));
+                                corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","DELETE"));
                                 corsConfiguration.setAllowCredentials(true);
                             return corsConfiguration;
                         }))
@@ -60,7 +77,7 @@ public class SecurityConfig {
                         .authorizeHttpRequests(auth -> auth
                                 //react 라우터들에 대한 접근 권한 허용
                                 .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                                .requestMatchers("","/","/auth/**","/oauthLogin","/swagger-ui/**","/api-docs/**","/question","/test/**","/static/**").permitAll()
+                                .requestMatchers("","/","/auth/**","/oauthLogin","/question","/test/**").permitAll()
                                 .requestMatchers("/admin").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                         )

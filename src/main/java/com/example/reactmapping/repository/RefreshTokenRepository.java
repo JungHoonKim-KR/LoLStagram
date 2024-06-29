@@ -18,7 +18,7 @@ public class RefreshTokenRepository {
 
     public void save(RefreshToken refreshToken){
         ValueOperations valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(refreshToken.getEmailId()+"refreshToken",refreshToken.getRefreshToken(), Token.INFO.getRefreshTokenTime(),TimeUnit.MILLISECONDS);
+        valueOperations.set(refreshToken.getEmailId() + Token.TokenType.REFRESH.name(), refreshToken.getRefreshToken(), Token.TokenTime.INFO.getRefreshExpiredTime(),TimeUnit.MILLISECONDS);
     }
 
     public Optional<RefreshToken> findById(final String emailId,String type) {

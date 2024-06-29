@@ -1,5 +1,8 @@
 package com.example.reactmapping.norm;
 
+import lombok.Getter;
+
+@Getter
 public enum LOL {
     INFO(20,"14.11.1");
     private final int gameCount;
@@ -9,8 +12,4 @@ public enum LOL {
         this.gameCount = gameCount;
         this.version = version;
     }
-    public int getGameCount(){
-        return gameCount;
-    }
-    public String getVersion(){return version;}
 }

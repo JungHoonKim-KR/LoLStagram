@@ -1,20 +1,25 @@
 package com.example.reactmapping.norm;
 
-public enum Token {
-    INFO(10 * 1000 * 60L, 60 * 1000 * 60L);
-    private final Long accessExpiredTime;
-    private final Long refreshExpiredTime;
-
-    public Long getAccessTokenTime() {
-        return accessExpiredTime;
+import lombok.Getter;
+public class Token{
+    public enum TokenType{
+        ACCESS,REFRESH;
+    }
+    public enum TokenName{
+        accessToken,refreshToken;
     }
 
-    public Long getRefreshTokenTime() {
-        return refreshExpiredTime;
-    }
+    @Getter
+    public enum TokenTime {
+        INFO(10 * 1000 * 60L, 60 * 1000 * 60L);
 
-    Token(Long accessExpiredTime, Long refreshExpiredTime) {
-        this.accessExpiredTime = accessExpiredTime;
-        this.refreshExpiredTime = refreshExpiredTime;
+        private final Long accessExpiredTime;
+        private final Long refreshExpiredTime;
+
+        TokenTime(Long accessExpiredTime, Long refreshExpiredTime) {
+            this.accessExpiredTime = accessExpiredTime;
+            this.refreshExpiredTime = refreshExpiredTime;
+        }
     }
 }
+

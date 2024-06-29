@@ -51,7 +51,7 @@ public class PostService {
                 .createTime(LocalDateTime.now())
                 .build();
         if (postDto.getServerImg() != null) {
-            img = imgService.createImg(postDto.getServerImg(),null,postDto.getMemberId(), String.valueOf(ImageType.PostType));
+            img = imgService.createImg(postDto.getServerImg(),null,postDto.getMemberId(), ImageType.PostType.name());
             post = post.toBuilder().image(img).build();
         }
         postRepository.save(post);

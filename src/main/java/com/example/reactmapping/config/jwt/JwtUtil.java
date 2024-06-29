@@ -27,8 +27,8 @@ public class JwtUtil {
         Claims claims= Jwts.claims();
         claims.put("tokenType", tokenType);
         claims.put("userEmail",userEmail);
-        String key = tokenType.equals("ACCESS") ? accessKey:refreshKey;
-        Long expiredTime = tokenType.equals("ACCESS") ? Token.INFO.getAccessTokenTime() :Token.INFO.getRefreshTokenTime();
+        String key = tokenType.equals(Token.TokenType.ACCESS.name()) ? accessKey:refreshKey;
+        Long expiredTime = tokenType.equals(Token.TokenType.ACCESS.name()) ? Token.TokenTime.INFO.getAccessExpiredTime() :Token.TokenTime.INFO.getRefreshExpiredTime();
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
@@ -38,7 +38,7 @@ public class JwtUtil {
     }
 
     public boolean isExpired(String token,String tokenType){
-        String key = tokenType.equals("ACCESS") ? accessKey:refreshKey;
+        String key = tokenType.equals(Token.TokenType.ACCESS.name()) ? accessKey:refreshKey;
         try{
             Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getExpiration().before(new Date());
             return false;
@@ -50,7 +50,7 @@ public class JwtUtil {
 
 
     public String getTokenType(String token, String tokenType, HttpServletResponse response){
-        String key = tokenType.equals("ACCESS") ? accessKey:refreshKey;
+        String key = tokenType.equals(Token.TokenType.ACCESS.name()) ? accessKey:refreshKey;
         try{
            return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().get("tokenType", String.class);
         }catch (Exception e) {
@@ -74,7 +74,7 @@ public class JwtUtil {
 
     }
     public String getUserEmail(String token,String tokenType){
-        String key = tokenType.equals("ACCESS") ? accessKey:refreshKey;
+        String key = tokenType.equals(Token.TokenType.ACCESS.name()) ? accessKey:refreshKey;
         return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().get("userEmail",String.class);
     }
 

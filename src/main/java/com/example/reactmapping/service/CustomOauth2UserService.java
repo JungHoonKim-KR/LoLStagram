@@ -5,6 +5,7 @@ import com.example.reactmapping.dto.OAuth2.GoogleResponse;
 import com.example.reactmapping.dto.OAuth2.NaverResponse;
 import com.example.reactmapping.oauth2.*;
 import com.example.reactmapping.entity.Member;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -20,9 +21,27 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         log.info(String.valueOf(oAuth2User));
-        String registerId = userRequest.getClientRegistration().getRegistrationId();
-        OAuth2Response oAuth2Response = null;
 
+        String registerId = userRequest.getClientRegistration().getRegistrationId();
+        OAuth2Response oAuth2Response = getOAuth2Response(registerId, oAuth2User);
+        if (oAuth2Response == null) return null;
+        else return new CustomOAuth2User(getMember(oAuth2Response));
+    }
+
+    private static Member getMember(OAuth2Response oAuth2Response) {
+        Member member = new Member();
+        member = member.toBuilder()
+                .emailId(oAuth2Response.getEmail())
+                .username(oAuth2Response.getName())
+                .build();
+
+        log.info(member.getEmailId());
+        log.info(member.getUsername());
+        return member;
+    }
+
+    private static @Nullable OAuth2Response getOAuth2Response(String registerId, OAuth2User oAuth2User) {
+        OAuth2Response oAuth2Response;
         if (registerId.equals("naver")) {
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
         } else if (registerId.equals("google")) {
@@ -30,13 +49,6 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         } else {
             return null;
         }
-        Member member = new Member();
-        member = member.toBuilder()
-                .emailId(oAuth2Response.getEmail())
-                .username(oAuth2Response.getName())
-                .build();
-        log.info(member.getEmailId());
-        log.info(member.getUsername());
-        return new CustomOAuth2User(member);
+        return oAuth2Response;
     }
 }

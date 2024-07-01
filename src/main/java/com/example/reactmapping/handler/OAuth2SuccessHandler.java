@@ -1,6 +1,5 @@
 package com.example.reactmapping.handler;
 
-import com.example.reactmapping.config.jwt.JwtUtil;
 import com.example.reactmapping.dto.AuthenticationDto;
 import com.example.reactmapping.dto.OAuth2.CustomOAuth2User;
 import com.example.reactmapping.entity.Member;
@@ -11,11 +10,13 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,16 +40,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         // 신규 화원인 경우
         Optional<Member> memberByEmailId = memberRepository.findMemberByEmailId(emailId);
         if(!memberByEmailId.isPresent()){
-            String encodedEmail = URLEncoder.encode(emailId, StandardCharsets.UTF_8);
-            String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8);
-            response.sendRedirect("http://ec2-13-209-191-38.ap-northeast-2.compute.amazonaws.com:8080/#/join?emailId="+encodedEmail + "&username="+encodedUsername);
+            join(response, emailId, username);
             return;
         }
-        HttpSession session = request.getSession();
-        String authenticationCode = UUID.randomUUID().toString();
-
-        session.setAttribute("AuthenticationDto", new AuthenticationDto(emailId,authenticationCode));
-        response.sendRedirect("http://ec2-13-209-191-38.ap-northeast-2.compute.amazonaws.com:8080/#/oauth/callback?authenticationCode=" + authenticationCode);
+        sendAuthenticationCode(request, response, emailId);
 
 //        HTTP 응답 헤더에 토큰을 포함시키는 것은 가능하지만, 이 방법을 사용하면 클라이언트가 토큰을 받아올 수 없는 상황이 발생할 수 있습니다.
 //                웹 브라우저 환경에서는 JavaScript가 아닌 사용자의 브라우저를 통해 리다이렉트를 수행하는 경우, 브라우저는 리다이렉트 대상 페이지로 이동하면서 응답 헤더를 무시합니다.
@@ -58,5 +53,18 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 //        서버는 이 때 토큰을 응답으로 전달하는 방식입니다. 이 방법은 OAuth2의 Authorization Code Flow에서 사용하는 방법입니다.
 
 
+    }
+
+    private static void sendAuthenticationCode(HttpServletRequest request, HttpServletResponse response, String emailId) throws IOException {
+        HttpSession session = request.getSession();
+        String authenticationCode = UUID.randomUUID().toString();
+        session.setAttribute("AuthenticationDto", new AuthenticationDto(emailId,authenticationCode));
+        response.sendRedirect("http://13.209.191.38:8080/#/oauth/callback?authenticationCode=" + authenticationCode);
+    }
+
+    private static void join(HttpServletResponse response, String emailId, String username) throws IOException {
+        String encodedEmail = URLEncoder.encode(emailId, StandardCharsets.UTF_8);
+        String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8);
+        response.sendRedirect("http://13.209.191.38:8080/#/join?emailId="+encodedEmail + "&username="+encodedUsername);
     }
 }

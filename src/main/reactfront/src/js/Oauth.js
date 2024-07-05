@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useNavigate} from 'react-router-dom';
 import {useCookies} from 'react-cookie'
 function Oauth() {
-    const [cookie, getCookie] = useCookies(['accessToken']);
     const navigate = useNavigate();
 
     useEffect(() => {

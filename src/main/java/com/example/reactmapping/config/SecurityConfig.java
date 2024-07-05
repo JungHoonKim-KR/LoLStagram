@@ -1,6 +1,7 @@
 package com.example.reactmapping.config;
 
 import com.example.reactmapping.config.jwt.JwtFilter;
+import com.example.reactmapping.config.jwt.JwtService;
 import com.example.reactmapping.config.jwt.JwtUtil;
 import com.example.reactmapping.exception.ExceptionManager;
 import com.example.reactmapping.handler.OAuth2LoginFailureHandler;
@@ -8,6 +9,7 @@ import com.example.reactmapping.handler.OAuth2SuccessHandler;
 import com.example.reactmapping.repository.RefreshTokenRepository;
 import com.example.reactmapping.service.CustomOauth2UserService;
 import com.example.reactmapping.service.LogoutService;
+import com.example.reactmapping.utils.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -40,7 +42,7 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final ExceptionManager exceptionManager;
-
+    private final CookieUtil cookieUtil;
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
         return new BCryptPasswordEncoder();
@@ -57,7 +59,7 @@ public class SecurityConfig {
         };
     }
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, JwtService jwtService) throws Exception {
         return
                 httpSecurity
                         //cors
@@ -83,7 +85,7 @@ public class SecurityConfig {
                         )
                         //권한 불일치 -> login page로 이동
                         .formLogin(auth -> auth.disable())
-                        .addFilterBefore(new JwtFilter(jwtUtil,refreshTokenRepository,exceptionManager), UsernamePasswordAuthenticationFilter.class)
+                        .addFilterBefore(new JwtFilter(jwtUtil,jwtService,exceptionManager,cookieUtil), UsernamePasswordAuthenticationFilter.class)
                         .logout(logoutConfig -> { logoutConfig
                                 .logoutUrl("/logout")
                                 .addLogoutHandler(logoutService)

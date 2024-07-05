@@ -5,6 +5,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.IOException;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,23 +13,27 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 @RequiredArgsConstructor
 public class JwtUtil {
-    @Value("${jwt.accessKey}")
-    private String accessKey;
-    @Value("${jwt.refreshKey}")
-    private String refreshKey;
+    @Value("${jwt.secretKey}")
+    private String secretKey;
+
+    private final String TokenType = "tokenType";
+    private final String UserEmail = "userEmail";
 
 
     public String createToken(String userEmail, String tokenType){
+
         Claims claims= Jwts.claims();
-        claims.put("tokenType", tokenType);
-        claims.put("userEmail",userEmail);
-        String key = tokenType.equals(Token.TokenType.ACCESS.name()) ? accessKey:refreshKey;
-        Long expiredTime = tokenType.equals(Token.TokenType.ACCESS.name()) ? Token.TokenTime.INFO.getAccessExpiredTime() :Token.TokenTime.INFO.getRefreshExpiredTime();
+        claims.put(TokenType, tokenType);
+        claims.put(UserEmail,userEmail);
+//        String key = tokenType.equals(Token.TokenType.ACCESS.name()) ? secretKey:secretKey;
+        String key = secretKey;
+        Long expiredTime = tokenType.equals(Token.TokenType.ACCESS.name()) ?Token.TokenTime.accessToken.getExpiredTime() :Token.TokenTime.refreshToken.getExpiredTime();
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
@@ -37,45 +42,21 @@ public class JwtUtil {
                 .compact();
     }
 
-    public boolean isExpired(String token,String tokenType){
-        String key = tokenType.equals(Token.TokenType.ACCESS.name()) ? accessKey:refreshKey;
+    public boolean isExpired(String token){
         try{
-            Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().getExpiration().before(new Date());
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getExpiration().before(new Date());
             return false;
         }catch (Exception e){
             return true;
         }
         //토큰이 지금 보다 이전에 expired 됐다면 만료된 것
     }
-
-
-    public String getTokenType(String token, String tokenType, HttpServletResponse response){
-        String key = tokenType.equals(Token.TokenType.ACCESS.name()) ? accessKey:refreshKey;
-        try{
-           return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().get("tokenType", String.class);
-        }catch (Exception e) {
-            // 예외 발생 시 클라이언트에게 에러 메시지 반환
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-            // 에러 메시지 작성
-            String jsonPayload = "{\"message\" : \"%s\"}";
-            String errorMessage = String.format(jsonPayload, e.getMessage());
-
-            try {
-                OutputStream outputStream = response.getOutputStream();
-                outputStream.write(errorMessage.getBytes());
-            } catch (IOException | java.io.IOException ioException) {
-                ioException.printStackTrace();
-            }
-
-            return null;
-        }
-
+    public String getTokenType(String token){
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get(TokenType,String.class);
     }
-    public String getUserEmail(String token,String tokenType){
-        String key = tokenType.equals(Token.TokenType.ACCESS.name()) ? accessKey:refreshKey;
-        return Jwts.parser().setSigningKey(key).parseClaimsJws(token).getBody().get("userEmail",String.class);
+
+    public String getUserEmail(String token){
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get(UserEmail,String.class);
     }
 
 }

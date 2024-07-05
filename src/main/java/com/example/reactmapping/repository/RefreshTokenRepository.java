@@ -1,7 +1,7 @@
 package com.example.reactmapping.repository;
 
+import com.example.reactmapping.config.jwt.JwtUtil;
 import com.example.reactmapping.norm.Token;
-import com.example.reactmapping.object.RefreshToken;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -15,23 +15,28 @@ import java.util.concurrent.TimeUnit;
 @Repository
 public class RefreshTokenRepository {
     private final RedisTemplate redisTemplate;
+    private final JwtUtil jwtUtil;
 
-    public void save(RefreshToken refreshToken){
+
+    public void save(String token){
         ValueOperations valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(refreshToken.getEmailId() + Token.TokenType.REFRESH.name(), refreshToken.getRefreshToken(), Token.TokenTime.INFO.getRefreshExpiredTime(),TimeUnit.MILLISECONDS);
+        valueOperations.set(jwtUtil.getUserEmail(token) +":" + Token.TokenType.REFRESH.name()
+                , token,
+                Token.TokenTime.refreshToken.getExpiredTime(),TimeUnit.MILLISECONDS);
     }
 
-    public Optional<RefreshToken> findById(final String emailId,String type) {
+    public Optional<String> findByRefreshToken(String refreshToken) {
+        String emailId = jwtUtil.getUserEmail(refreshToken);
         ValueOperations valueOperations = redisTemplate.opsForValue();
-        Object refreshToken = valueOperations.get(emailId + type);
-        if (Objects.isNull(refreshToken)) {
+        Object refreshTokenObject = valueOperations.get(emailId + ":" + Token.TokenType.REFRESH.name());
+        if (Objects.isNull(refreshTokenObject)) {
             return Optional.empty();
         }
-        return Optional.of(new RefreshToken(emailId,refreshToken.toString()));
+        return Optional.of(jwtUtil.createToken(emailId,Token.TokenType.REFRESH.name()));
     }
 
-    public void delete(String emailId, String type){
-        redisTemplate.delete(emailId+type);
+    public void delete(String refreshToken){
+        redisTemplate.delete(jwtUtil.getUserEmail(refreshToken)+ ":" + Token.TokenType.REFRESH.name());
     }
 
 }

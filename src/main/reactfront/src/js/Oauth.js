@@ -1,21 +1,19 @@
 import axios from "axios";
 import { useEffect } from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
-
+import { useNavigate} from 'react-router-dom';
+import {useCookies} from 'react-cookie'
 function Oauth() {
-    const location = useLocation();
-    const urlParams = new URLSearchParams(location.search);
-    const authenticationCode = urlParams.get('authenticationCode');
-    const navigate = useNavigate(); // Hook for navigation
+    const [cookie, getCookie] = useCookies(['accessToken']);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.post("/auth/oauthLogin", {
-                    authenticationCode: authenticationCode
                 },{
                     withCredentials: true
                 });
+
                 localStorage.setItem('accessToken', response.data.accessToken);
                 localStorage.setItem('userName', response.data.username);
                 localStorage.setItem('mySummonerInfo', JSON.stringify(response.data.summonerInfoDto));
@@ -26,7 +24,7 @@ function Oauth() {
             }
         };
         fetchData();
-    }, [authenticationCode, navigate]); // Added navigate to the dependency array
+    }, [ navigate]); // Added navigate to the dependency array
 
     return null;
 }

@@ -1,7 +1,8 @@
 package com.example.reactmapping.service;
 
-import com.example.reactmapping.object.RefreshToken;
+import com.example.reactmapping.norm.Token;
 import com.example.reactmapping.repository.RefreshTokenRepository;
+import com.example.reactmapping.utils.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,21 +18,18 @@ import java.util.Optional;
 @Service
 public class LogoutService implements LogoutHandler {
     private final RefreshTokenRepository refreshTokenRepository;
-
+    private final CookieUtil cookieUtil;
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
 //        final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-
         //Token 추출
 //        String token = authorization.split(" ")[1];
-        String emailId=request.getHeader("emailId");
-
-        Optional<RefreshToken> refreshToken = refreshTokenRepository.findById(emailId, "refreshToken");
-        if(refreshToken.isPresent()){
-            refreshTokenRepository.delete(emailId,"refreshToken");
+        String refreshToken = cookieUtil.getCookieValue(request,Token.TokenName.refreshToken);
+        Optional<String> refreshTokenObject = refreshTokenRepository.findByRefreshToken(refreshToken);
+        if(refreshTokenObject.isPresent()){
+            refreshTokenRepository.delete(refreshToken);
         }
         request.getSession().invalidate();
-        log.info(emailId+"님 로그아웃");
-
+        log.info("로그아웃");
     }
 }

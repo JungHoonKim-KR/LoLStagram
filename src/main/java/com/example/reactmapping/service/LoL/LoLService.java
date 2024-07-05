@@ -40,7 +40,6 @@ public class LoLService {
     private String RiotIdGameName = "riotIdGameName";
     private String RiotIdTagline = "riotIdTagline";
     private final MatchRepository matchRepository;
-    private final LoLApi loLApi;
 
 
     // 소환사를 등록할 때 puuId를 가져와 DB에 저장
@@ -64,7 +63,7 @@ public class LoLService {
     // ex) 4번이면 0~3의 경기 즉 4개의 경기가 갱신이 안됨.
     public CompareDto compare(String puuId, String summonerId) {
         int result = -1;
-        String targetMatchId = callMatches(puuId, LOL.INFO.getGameCount() - 1, 1).get(0);
+        String targetMatchId = callMatches(puuId, LOL.gameCount - 1, 1).get(0);
         log.info(targetMatchId);
         List<MatchInfo> matchInfo = matchRepository.findAllBySummonerId(summonerId);
         if (!matchInfo.isEmpty()) {
@@ -96,9 +95,7 @@ public class LoLService {
             // CLASSIC, URF, ARAM
             String gameMode = String.valueOf(info.path("gameMode"));
             String gameType = null;
-            log.info(gameMode);
             gameType = getGameType(gameMode, info, gameType);
-            log.info(gameType);
             JsonNode path = info.path("participants");
             for (JsonNode p : path) {
                 //원하는 소환사의 정보를 찾았을 때
@@ -159,7 +156,7 @@ public class LoLService {
         }
         Long win = calWin(matchList);
         double totalKda = Double.parseDouble(df.format(((double) (totalkill + totalassist)) / ((double) totaldeath)));
-        summonerInfo = summonerInfo.toBuilder().totalKda(totalKda).recentWins(win).recentLosses(LOL.INFO.getGameCount() - win).build();
+        summonerInfo = summonerInfo.toBuilder().totalKda(totalKda).recentWins(win).recentLosses(LOL.gameCount - win).build();
         return new CreateSummonerInfoDto(summonerInfo, matchList);
     }
 
@@ -236,17 +233,18 @@ public class LoLService {
             // 솔랭: 420, 빠대: 490, 칼바람: 450
             String queueId = String.valueOf(info.path("queueId"));
             if (queueId.equals("420"))
-                gameType = "솔랭";
+                gameType = LOL.GameType.솔랭.name();
+                
             else if (queueId.equals("490"))
-                gameType = "빠른 대전";
-            else gameType = "자유 랭크";
+                gameType = LOL.GameType.빠른대전.name();
+            else gameType = LOL.GameType.자유랭크.name();
         } else {
             if (gameMode.equals("\"URF\""))
-                gameType = "URF";
+                gameType = LOL.GameType.URF.name();
             else if (gameMode.equals("\"ARAM\""))
-                gameType = "무작위 총력전";
+                gameType = LOL.GameType.무작위총력전.name();
             else if (gameMode.equals("\"CHERRY\""))
-                gameType = "아레나";
+                gameType = LOL.GameType.아레나.name();
         }
         return gameType;
     }

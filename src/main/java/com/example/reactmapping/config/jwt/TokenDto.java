@@ -10,5 +10,4 @@ public class TokenDto {
     private String userEmail;
     private String accessToken;
     private String refreshToken;
-
 }

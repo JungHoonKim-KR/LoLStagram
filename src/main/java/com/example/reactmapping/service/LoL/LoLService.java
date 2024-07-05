@@ -160,7 +160,6 @@ public class LoLService {
         return new CreateSummonerInfoDto(summonerInfo, matchList);
     }
 
-
     //이번 시즌 랭크정보 가져오기
     public SummonerInfo callSummonerProfile(String summonerId, String tag) throws JsonProcessingException {
         DecimalFormat df = getDecimalFormat();

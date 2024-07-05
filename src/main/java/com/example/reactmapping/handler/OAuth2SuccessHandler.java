@@ -66,7 +66,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(cookieUtil.createCookie(Token.TokenName.refreshToken,tokenDto.getRefreshToken()));
         response.sendRedirect("http://localhost:8080/#/oauth/callback");
     }
-
     //    private void sendAuthenticationCode(HttpServletRequest request, HttpServletResponse response, String emailId) throws IOException {
 //        HttpSession session = request.getSession();
 //        String authenticationCode = UUID.randomUUID().toString();

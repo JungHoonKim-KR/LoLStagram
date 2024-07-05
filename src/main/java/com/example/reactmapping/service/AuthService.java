@@ -114,8 +114,6 @@ public class AuthService {
         Optional<Member> findMember = memberRepository.findMemberByEmailId(requestEmail);
         if (findMember.isPresent()) {
             member = findMember.get();
-            //비밀번호 확인
-
         } else throw new AppException(ErrorCode.NOTFOUND, requestEmail + "는 존재하지 않습니다.");
         return member;
     }

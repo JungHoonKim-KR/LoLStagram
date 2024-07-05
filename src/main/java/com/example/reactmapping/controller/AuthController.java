@@ -33,7 +33,6 @@ public class AuthController {
         Member member = authService.join(dto);
         return ResponseEntity.ok().body(member);
     }
-
     @Operation(summary = "로그인")
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto, HttpServletResponse httpServletResponse

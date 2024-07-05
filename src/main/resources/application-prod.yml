@@ -46,7 +46,7 @@ springdoc:
   default-produces-media-type: application/json
 
 jwt:
-  secretKey: ${JWT_ACCESS_KEY}
+  secretKey: ${JWT_SECRET_KEY}
 
 cloud:
   aws:

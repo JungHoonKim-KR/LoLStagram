@@ -54,7 +54,6 @@ public class JwtUtil {
     public String getTokenType(String token){
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get(TokenType,String.class);
     }
-
     public String getUserEmail(String token){
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get(UserEmail,String.class);
     }

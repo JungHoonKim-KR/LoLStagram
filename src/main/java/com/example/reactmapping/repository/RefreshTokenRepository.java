@@ -17,7 +17,6 @@ public class RefreshTokenRepository {
     private final RedisTemplate redisTemplate;
     private final JwtUtil jwtUtil;
 
-
     public void save(String token){
         ValueOperations valueOperations = redisTemplate.opsForValue();
         valueOperations.set(jwtUtil.getUserEmail(token) +":" + Token.TokenType.REFRESH.name()

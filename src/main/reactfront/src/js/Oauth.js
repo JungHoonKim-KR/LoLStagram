@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect } from 'react';
 import { useNavigate} from 'react-router-dom';
-import {useCookies} from 'react-cookie'
 function Oauth() {
     const navigate = useNavigate();
 
@@ -23,7 +22,7 @@ function Oauth() {
             }
         };
         fetchData();
-    }, [ navigate]); // Added navigate to the dependency array
+    }, [ navigate]);
 
     return null;
 }

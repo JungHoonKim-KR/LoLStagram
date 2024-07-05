@@ -41,8 +41,7 @@ jobs:
           spring.data.redis.host: ${{ secrets.REDIS_HOST }}
           spring.data.redis.password: ${{ secrets.REDIS_PASSWORD }}
           springdoc.swagger-ui.path: /api-docs.html
-          jwt.accessKey: ${{ secrets.JWT_ACCESS_KEY }}
-          jwt.refreshKey: ${{ secrets.JWT_REFRESH_KEY }}
+          jwt.secretKey: ${{ secrets.JWT_ACCESS_KEY }}
           cloud.aws.credentials.access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           cloud.aws.credentials.secret-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  
           

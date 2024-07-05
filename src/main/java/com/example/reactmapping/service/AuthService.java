@@ -1,6 +1,7 @@
 package com.example.reactmapping.service;
 
 import com.example.reactmapping.config.jwt.JwtService;
+import com.example.reactmapping.config.jwt.JwtUtil;
 import com.example.reactmapping.config.jwt.TokenDto;
 import com.example.reactmapping.dto.*;
 import com.example.reactmapping.entity.*;
@@ -9,15 +10,14 @@ import com.example.reactmapping.exception.ErrorCode;
 import com.example.reactmapping.norm.ImageType;
 import com.example.reactmapping.norm.LOL;
 import com.example.reactmapping.entity.Image;
+import com.example.reactmapping.norm.Token;
 import com.example.reactmapping.object.MostChampion;
-import com.example.reactmapping.object.RefreshToken;
 import com.example.reactmapping.repository.*;
 import com.example.reactmapping.service.LoL.LoLService;
+import com.example.reactmapping.utils.CookieUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.EntityManager;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -34,7 +34,7 @@ import java.util.Optional;
 @Slf4j
 public class AuthService {
     private final MemberRepository memberRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+
     private final SummonerInfoRepository summonerInfoRepository;
     private final MatchRepository matchRepository;
     private final MatchService matchService;
@@ -44,6 +44,8 @@ public class AuthService {
     private final ImgService imgService;
     private final ImageRepository imageRepository;
     private final EntityManager entityManager;
+    private final JwtUtil jwtUtil;
+    private final CookieUtil cookieUtil;
 
     public Member join(JoinDTO dto) throws IOException {
         // 회원 아이디가 이미 존재하는지
@@ -62,80 +64,76 @@ public class AuthService {
                 .summonerId(callSummonerInfoResponse.getSummonerId())
                 .build();
         if(dto.getImg() != null) {
-            Image image = imgService.createImg(dto.getImg(), member.getEmailId(), null, String.valueOf(ImageType.ProfileType));
+            Image image = imgService.createImg(dto.getImg(), member.getEmailId(), null, ImageType.ProfileType.name());
             member = member.toBuilder().profileImg(image.getFileUrl()).build();
             memberRepository.save(member);
             imageRepository.save(image);
         }
         else {
             memberRepository.save(member);
-
         }
-
         return member;
     }
 
-    public LoginResponseDto login(HttpSession httpSession, HttpServletResponse response, String requestEmail, String requestPassword, String authenticationCode, Pageable pageable,String type) throws JsonProcessingException {
-        Member member = null;
+    public LoginResponseDto login(HttpServletResponse response, String requestEmail, String requestPassword,
+                                  Pageable pageable,String type) throws JsonProcessingException {
+        Member member = getMemberByEmail(requestEmail);
+        verifyPassword(requestPassword, member);
+        SummonerInfo summonerInfo = getSummonerInfo(member);
+        List<MatchInfoDto> matchList = matchService.getMatchList(pageable, type,summonerInfo.getSummonerId()).getMatchInfoDtoList();
+        TokenDto tokenDto = jwtService.generateToken(requestEmail);
+        response.addCookie(cookieUtil.createCookie(Token.TokenName.refreshToken,tokenDto.getRefreshToken()));
+        return getLoginResponseDto(response, member, tokenDto.getAccessToken(), summonerInfo, matchList);
+    }
+
+    public LoginResponseDto socialLogin(HttpServletResponse response, String accessToken,Pageable pageable,String type){
+        Member member = getMemberByEmail(jwtUtil.getUserEmail(accessToken));
+        SummonerInfo summonerInfo = getSummonerInfo(member);
+        List<MatchInfoDto> matchList = matchService.getMatchList(pageable, type,summonerInfo.getSummonerId()).getMatchInfoDtoList();
+        return getLoginResponseDto(response, member, accessToken, summonerInfo, matchList);
+    }
+   
+    private SummonerInfo getSummonerInfo(Member member) {
+        Optional<SummonerInfo> optionalSummonerInfo = summonerInfoRepository.findBySummonerId(member.getSummonerId());
+        SummonerInfo summonerInfo;
+        if(optionalSummonerInfo.isPresent())
+            summonerInfo = optionalSummonerInfo.get();
+        else throw new AppException(ErrorCode.NOTFOUND,"소환사 정보를 찾을 수 없습니다.");
+        return summonerInfo;
+    }
+    
+
+    private void verifyPassword(String requestPassword, Member member) {
+            if (!bCryptPasswordEncoder.matches(requestPassword, member.getPassword()))
+                throw new AppException(ErrorCode.ACCESS_ERROR, "비밀번호가 일치하지 않습니다.");
+    }
+
+
+    private Member getMemberByEmail(String requestEmail) {
+        Member member;
         Optional<Member> findMember = memberRepository.findMemberByEmailId(requestEmail);
-        //존재하는 회원인지
         if (findMember.isPresent()) {
             member = findMember.get();
             //비밀번호 확인
-            if (authenticationCode == null) {
-                if (!bCryptPasswordEncoder.matches(requestPassword, member.getPassword())) {
-                    throw new AppException(ErrorCode.ACCESS_ERROR, "비밀번호가 일치하지 않습니다.");
-                }
 
-            }
         } else throw new AppException(ErrorCode.NOTFOUND, requestEmail + "는 존재하지 않습니다.");
-        //토큰 발급
-        TokenDto tokenDto = jwtService.login(requestEmail);
-        httpSession.setAttribute(tokenDto.getAccessToken(),requestEmail);
-        log.info("로그인 유저: " + httpSession.getAttribute(tokenDto.getAccessToken()));
-        Cookie sessionCookie = new Cookie("JSESSIONID", httpSession.getId());
-        response.addCookie(sessionCookie);
-        //존재하는 회원이라면 refresh 토큰 확인
-        Optional<RefreshToken> findRefreshToken = refreshTokenRepository.findById(member.getEmailId(), "refreshToken");
-
-        //refresh 토큰이 존재 하는지
-        RefreshToken refreshToken;
-        if (findRefreshToken.isPresent()) {
-            //존재한다면 갱신
-            refreshToken = findRefreshToken.get().updateToken(tokenDto.getRefreshToken());
-        } else {
-        //없다면 새로 생성
-        refreshToken = new RefreshToken(tokenDto.getUserEmail(), tokenDto.getRefreshToken());
+        return member;
     }
-        refreshTokenRepository.save(refreshToken);
 
-        SummonerInfo summonerInfo = summonerInfoRepository.findBySummonerId(member.getSummonerId()).get();
-        //Get MatchList
-        List<MatchInfoDto> matchList = matchService.getMatchList(pageable, type,summonerInfo.getSummonerId()).getMatchInfoDtoList();
-        MemberDto memberDto = new MemberDto(member.getId(),member.getEmailId(), member.getUsername(), member.getProfileImg());
+    private LoginResponseDto getLoginResponseDto(HttpServletResponse response, Member member, String accessToken, SummonerInfo summonerInfo, List<MatchInfoDto> matchList) {
+        MemberDto memberDto = new MemberDto(member.getId(), member.getEmailId(), member.getUsername(), member.getProfileImg());
 
-        //반환 값
         LoginResponseDto loginResponseDto = LoginResponseDto.builder()
-                .accessToken(tokenDto.getAccessToken())
+                .accessToken(accessToken)
                 .username(member.getUsername())
                 .summonerInfoDto(SummonerInfoDto.entityToDto(summonerInfo))
                 .memberDto(memberDto)
                 .matchInfoDtoList(matchList)
                 .build();
-        setHeader(response, loginResponseDto);
         return loginResponseDto;
-
     }
 
-    //응답에 access 토큰 부여
-    //이건 헤더에 직접적으로 토큰을 부여하는게 아니라 프론트엔드에게 전달할 응답값에 토큰을 넣는 것임.
-    //request : 클라이언트의 요청값, response: 백 -> 프론트 전달값
-    private void setHeader(HttpServletResponse response, LoginResponseDto loginResponseDto) {
-        //클라이언트에 다음 header에 접근할 수 있게 함
-//        response.setHeader("Access-Control-Expose-Headers", "ACCESS,REFRESH");
-        response.setHeader("loginInfo", String.valueOf(loginResponseDto));
 
-    }
     @Transactional
     public CallSummonerInfoResponse callSummonerInfo(String riotGameName, String tag) throws JsonProcessingException {
         String puuId, summonerId;
@@ -151,9 +149,9 @@ public class AuthService {
         CompareDto compare = loLService.compare(puuId, summonerId);
 
         //9라면 이미 최신 상태임
-        if(compare.getResult() != LOL.INFO.getGameCount()-1) {
+        if(compare.getResult() != LOL.gameCount-1) {
         //최신 상태가 아니라면
-            CreateSummonerInfoDto summonerInfoAndMatchList = loLService.createSummonerInfo(riotGameName, tag, summonerProfile, 0, LOL.INFO.getGameCount());
+            CreateSummonerInfoDto summonerInfoAndMatchList = loLService.createSummonerInfo(riotGameName, tag, summonerProfile, 0, LOL.gameCount);
             summonerProfile = summonerInfoAndMatchList.getSummonerInfo();
             List<MatchInfo> matchInfoList = summonerInfoAndMatchList.getMatchInfo();
 
@@ -162,8 +160,8 @@ public class AuthService {
                 List<MatchInfo> originMatchList = compare.getMatchInfoList();
 
                 // 중첩된 개수를 구한다.
-                int newGameCount = LOL.INFO.getGameCount() - compare.getResult();
-                for(int i = LOL.INFO.getGameCount()-1, j = 0; j<newGameCount;i--, j++){
+                int newGameCount = LOL.gameCount - compare.getResult();
+                for(int i = LOL.gameCount-1, j = 0; j<newGameCount;i--, j++){
                     MatchInfo matchInfo = matchInfoList.get(j);
                     //originMatchList 정보를 일부 활용하기 때문에 예외적으로 Repo에 직접 접근 허용
                     matchRepository.updateAll(matchInfo.getMatchId(),matchInfo.getGameStartTimestamp(),matchInfo.getKills()

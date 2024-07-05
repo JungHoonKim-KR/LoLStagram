@@ -72,7 +72,6 @@ public class JwtFilter extends OncePerRequestFilter {
             handleException(response, e);
         }
     }
-
     private void isExpiredAccessTokenTime(HttpServletRequest request, HttpServletResponse response, String accessToken, String refreshToken) {
         if (jwtUtil.isExpired(accessToken)) {
             log.error("{} 만료", Token.TokenName.accessToken);

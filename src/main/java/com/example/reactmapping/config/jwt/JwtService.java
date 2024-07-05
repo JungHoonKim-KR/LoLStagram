@@ -20,7 +20,6 @@ public class JwtService {
         refreshTokenRepository.save(tokenDto.getRefreshToken());
         return tokenDto;
     }
-
     public Optional<String> findRefreshTokenBy(String refreshToken){
          return refreshTokenRepository.findByRefreshToken(refreshToken);
     }

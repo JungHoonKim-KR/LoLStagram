@@ -19,7 +19,6 @@ public class LOL {
         GameType(String type){
             this.type = type;
         }
-
     }
 
 

@@ -32,7 +32,7 @@ public class PostService {
     private final MemberRepository memberRepository;
     private final ImgService imgService;
     private final PostCommentRepository postCommentRepository;
-
+//
     public void savePost(PostDto postDto) throws IOException {
         Member findMember = memberRepository.findMemberById(postDto.getMemberId())
                 .orElseThrow(() -> new AppException(ErrorCode.NOTFOUND,"회원을 찾지 못했습니다."));

@@ -21,9 +21,6 @@ public class LogoutService implements LogoutHandler {
     private final CookieUtil cookieUtil;
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-//        final String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
-        //Token 추출
-//        String token = authorization.split(" ")[1];
         String refreshToken = cookieUtil.getCookieValue(request,Token.TokenName.refreshToken);
         Optional<String> refreshTokenObject = refreshTokenRepository.findByRefreshToken(refreshToken);
         if(refreshTokenObject.isPresent()){

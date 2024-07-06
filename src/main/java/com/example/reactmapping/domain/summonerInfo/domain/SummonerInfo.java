@@ -14,7 +14,6 @@ import org.springframework.data.domain.Persistable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,14 +45,6 @@ public class SummonerInfo implements Persistable<String> {
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createTime;
-
-//    public void addMatchInfo(MatchInfo matchInfo) {
-//        if (matchList == null) {
-//            matchList = new ArrayList<>();
-//        }
-//        matchInfo= matchInfo.toBuilder().summonerInfo(this).build();
-//        matchList.add(matchInfo);
-//    }
 
 
     @PrePersist

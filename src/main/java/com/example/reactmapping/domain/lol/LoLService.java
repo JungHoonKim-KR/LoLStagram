@@ -20,10 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.text.DecimalFormat;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
@@ -184,6 +181,7 @@ public class LoLService {
 //                .summonerName(map.get("summonerName").toString())
                 .summonerTag(tag)
                 .leaguePoints(Long.valueOf(map.get("leaguePoints").toString()))
+                .matchList(new ArrayList<>())
                 .totalWins(win)
                 .totalLosses(loss)
                 .totalAvgOfWin(totalAvgOfWin)

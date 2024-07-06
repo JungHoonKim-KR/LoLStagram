@@ -40,10 +40,4 @@ public class Post {
         this.member = member;
         member.getPostList().add(this);
     }
-//    public void addComment(PostComment comment){
-//        if(commentList == null)
-//            commentList=new ArrayList<>();
-//        PostComment updatedComment = comment.toBuilder().post(this).build();
-//        commentList.add(updatedComment);
-//    }
 }

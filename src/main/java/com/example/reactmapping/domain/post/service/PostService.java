@@ -40,7 +40,6 @@ public class PostService {
     public void savePost(PostDto postDto) throws IOException {
         Member findMember = memberRepository.findMemberById(postDto.getMemberId())
                 .orElseThrow(() -> new AppException(ErrorCode.NOTFOUND,"회원을 찾지 못했습니다."));
-        Image img ;
         Post post = Post.builder()
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
@@ -48,7 +47,7 @@ public class PostService {
                 .createTime(LocalDateTime.now())
                 .build();
         if (postDto.getServerImg() != null) {
-            img = imgService.createImg(postDto.getServerImg(),null,postDto.getMemberId(), ImageType.PostType.name());
+            Image img = imgService.createImg(postDto.getServerImg(),null,postDto.getMemberId(), ImageType.PostType.name());
             post = post.toBuilder().image(img).build();
         }
         postRepository.save(post);
@@ -60,7 +59,6 @@ public class PostService {
         List<Post> postList = findPostObject.getContent();
         List<Long> postIds = postList.stream().map(Post::getId).collect(Collectors.toList());
         List<PostComment> allComments = postCommentRepository.findAllComments(postIds);
-
         Map<Long, List<PostComment>> commentsByPostId = allComments.stream().collect(Collectors.groupingBy(comment -> comment.getPost().getId()));
 
         List<PostDto> postDtoList = postList.stream().map(post -> {
@@ -75,15 +73,14 @@ public class PostService {
     public void saveComment(PostCommentDto postCommentDto){
         Post post = postRepository.findById(postCommentDto.postId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOTFOUND, "게시글을 찾지 못했습니다."));
-
+memberRepository.findAll();
         Member writer = memberRepository.findMemberById(postCommentDto.writeId)
                 .orElseThrow(()-> new AppException(ErrorCode.NOTFOUND,"회원을 찾지 못했습니다."));
         PostComment postComment = new PostComment().toBuilder()
-                .writerName(writer.getUsername())
-                .writeId(writer)
+                .writer(writer)
                 .comment(postCommentDto.comment)
                 .build();
-        post.addComment(postComment);
+        postComment.setPost(post);
         postRepository.save(post);
     }
 

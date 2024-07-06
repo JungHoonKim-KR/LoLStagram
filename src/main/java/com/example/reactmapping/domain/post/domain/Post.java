@@ -26,7 +26,7 @@ public class Post {
     private String content;
     private LocalDateTime createTime=LocalDateTime.now();
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "memberId")
+    @JoinColumn(name = "member_id")
     private Member member;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -34,16 +34,16 @@ public class Post {
     private Image image;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
-    private List<PostComment> commentList;
+    private List<PostComment> commentList = new ArrayList<>();
 
     public void setMember(Member member) {
         this.member = member;
         member.getPostList().add(this);
     }
-    public void addComment(PostComment comment){
-        if(commentList == null)
-            commentList=new ArrayList<>();
-        PostComment updatedComment = comment.toBuilder().post(this).build();
-        commentList.add(updatedComment);
-    }
+//    public void addComment(PostComment comment){
+//        if(commentList == null)
+//            commentList=new ArrayList<>();
+//        PostComment updatedComment = comment.toBuilder().post(this).build();
+//        commentList.add(updatedComment);
+//    }
 }

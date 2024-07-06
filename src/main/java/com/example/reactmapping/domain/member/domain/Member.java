@@ -7,6 +7,7 @@ import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,7 +18,7 @@ import java.util.List;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "memberId")
+    @Column(name = "member_id")
     private Long id;
     @Schema(description = "회원 이메일")
     private String emailId;
@@ -37,9 +38,9 @@ public class Member {
     @Nullable
     private String profileImg;
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
-    private List<Post> postList;
+    private List<Post> postList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "writerId", cascade = CascadeType.ALL)
-    private List<PostComment> commentList;
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
+    private List<PostComment> commentList = new ArrayList<>();
 
 }

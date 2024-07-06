@@ -37,23 +37,23 @@ public class SummonerInfo implements Persistable<String> {
     private double totalAvgOfWin;
     private Long recentWins;
     private Long recentLosses;
-    @OneToMany(mappedBy = "summonerInfo" )
+    @OneToMany(mappedBy = "summonerInfo")
     @JsonManagedReference
     @OrderBy("gameStartTimestamp DESC")
-    private List<MatchInfo> matchList;
+    private List<MatchInfo> matchList = new ArrayList<>();
     @Convert(converter = StringListConverter.class)
-    private List<MostChampion> mostChampionList;
+    private List<MostChampion> mostChampionList = new ArrayList<>();
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createTime;
 
-    public void addMatchInfo(MatchInfo matchInfo) {
-        if (matchList == null) {
-            matchList = new ArrayList<>();
-        }
-        matchInfo= matchInfo.toBuilder().summonerInfo(this).build();
-        matchList.add(matchInfo);
-    }
+//    public void addMatchInfo(MatchInfo matchInfo) {
+//        if (matchList == null) {
+//            matchList = new ArrayList<>();
+//        }
+//        matchInfo= matchInfo.toBuilder().summonerInfo(this).build();
+//        matchList.add(matchInfo);
+//    }
 
 
     @PrePersist

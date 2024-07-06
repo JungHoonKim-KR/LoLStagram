@@ -17,13 +17,16 @@ public class PostComment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "postComment_id")
     private Long id;
-    private String writerName;
     private String comment;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Post")
+    @JoinColumn(name = "post")
     private Post post;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "writer_id")
-    private Member writeId;
+    @JoinColumn(name = "writer")
+    private Member writer;
 
+    public void setPost(Post post) {
+        this.post = post;
+        post.getCommentList().add(this);
+    }
 }

@@ -51,6 +51,11 @@ public class MatchInfo implements Persistable<String> {
         return createTime == null;
     }
 
+
+    public void setSummonerInfo(SummonerInfo summonerInfo) {
+        this.summonerInfo = summonerInfo;
+        summonerInfo.getMatchList().add(this);
+    }
     // ID 필드에 대한 getter
     @Override
     public String getId() {

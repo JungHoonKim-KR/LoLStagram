@@ -60,7 +60,7 @@ const Box1 = () => {
             return;
         } else {
             try {
-                const result = await axios.put('/update/summoner', {
+                const result = await axios.put('/summoner/update', {
                     summonerName: name,
                     summonerTag: tag,
                 }, {
@@ -92,7 +92,7 @@ const Box1 = () => {
             return;
         } else {
             try {
-                await axios.put('/update/profile',
+                await axios.put('/profile/update',
                     {
                         id: memberInfo.id,
                         summonerName: summonerNameProfile.trim(),
@@ -163,7 +163,7 @@ const Box1 = () => {
     const handleLogout = async () => {
         if (window.confirm("로그아웃 하시겠습니까?")) {
             try {
-                await axios.post('/auth/logout',
+                await axios.post('/logout',
                     {}, {
                         headers: {
                             'Authorization': `Bearer ${token}`,

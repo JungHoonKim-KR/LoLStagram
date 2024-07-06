@@ -24,7 +24,7 @@ const Box3 = (searchResult) => {
 
     const callMatchInfo = useCallback(async (callType) => {
         try {
-            const promise = await axios.put('/update/match', {
+            const promise = await axios.put('/match/update', {
                 summonerId: summonerInfo.summonerId,
                 type: callType,
                 page: page
@@ -84,7 +84,7 @@ const Box3 = (searchResult) => {
     const updateHandler = async () => {
         setIsUpdateLoading(true)
         try {
-            const promise = await axios.put('/update/summoner',     {
+            const promise = await axios.put('/summoner/update',     {
                     summonerName: summonerInfo.summonerName,
                     summonerTag: summonerInfo.summonerTag
                 },

@@ -39,7 +39,6 @@ public class Member {
     private String profileImg;
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
     private List<Post> postList = new ArrayList<>();
-
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<PostComment> commentList = new ArrayList<>();
 

@@ -24,7 +24,6 @@ public class PostComment {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer")
     private Member writer;
-
     public void setPost(Post post) {
         this.post = post;
         post.getCommentList().add(this);

@@ -4,7 +4,6 @@ import com.example.reactmapping.domain.post.domain.PostComment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
-
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor

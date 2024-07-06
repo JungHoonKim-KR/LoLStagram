@@ -143,8 +143,7 @@ public class AuthService {
                 .build();
         return loginResponseDto;
     }
-
-
+    @Transactional
     public CallSummonerInfoResponse callSummonerInfo(String riotGameName, String tag) throws JsonProcessingException {
         String puuId, summonerId;
         // riot 닉네임이 존재하는지
@@ -157,14 +156,12 @@ public class AuthService {
         summonerProfile = summonerProfile.toBuilder().puuId(puuId).summonerId(summonerId).summonerName(riotGameName).build();
         //최근 전적 가져오기
         CompareDto compare = loLService.compare(puuId, summonerId);
-
         //9라면 이미 최신 상태임
         if(compare.getResult() != LOL.gameCount-1) {
         //최신 상태가 아니라면
             CreateSummonerInfoDto summonerInfoAndMatchList = loLService.createSummonerInfo(riotGameName, tag, summonerProfile, 0, LOL.gameCount);
             summonerProfile = summonerInfoAndMatchList.getSummonerInfo();
             List<MatchInfo> matchInfoList = summonerInfoAndMatchList.getMatchInfo();
-
             // 신규 가입이 아닌 경우 기존 경기에 대한 수정작업 진행
             if(compare.getResult()!=-1){
                 List<MatchInfo> originMatchList = compare.getMatchInfoList();
@@ -185,13 +182,12 @@ public class AuthService {
             summonerProfile = summonerProfile.toBuilder().mostChampionList(mostChampionList).build();
 
             for (MatchInfo matchInfo : matchInfoList) {
-                summonerProfile.addMatchInfo(matchInfo);
+                matchInfo.setSummonerInfo(summonerProfile);
             }
-
             // 바로 저장
             if(compare.getResult()==-1){
                 // match save -> dirty checking : summonerInfo save
-                matchService.matchSaveAll(summonerProfile.getMatchList());
+                matchService.matchSaveAll(summonerProfile.getMatchList( ));
             }
             else{
                 // 기존 회원이라면 이미 match, summonerInfo가 영속성 컨텍스트에 포함됨
@@ -199,7 +195,6 @@ public class AuthService {
                 // 그래서 summonerInfo를 update하여 match update를 JPA에게 맡김
                 // 영속성 컨텍스트에 저장된 summonerInfo 객체를 추적하기 어려워 직접 찾아서 사용
                 SummonerInfo existingSummonerInfo = entityManager.find(SummonerInfo.class, summonerProfile.getId());
-
                 if (existingSummonerInfo != null) {
                     existingSummonerInfo.update(summonerProfile);
 
@@ -209,7 +204,6 @@ public class AuthService {
                     log.warn("SummonerInfo is not in the persistence context.");
                     throw new AppException(ErrorCode.NOTFOUND,"SummonerInfo is not in the persistence context.");
                 }
-
             }
         }
         return new CallSummonerInfoResponse(summonerProfile,summonerId);

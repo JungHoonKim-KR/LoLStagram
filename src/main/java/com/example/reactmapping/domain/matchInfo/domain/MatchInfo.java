@@ -39,7 +39,7 @@ public class MatchInfo implements Persistable<String> {
     @JoinColumn(name = "summoner_id")
     @JsonBackReference
     private SummonerInfo summonerInfo;
-
+//
     @Column(nullable = false, updatable = false)
     private LocalDateTime createTime;
     @PrePersist

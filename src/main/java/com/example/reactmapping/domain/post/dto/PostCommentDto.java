@@ -16,7 +16,7 @@ public class PostCommentDto {
     public static PostCommentDto entityToDto(PostComment postComment){
         return PostCommentDto.builder()
                 .postId(postComment.getId())
-                .writerName(postComment.getWriterName())
+                .writerName(postComment.getWriter().getUsername())
                 .comment(postComment.getComment())
                 .build();
     }

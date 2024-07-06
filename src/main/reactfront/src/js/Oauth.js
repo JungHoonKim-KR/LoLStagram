@@ -7,7 +7,7 @@ function Oauth() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.post("/auth/oauthLogin", {
+                const response = await axios.post("/login/oauthLogin", {
                 },{
                     withCredentials: true
                 });

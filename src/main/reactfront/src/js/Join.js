@@ -36,7 +36,7 @@ function Join(){
                 type: "application/json"
             }));
             formData.append("image", img);  // file 객체 추가
-            await axios.post("/auth/join",
+            await axios.post("/join",
                 formData,
                 {
 

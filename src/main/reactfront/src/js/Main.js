@@ -127,13 +127,6 @@ const Main = () => {
         setPostList(newPostList);
     };
 
-    // Currently commented out since 'pushHeart' is not used
-    // const pushHeart = (postIndex, commentIndex) => {
-    //     const newPostList = [...postList];
-    //     newPostList[postIndex].comments[commentIndex].liked = !newPostList[postIndex].comments[commentIndex].liked;
-    //     setPostList(newPostList);
-    // };
-
     const addPost = async () => {
         try {
             fetchData(page + 1);

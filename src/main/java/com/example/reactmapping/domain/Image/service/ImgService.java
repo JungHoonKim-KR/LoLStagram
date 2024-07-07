@@ -9,14 +9,17 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class ImgService {
     @Value("${cloud.aws.s3.bucket}")
@@ -25,7 +28,7 @@ public class ImgService {
     private final ImageRepository imageRepository;
 
     public Image createImg(MultipartFile file, String emailId, Long objectId, String objectType) throws IOException {
-        if (file.getOriginalFilename() == "")
+        if (Objects.equals(file.getOriginalFilename(), ""))
             return null;
         String fileOriginalName = file.getOriginalFilename();
         String fileExtension = file.getOriginalFilename().substring(fileOriginalName.lastIndexOf("."), fileOriginalName.length());

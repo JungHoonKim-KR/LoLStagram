@@ -10,12 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
+@Transactional
 public class LogoutService implements LogoutHandler {
     private final RefreshTokenRepository refreshTokenRepository;
     private final CookieUtil cookieUtil;

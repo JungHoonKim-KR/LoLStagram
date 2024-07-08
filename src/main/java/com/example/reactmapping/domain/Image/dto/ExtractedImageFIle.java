@@ -1,5 +1,4 @@
 package com.example.reactmapping.domain.Image.dto;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

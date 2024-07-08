@@ -25,7 +25,6 @@ public class PostController {
             postDto = postDto.toBuilder().serverImg(image).build();
         postService.savePost(postDto);
     }
-
     @GetMapping("/postList")
     public PostResultDto getPostList(@PageableDefault(size = 3,direction = Sort.Direction.DESC)  Pageable pageable) {
         return postService.getPostList(pageable);

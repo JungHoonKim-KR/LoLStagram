@@ -1,7 +1,6 @@
 package com.example.reactmapping.domain.post.service;
 
-import com.example.reactmapping.domain.Image.domain.Image;
-import com.example.reactmapping.domain.Image.service.ImgService;
+import com.example.reactmapping.domain.Image.service.ImageCreateService;
 import com.example.reactmapping.domain.member.domain.Member;
 import com.example.reactmapping.domain.post.domain.Post;
 import com.example.reactmapping.domain.post.domain.PostComment;
@@ -11,7 +10,6 @@ import com.example.reactmapping.domain.post.dto.PostDto;
 import com.example.reactmapping.domain.post.dto.PostResultDto;
 import com.example.reactmapping.global.exception.AppException;
 import com.example.reactmapping.global.exception.ErrorCode;
-import com.example.reactmapping.global.norm.ImageType;
 import com.example.reactmapping.domain.member.repository.MemberRepository;
 import com.example.reactmapping.domain.post.repository.PostCommentRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +33,7 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-    private final ImgService imgService;
+    private final ImageCreateService imgService;
     private final PostCommentRepository postCommentRepository;
 
     public void savePost(PostDto postDto) throws IOException {
@@ -48,13 +46,12 @@ public class PostService {
                 .createTime(LocalDateTime.now())
                 .build();
         if (postDto.getServerImg() != null) {
-            Image img = imgService.createImg(postDto.getServerImg(),null,postDto.getMemberId(), ImageType.PostType.name());
-            post = post.toBuilder().image(img).build();
+            String imageUrl = imgService.createImg(postDto.getServerImg());
+            post = post.toBuilder().imageUrl(imageUrl).build();
         }
         postRepository.save(post);
     }
     public PostResultDto getPostList(Pageable pageable){
-
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "createTime"));
         Page<Post> findPostObject = postRepository.findAll(pageRequest);
         List<Post> postList = findPostObject.getContent();
@@ -74,7 +71,7 @@ public class PostService {
     public void saveComment(PostCommentDto postCommentDto){
         Post post = postRepository.findById(postCommentDto.postId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOTFOUND, "게시글을 찾지 못했습니다."));
-memberRepository.findAll();
+        memberRepository.findAll();
         Member writer = memberRepository.findMemberById(postCommentDto.writeId)
                 .orElseThrow(()-> new AppException(ErrorCode.NOTFOUND,"회원을 찾지 못했습니다."));
         PostComment postComment = new PostComment().toBuilder()

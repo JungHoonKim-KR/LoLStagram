@@ -1,7 +1,7 @@
-package com.example.reactmapping.domain.summonerInfo.domain;
+package com.example.reactmapping.domain.lol.summonerInfo.domain;
 
 import com.example.reactmapping.StringListConverter;
-import com.example.reactmapping.domain.matchInfo.domain.MatchInfo;
+import com.example.reactmapping.domain.lol.matchInfo.domain.MatchInfo;
 import com.example.reactmapping.domain.lol.dto.MostChampion;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;

@@ -1,4 +1,4 @@
-package com.example.reactmapping.domain.summonerInfo.dto;
+package com.example.reactmapping.domain.lol.summonerInfo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

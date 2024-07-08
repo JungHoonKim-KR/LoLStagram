@@ -1,8 +1,10 @@
-package com.example.reactmapping.domain.matchInfo.service;
-import com.example.reactmapping.domain.matchInfo.domain.MatchInfo;
-import com.example.reactmapping.domain.matchInfo.repository.MatchRepository;
-import com.example.reactmapping.domain.matchInfo.dto.MatchInfoDto;
-import com.example.reactmapping.domain.matchInfo.dto.MatchInfoResultDto;
+package com.example.reactmapping.domain.lol.matchInfo.service;
+import com.example.reactmapping.domain.lol.util.LoLApiUtil;
+import com.example.reactmapping.domain.lol.matchInfo.dto.MatchInfoResultDto;
+import com.example.reactmapping.domain.lol.matchInfo.repository.MatchRepository;
+import com.example.reactmapping.domain.lol.matchInfo.domain.MatchInfo;
+import com.example.reactmapping.domain.lol.matchInfo.dto.MatchInfoDto;
+import com.example.reactmapping.global.norm.LOL;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,14 +19,19 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class MatchService {
+public class GetMatchInfo {
     private final MatchRepository matchRepository;
-
+    private final LoLApiUtil loLApiUtil;
     public void matchSaveAll(List<MatchInfo>matchInfoList){
         matchRepository.saveAll(matchInfoList);
     }
+    // 최근 대전기록 가져오기
+    public List<String> getMatches(String puuId, int startGame, int count) {
+        String Url = String.format("/lol/match/v5/matches/by-puuid/%s/ids?start=%s&count=%s", puuId, startGame, count);
+        return loLApiUtil.createWebClient(LOL.BaseUrlAsia, Url).bodyToMono(List.class).block();
+    }
 
-    public MatchInfoResultDto getMatchList(Pageable pageable, String type,String summonerId){
+    public MatchInfoResultDto getMatchList(Pageable pageable, String type, String summonerId){
         //pageable 조건문 all 예외 처리
         Specification<MatchInfo> spec;
 

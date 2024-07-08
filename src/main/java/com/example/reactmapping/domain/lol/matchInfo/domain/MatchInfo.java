@@ -1,7 +1,7 @@
-package com.example.reactmapping.domain.matchInfo.domain;
+package com.example.reactmapping.domain.lol.matchInfo.domain;
 
 import com.example.reactmapping.StringListConverter;
-import com.example.reactmapping.domain.summonerInfo.domain.SummonerInfo;
+import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

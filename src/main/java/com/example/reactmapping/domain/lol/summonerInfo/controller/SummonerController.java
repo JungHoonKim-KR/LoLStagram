@@ -1,9 +1,9 @@
-package com.example.reactmapping.domain.summonerInfo.controller;
+package com.example.reactmapping.domain.lol.summonerInfo.controller;
 
+import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerInfoDto;
+import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDto;
 import com.example.reactmapping.domain.member.dto.CallSummonerInfoResponse;
 import com.example.reactmapping.domain.member.service.AuthService;
-import com.example.reactmapping.domain.summonerInfo.dto.SummonerInfoDto;
-import com.example.reactmapping.domain.summonerInfo.dto.SummonerNameAndTagDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PutMapping;

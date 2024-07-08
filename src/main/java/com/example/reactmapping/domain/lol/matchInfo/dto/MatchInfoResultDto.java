@@ -1,4 +1,4 @@
-package com.example.reactmapping.domain.matchInfo.dto;
+package com.example.reactmapping.domain.lol.matchInfo.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

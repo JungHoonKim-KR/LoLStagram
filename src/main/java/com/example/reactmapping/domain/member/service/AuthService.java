@@ -1,30 +1,30 @@
 package com.example.reactmapping.domain.member.service;
 
+import com.example.reactmapping.domain.lol.CalcMostChampion;
 import com.example.reactmapping.domain.lol.dto.CompareDto;
+import com.example.reactmapping.domain.lol.matchInfo.service.CompareMatchService;
+import com.example.reactmapping.domain.lol.summonerInfo.service.CreateSummonerInfo;
+import com.example.reactmapping.domain.lol.summonerInfo.service.GetSummonerInfo;
 import com.example.reactmapping.global.security.jwt.JwtService;
 import com.example.reactmapping.global.security.jwt.JwtUtil;
 import com.example.reactmapping.global.security.jwt.TokenDto;
-import com.example.reactmapping.domain.Image.repository.ImageRepository;
-import com.example.reactmapping.domain.matchInfo.domain.MatchInfo;
-import com.example.reactmapping.domain.matchInfo.dto.MatchInfoDto;
-import com.example.reactmapping.domain.matchInfo.repository.MatchRepository;
+import com.example.reactmapping.domain.lol.matchInfo.domain.MatchInfo;
+import com.example.reactmapping.domain.lol.matchInfo.dto.MatchInfoDto;
+import com.example.reactmapping.domain.lol.matchInfo.repository.MatchRepository;
 import com.example.reactmapping.domain.member.domain.Member;
 import com.example.reactmapping.domain.member.dto.*;
 import com.example.reactmapping.domain.member.repository.MemberRepository;
-import com.example.reactmapping.domain.summonerInfo.domain.SummonerInfo;
-import com.example.reactmapping.domain.summonerInfo.dto.CreateSummonerInfoDto;
-import com.example.reactmapping.domain.summonerInfo.dto.SummonerInfoDto;
-import com.example.reactmapping.domain.summonerInfo.repository.SummonerInfoRepository;
+import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
+import com.example.reactmapping.domain.lol.summonerInfo.dto.CreateSummonerInfoDto;
+import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerInfoDto;
+import com.example.reactmapping.domain.lol.summonerInfo.repository.SummonerInfoRepository;
 import com.example.reactmapping.global.exception.AppException;
 import com.example.reactmapping.global.exception.ErrorCode;
-import com.example.reactmapping.global.norm.ImageType;
 import com.example.reactmapping.global.norm.LOL;
-import com.example.reactmapping.domain.Image.domain.Image;
 import com.example.reactmapping.global.norm.Token;
 import com.example.reactmapping.domain.lol.dto.MostChampion;
-import com.example.reactmapping.domain.Image.service.ImgService;
-import com.example.reactmapping.domain.lol.LoLService;
-import com.example.reactmapping.domain.matchInfo.service.MatchService;
+import com.example.reactmapping.domain.Image.service.ImageCreateService;
+import com.example.reactmapping.domain.lol.matchInfo.service.GetMatchInfo;
 import com.example.reactmapping.global.cookie.CookieUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.persistence.EntityManager;
@@ -49,15 +49,17 @@ public class AuthService {
 
     private final SummonerInfoRepository summonerInfoRepository;
     private final MatchRepository matchRepository;
-    private final MatchService matchService;
+    private final GetMatchInfo matchService;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final LoLService loLService;
-    private final ImgService imgService;
-    private final ImageRepository imageRepository;
+    private final ImageCreateService imgService;
     private final EntityManager entityManager;
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
+    private final GetSummonerInfo getSummonerInfo;
+    private final CreateSummonerInfo createSummonerInfo;
+    private final CalcMostChampion calcMostChampion;
+    private final CompareMatchService compareMatchService;
 
     public Member join(JoinDTO dto) throws IOException {
         // 회원 아이디가 이미 존재하는지
@@ -77,10 +79,9 @@ public class AuthService {
                 .build();
 
         if(dto.getImg() != null) {
-            Image image = imgService.createImg(dto.getImg(), member.getEmailId(), null, ImageType.ProfileType.name());
-            member = member.toBuilder().profileImg(image.getFileUrl()).build();
+            String imageUrl = imgService.createImg(dto.getImg());
+            member = member.toBuilder().profileImg(imageUrl).build();
             memberRepository.save(member);
-            imageRepository.save(image);
         }
         else {
             memberRepository.save(member);
@@ -147,19 +148,19 @@ public class AuthService {
     public CallSummonerInfoResponse callSummonerInfo(String riotGameName, String tag) throws JsonProcessingException {
         String puuId, summonerId;
         // riot 닉네임이 존재하는지
-        puuId = loLService.callPuuId(riotGameName,tag);
+        puuId = getSummonerInfo.getPuuId(riotGameName,tag);
         log.info("find puuId: "+ puuId);
 
-        summonerId = loLService.callSummonerId(puuId);
+        summonerId = getSummonerInfo.getSummonerId(puuId);
         //리그 정보 가져오기
-        SummonerInfo summonerProfile = loLService.callSummonerProfile(summonerId,tag);
+        SummonerInfo summonerProfile = getSummonerInfo.callSummonerProfile(summonerId,tag);
         summonerProfile = summonerProfile.toBuilder().puuId(puuId).summonerId(summonerId).summonerName(riotGameName).build();
         //최근 전적 가져오기
-        CompareDto compare = loLService.compare(puuId, summonerId);
+        CompareDto compare = compareMatchService.compare(puuId, summonerId);
         //9라면 이미 최신 상태임
         if(compare.getResult() != LOL.gameCount-1) {
         //최신 상태가 아니라면
-            CreateSummonerInfoDto summonerInfoAndMatchList = loLService.createSummonerInfo(riotGameName, tag, summonerProfile, 0, LOL.gameCount);
+            CreateSummonerInfoDto summonerInfoAndMatchList = createSummonerInfo.createSummonerInfo(riotGameName, tag, summonerProfile, 0, LOL.gameCount);
             summonerProfile = summonerInfoAndMatchList.getSummonerInfo();
             List<MatchInfo> matchInfoList = summonerInfoAndMatchList.getMatchInfo();
             // 신규 가입이 아닌 경우 기존 경기에 대한 수정작업 진행
@@ -178,7 +179,7 @@ public class AuthService {
                 }
             }
             //mostchampion 설정
-            List<MostChampion> mostChampionList = loLService.calcMostChampion(matchInfoList);
+            List<MostChampion> mostChampionList = calcMostChampion.calcMostChampion(matchInfoList);
             summonerProfile = summonerProfile.toBuilder().mostChampionList(mostChampionList).build();
 
             for (MatchInfo matchInfo : matchInfoList) {

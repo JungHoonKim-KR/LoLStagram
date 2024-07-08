@@ -1,6 +1,6 @@
-package com.example.reactmapping.domain.summonerInfo.repository;
+package com.example.reactmapping.domain.lol.summonerInfo.repository;
 
-import com.example.reactmapping.domain.summonerInfo.domain.SummonerInfo;
+import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
 import com.example.reactmapping.domain.lol.dto.MostChampion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

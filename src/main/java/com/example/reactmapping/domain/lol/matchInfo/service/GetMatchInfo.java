@@ -33,23 +33,24 @@ public class GetMatchInfo {
 
     public MatchInfoResultDto getMatchList(Pageable pageable, String type, String summonerId){
         //pageable 조건문 all 예외 처리
-        Specification<MatchInfo> spec;
-
-        if ("ALL".equals(type)) {
-            // type 값이 "ALL"일 때
-            spec = Specification
-                    .<MatchInfo>where((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("summonerInfo").get("summonerId"), summonerId));
-        } else {
-            // type 값이 "ALL"이 아닐 때
-            spec = Specification
-                    .<MatchInfo>where((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("gameType"), type))
-                    .and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("summonerInfo").get("summonerId"), summonerId));
-        }
+        Specification<MatchInfo> spec = getMatchInfoSpecification(type, summonerId);
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "gameStartTimestamp"));
         Page<MatchInfo> content = matchRepository.findAll(spec, pageRequest);
         List<MatchInfoDto> matchInfoDtos = MatchInfoDto.entityToDto(content.getContent());
 
         return new MatchInfoResultDto(matchInfoDtos,content.isLast(),type);
+    }
+
+    private Specification<MatchInfo> getMatchInfoSpecification(String type, String summonerId) {
+        if ("ALL".equals(type)) {
+            // type 값이 "ALL"일 때
+           return(root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("summonerInfo").get("summonerId"), summonerId);
+        } else {
+            // type 값이 "ALL"이 아닐 때
+            return  Specification
+                    .<MatchInfo>where((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("gameType"), type))
+                    .and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("summonerInfo").get("summonerId"), summonerId));
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.example.reactmapping.domain.post.domain;
 
-import com.example.reactmapping.domain.Image.domain.Image;
 import com.example.reactmapping.domain.member.domain.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

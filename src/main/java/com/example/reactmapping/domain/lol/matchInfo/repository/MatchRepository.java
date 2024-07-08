@@ -1,6 +1,6 @@
-package com.example.reactmapping.domain.matchInfo.repository;
+package com.example.reactmapping.domain.lol.matchInfo.repository;
 
-import com.example.reactmapping.domain.matchInfo.domain.MatchInfo;
+import com.example.reactmapping.domain.lol.matchInfo.domain.MatchInfo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

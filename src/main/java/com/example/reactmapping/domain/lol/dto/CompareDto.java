@@ -1,6 +1,6 @@
 package com.example.reactmapping.domain.lol.dto;
 
-import com.example.reactmapping.domain.matchInfo.domain.MatchInfo;
+import com.example.reactmapping.domain.lol.matchInfo.domain.MatchInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

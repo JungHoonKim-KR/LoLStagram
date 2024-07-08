@@ -28,11 +28,7 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="image_id")
-    private Image image;
-
+    private String imageUrl;
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostComment> commentList = new ArrayList<>();
 

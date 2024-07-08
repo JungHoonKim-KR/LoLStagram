@@ -39,8 +39,8 @@ public class PostDto {
               .commentList(postCommentDtos)
               .build();
 
-      if(post.getImage()!=null){
-           build=build.toBuilder().frontImage(post.getImage().getFileUrl()).build();
+      if(post.getImageUrl()!=null){
+           build=build.toBuilder().frontImage(post.getImageUrl()).build();
        }
       return build;
   }

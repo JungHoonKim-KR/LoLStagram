@@ -24,13 +24,13 @@ public class LoLApiUtil {
                 .header(LOL.RiotTokenHeader,LOL.ApiKey).retrieve();
     }
 
-    public @Nullable String getApiResponseOneData(String baseUrl, String url, String id, String message) {
+    public @Nullable String getApiResponseOneData(String baseUrl, String url, String id, String errorMessage) {
         return createWebClient(baseUrl, url)
                 .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {
                 })
                 .map(summonerInfo -> summonerInfo.get(id))
                 .onErrorResume(e -> {
-                    throw new AppException(ErrorCode.NOTFOUND, message);
+                    throw new AppException(ErrorCode.NOTFOUND, errorMessage);
                 })
                 .block();
     }

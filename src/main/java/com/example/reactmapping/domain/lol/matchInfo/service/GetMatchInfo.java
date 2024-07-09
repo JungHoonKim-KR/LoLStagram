@@ -6,6 +6,7 @@ import com.example.reactmapping.domain.lol.matchInfo.domain.MatchInfo;
 import com.example.reactmapping.domain.lol.matchInfo.dto.MatchInfoDto;
 import com.example.reactmapping.global.norm.LOL;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import java.util.List;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class GetMatchInfo {
     private final MatchRepository matchRepository;
     private final LoLApiUtil loLApiUtil;
@@ -33,6 +35,7 @@ public class GetMatchInfo {
 
     public MatchInfoResultDto getMatchList(Pageable pageable, String type, String summonerId){
         //pageable 조건문 all 예외 처리
+        log.info("callType : {}",type);
         Specification<MatchInfo> spec = getMatchInfoSpecification(type, summonerId);
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "gameStartTimestamp"));

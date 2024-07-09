@@ -7,6 +7,7 @@ import com.example.reactmapping.global.norm.LOL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.IntStream;
@@ -14,6 +15,7 @@ import java.util.stream.IntStream;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class CompareMatchService {
     // 최신 경기 리스트 10개 중 마지막 경기를 가져옴
     // 이 마지막 경기가 현재 저장된 리스트의 몇번 인덱스에 포함되는지
@@ -23,7 +25,6 @@ public class CompareMatchService {
     public CompareDto compare(String puuId, String summonerId) {
         int result = -1;
         String targetMatchId = matchService.getMatches(puuId, LOL.gameCount - 1, 1).get(0);
-        log.info(targetMatchId);
         List<MatchInfo> matchInfo = matchRepository.findAllBySummonerId(summonerId);
         if (!matchInfo.isEmpty()) {
             result = IntStream.range(0, matchInfo.size())
@@ -33,7 +34,6 @@ public class CompareMatchService {
             // 업데이트는 개수로 처리하기 때문에 0이 아니라면 인덱스 +1을 해줘야함
             if (result != 0) result++;
         }
-        log.info("겹치는 경기" + result);
         return new CompareDto(result, matchInfo);
     }
 }

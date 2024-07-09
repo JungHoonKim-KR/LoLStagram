@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class GetSummonerInfo {
     private final DataUtil dataUtil;
     private final LoLApiUtil loLApiUtil;
@@ -44,6 +46,7 @@ public class GetSummonerInfo {
         }
         Long win = Long.valueOf(map.get("wins").toString());
         Long loss = Long.valueOf(map.get("losses").toString());
+        System.out.println(tag);
         double totalAvgOfWin = Double.parseDouble(df.format((double) win / ((double) win + (double) loss) * 100));
         return SummonerInfo.builder()
                 .leagueId(map.get("leagueId").toString())

@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 import java.util.LinkedList;
@@ -23,6 +24,7 @@ import java.util.stream.StreamSupport;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CreateSummonerInfo {
     private final DataUtil dataUtil;
     private final GetMatchInfo matchService;
@@ -105,7 +107,10 @@ public class CreateSummonerInfo {
         }
         Long win = calWin(matchList);
         double totalKda = Double.parseDouble(df.format(((double) (totalkill + totalassist)) / ((double) totaldeath)));
+        System.out.println(summonerInfo.getSummonerTag());
+
         summonerInfo = summonerInfo.toBuilder().totalKda(totalKda).recentWins(win).recentLosses(LOL.gameCount - win).build();
+        System.out.println(summonerInfo.getSummonerTag());
         return new CreateSummonerInfoDto(summonerInfo, matchList);
     }
 

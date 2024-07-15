@@ -1,18 +1,15 @@
 package com.example.reactmapping.domain.lol.util;
 
-import com.example.reactmapping.global.exception.AppException;
-import com.example.reactmapping.global.exception.ErrorCode;
 import com.example.reactmapping.global.norm.LOL;
-import jakarta.annotation.Nullable;
-import org.springframework.core.ParameterizedTypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.Map;
 
 @Component
 public class LoLApiUtil {
-
+    private final ObjectMapper objectMapper = new ObjectMapper();
     public WebClient.ResponseSpec createWebClient(String baseUrl, String url) {
         WebClient webClient = WebClient.create(baseUrl);
         return webClient.get()
@@ -23,24 +20,19 @@ public class LoLApiUtil {
                 .header("Origin", "https://developer.riotgames.com")
                 .header(LOL.RiotTokenHeader,LOL.ApiKey).retrieve();
     }
-
-    public @Nullable String getApiResponseOneData(String baseUrl, String url, String id, String errorMessage) {
-        return createWebClient(baseUrl, url)
-                .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {
-                })
-                .map(summonerInfo -> summonerInfo.get(id))
-                .onErrorResume(e -> {
-                    throw new AppException(ErrorCode.NOTFOUND, errorMessage);
-                })
-                .block();
-    }
-    public @Nullable String getApiResponse(String baseUrl, String url, ErrorCode errorCode, String errorMessage) {
-        return createWebClient(baseUrl, url)
+    public JsonNode getJsonResponse(String baseUrl, String url, String errorMessage) {
+        String jsonResponse = createWebClient(baseUrl, url)
                 .bodyToMono(String.class)
                 .onErrorResume(e -> {
-                    throw new AppException(errorCode, errorMessage);
+                    throw new RuntimeException("소환사 아이디를 찾을 수 없습니다. 라이엇 이름 또는 태그가 일치하지 않습니다.");
                 })
                 .block();
+        try {
+            return objectMapper.readTree(jsonResponse);
+        } catch (Exception e) {
+            throw new RuntimeException("Error parsing JSON response", e);
+        }
     }
+
 
 }

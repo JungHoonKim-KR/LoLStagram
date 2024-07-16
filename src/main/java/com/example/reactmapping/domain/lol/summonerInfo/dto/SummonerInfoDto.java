@@ -1,7 +1,7 @@
 package com.example.reactmapping.domain.lol.summonerInfo.dto;
 
-import com.example.reactmapping.domain.lol.matchInfo.dto.MatchInfoDto;
 import com.example.reactmapping.domain.lol.dto.MostChampion;
+import com.example.reactmapping.domain.lol.match.dto.MatchDto;
 import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,48 +30,30 @@ public class SummonerInfoDto {
     private Long recentWins;
     private Long recentLosses;
     private List<MostChampion> mostChampionList;
-    private List<MatchInfoDto> matchList;
+    private List<MatchDto> matchList;
 
     // SummonerInfo 엔티티를 SummonerInfoDto로 변환하는 메서드
     public static SummonerInfoDto entityToDto(SummonerInfo summonerInfo) {
         //match를 페이징 처리 하려면 제거
-        List<MatchInfoDto> matchInfoDtoList = MatchInfoDto.entityToDto(summonerInfo.getMatchList());
+        List<MatchDto> MatchDtoList = MatchDto.entityToDto(summonerInfo.getMatchList());
 
         return SummonerInfoDto.builder()
                 .summonerId(summonerInfo.getSummonerId())
-                .leagueId(summonerInfo.getLeagueId())
-                .tier(summonerInfo.getTier())
-                .tierRank(summonerInfo.getTierRank())
-                .totalKda(summonerInfo.getTotalKda())
                 .summonerName(summonerInfo.getSummonerName())
                 .summonerTag(summonerInfo.getSummonerTag())
-                .leaguePoints(summonerInfo.getLeaguePoints())
                 .puuId(summonerInfo.getPuuId())
-                .totalWins(summonerInfo.getTotalWins())
-                .totalLosses(summonerInfo.getTotalLosses())
-                .recentWins(summonerInfo.getRecentWins())
-                .recentLosses(summonerInfo.getRecentLosses())
-                .totalAvgOfWin(summonerInfo.getTotalAvgOfWin())
-                .matchList(matchInfoDtoList) // MatchInfoDto 리스트를 설정
+                .leagueId(summonerInfo.getBasicInfo().getLeagueId())
+                .tier(summonerInfo.getBasicInfo().getTier())
+                .tierRank(summonerInfo.getBasicInfo().getTierRank())
+                .leaguePoints(summonerInfo.getBasicInfo().getLeaguePoints())
+                .totalWins(summonerInfo.getBasicInfo().getTotalWins())
+                .totalLosses(summonerInfo.getBasicInfo().getTotalLosses())
+                .totalAvgOfWin(summonerInfo.getBasicInfo().getTotalAvgOfWin())
+                .recentWins(summonerInfo.getRecentRecord().getRecentWins())
+                .recentLosses(summonerInfo.getRecentRecord().getRecentLosses())
+                .totalKda(summonerInfo.getRecentRecord().getTotalKda())
+                .matchList(MatchDtoList) // MatchDto 리스트를 설정
                 .mostChampionList(summonerInfo.getMostChampionList())
-                .build();
-    }
-    public static SummonerInfo dtoToEntity(SummonerInfoDto summonerInfoDto){
-        return SummonerInfo.builder()
-                .summonerId(summonerInfoDto.getSummonerId())
-                .leagueId(summonerInfoDto.getLeagueId())
-                .tier(summonerInfoDto.getTier())
-                .tierRank(summonerInfoDto.getTierRank())
-                .totalKda(summonerInfoDto.getTotalKda())
-                .summonerName(summonerInfoDto.getSummonerName())
-                .summonerTag(summonerInfoDto.getSummonerTag())
-                .leaguePoints(summonerInfoDto.getLeaguePoints())
-                .puuId(summonerInfoDto.getPuuId())
-                .totalWins(summonerInfoDto.getTotalWins())
-                .totalLosses(summonerInfoDto.getTotalLosses())
-                .totalAvgOfWin(summonerInfoDto.getTotalAvgOfWin())
-                .recentWins(summonerInfoDto.getRecentWins())
-                .recentLosses(summonerInfoDto.getRecentLosses())
                 .build();
     }
 }

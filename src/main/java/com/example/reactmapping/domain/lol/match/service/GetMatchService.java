@@ -1,10 +1,11 @@
-package com.example.reactmapping.domain.lol.matchInfo.service;
+package com.example.reactmapping.domain.lol.match.service;
+
+import com.example.reactmapping.domain.lol.match.domain.Match;
+import com.example.reactmapping.domain.lol.match.dto.MatchDto;
+import com.example.reactmapping.domain.lol.match.dto.MatchResultDto;
 import com.example.reactmapping.domain.lol.util.LoLApiUtil;
-import com.example.reactmapping.domain.lol.matchInfo.dto.MatchInfoResultDto;
-import com.example.reactmapping.domain.lol.matchInfo.repository.MatchRepository;
-import com.example.reactmapping.domain.lol.matchInfo.domain.MatchInfo;
-import com.example.reactmapping.domain.lol.matchInfo.dto.MatchInfoDto;
 import com.example.reactmapping.global.norm.LOL;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,38 +22,40 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 @Slf4j
-public class GetMatchInfo {
-    private final MatchRepository matchRepository;
+public class GetMatchService {
     private final LoLApiUtil loLApiUtil;
-    public void matchSaveAll(List<MatchInfo>matchInfoList){
-        matchRepository.saveAll(matchInfoList);
+    private final MatchService matchService;
+
+    public JsonNode getMatch(String matchId){
+        log.info(matchId);
+        return loLApiUtil.getJsonResponse(LOL.BaseUrlAsia, "/lol/match/v5/matches/" + matchId, "경기를 찾을 수 없습니다.")
+                .path("info");
     }
     // 최근 대전기록 가져오기
-    public List<String> getMatches(String puuId, int startGame, int count) {
+    public List<String> getMatchIds(String puuId, int startGame, int count) {
         String Url = String.format("/lol/match/v5/matches/by-puuid/%s/ids?start=%s&count=%s", puuId, startGame, count);
         return loLApiUtil.createWebClient(LOL.BaseUrlAsia, Url).bodyToMono(List.class).block();
     }
-
-    public MatchInfoResultDto getMatchList(Pageable pageable, String type, String summonerId){
+    public MatchResultDto getMatchList(Pageable pageable, String type, String summonerId){
         //pageable 조건문 all 예외 처리
         log.info("callType : {}",type);
-        Specification<MatchInfo> spec = getMatchInfoSpecification(type, summonerId);
+        Specification<Match> spec = getMatchSpecification(type, summonerId);
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "gameStartTimestamp"));
-        Page<MatchInfo> content = matchRepository.findAll(spec, pageRequest);
-        List<MatchInfoDto> matchInfoDtos = MatchInfoDto.entityToDto(content.getContent());
+        Page<Match> content = matchService.findAll(spec, pageRequest);
+        List<MatchDto> MatchDtos = MatchDto.entityToDto(content.getContent());
 
-        return new MatchInfoResultDto(matchInfoDtos,content.isLast(),type);
+        return new MatchResultDto(MatchDtos,content.isLast(),type);
     }
 
-    private Specification<MatchInfo> getMatchInfoSpecification(String type, String summonerId) {
+    private Specification<Match> getMatchSpecification(String type, String summonerId) {
         if ("ALL".equals(type)) {
             // type 값이 "ALL"일 때
            return(root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("summonerInfo").get("summonerId"), summonerId);
         } else {
             // type 값이 "ALL"이 아닐 때
             return  Specification
-                    .<MatchInfo>where((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("gameType"), type))
+                    .<Match>where((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("gameType"), type))
                     .and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("summonerInfo").get("summonerId"), summonerId));
         }
     }

@@ -106,7 +106,7 @@ li.champion{
     width: 60px;
     height: 60px;
 }
-.matchInfo{
+.Match{
     display: flex;
 }
 li.true{

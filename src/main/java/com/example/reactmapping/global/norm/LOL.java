@@ -6,6 +6,9 @@ public class LOL {
 
     public static final String version = "14.11.1";
     public static final int gameCount = 20;
+    public static final int Up_To_Date = 0;
+    public static final int FirstIndex = 0;
+    public static final int LastIndex = gameCount - 1;
     public static final String RiotIdGameName = "riotIdGameName";
     public static final String RiotIdTagline = "riotIdTagline";
     public static final String RiotTokenHeader = "X-Riot-Token";

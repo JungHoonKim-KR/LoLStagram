@@ -1,9 +1,10 @@
 package com.example.reactmapping.domain.lol.summonerInfo.controller;
 
+import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerInfoDto;
-import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDto;
-import com.example.reactmapping.domain.member.dto.CallSummonerInfoResponse;
-import com.example.reactmapping.domain.member.service.AuthService;
+import com.example.reactmapping.domain.lol.summonerInfo.dto.UpdateRequestDto;
+import com.example.reactmapping.domain.lol.summonerInfo.service.SummonerInfoService;
+import com.example.reactmapping.domain.lol.summonerInfo.service.UpdateSummonerInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/summoner")
 public class SummonerController {
-    private final AuthService authService;
+    private final UpdateSummonerInfo updateSummonerInfo;
+    private final SummonerInfoService repositoryService;
     @PutMapping("/update")
-    public SummonerInfoDto update(@RequestBody SummonerNameAndTagDto summonerNameAndTagDto) throws JsonProcessingException {
-        CallSummonerInfoResponse callSummonerInfoResponse = authService.callSummonerInfo(summonerNameAndTagDto.getSummonerName(), summonerNameAndTagDto.getSummonerTag());
-        return SummonerInfoDto.entityToDto(callSummonerInfoResponse.getSummonerInfo());
+    public SummonerInfoDto update(@RequestBody UpdateRequestDto updateRequestDto) throws JsonProcessingException {
+        SummonerInfo summonerInfoById = repositoryService.findSummonerInfoById(updateRequestDto.getSummonerId());
+        SummonerInfo callSummonerInfoResponse = updateSummonerInfo.getUpdatedSummonerInfo(summonerInfoById);
+        return SummonerInfoDto.entityToDto(callSummonerInfoResponse);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.reactmapping.domain.lol.matchInfo.dto;
+package com.example.reactmapping.domain.lol.match.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,8 +9,8 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @AllArgsConstructor
-public class MatchInfoResultDto {
-    public List<MatchInfoDto> matchInfoDtoList;
+public class MatchResultDto {
+    public List<MatchDto> MatchDtoList;
     public Boolean isLast;
     public String type;
 }

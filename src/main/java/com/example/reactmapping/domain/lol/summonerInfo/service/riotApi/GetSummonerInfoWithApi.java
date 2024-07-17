@@ -1,9 +1,8 @@
 package com.example.reactmapping.domain.lol.summonerInfo.service.riotApi;
 
-import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDto;
+import com.example.reactmapping.domain.lol.summonerInfo.domain.BasicInfo;
 import com.example.reactmapping.domain.lol.util.DataUtil;
 import com.example.reactmapping.domain.lol.util.LoLApiUtil;
-import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
 import com.example.reactmapping.global.norm.LOL;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,29 +29,30 @@ public class GetSummonerInfoWithApi {
                 , "/lol/summoner/v4/summoners/by-puuid/" + puuId
                 , "소환사 아이디를 찾을 수 없습니다. 라이엇 이름 또는 태그가 일치하지 않습니다.").get("id").asText();
     }
-    public SummonerInfo getSummonerProfile(String summonerId, String tag) {
+    public BasicInfo getSummonerBasic(String summonerId, String tag) {
         JsonNode jsonResponse =loLApiUtil.getJsonResponse(LOL.BaseUrlKR
                 ,"/lol/league/v4/entries/by-summoner/" + summonerId
-                ,"소환사 아이디를 찾을 수 없습니다. 라이엇 이름 또는 태그가 일치하지 않습니다.");
-        return parseSummonerInfo(jsonResponse, tag);
+                ,"소환사 아이디를 찾을 수 없습니다. 라이엇 이름 또는 태그가 일치하지 않습니다.").get(0);
+        return parseBasicInfo(jsonResponse, tag);
     }
 
-    private SummonerInfo parseSummonerInfo(JsonNode jsonResponse, String tag) {
+    private BasicInfo parseBasicInfo(JsonNode jsonResponse, String tag) {
         long win = jsonResponse.get("wins").asLong();
         long loss = jsonResponse.get("losses").asLong();
         double winRate = calculateWinRate(win, loss);
-
-        return SummonerInfo.builder()
-                .leagueId(jsonResponse.get("leagueId").asText())
-                .tier(jsonResponse.get("tier").asText())
-                .tierRank(dataUtil.convertRomanToArabic(jsonResponse.get("rank").asText()))
-                .summonerTag(tag)
-                .leaguePoints(Long.valueOf(jsonResponse.get("leaguePoints").asText()))
-                .matchList(new ArrayList<>())
-                .totalWins(win)
-                .totalLosses(loss)
-                .totalAvgOfWin(winRate)
-                .build();
+        return new BasicInfo(jsonResponse.get("leagueId").asText(),jsonResponse.get("tier").asText(),dataUtil.convertRomanToArabic(jsonResponse.get("rank").asText())
+        ,Long.valueOf(jsonResponse.get("leaguePoints").asText()),win,loss,winRate);
+//        return SummonerInfo.builder()
+////                .leagueId(jsonResponse.get("leagueId").asText())
+////                .tier(jsonResponse.get("tier").asText())
+////                .tierRank(dataUtil.convertRomanToArabic(jsonResponse.get("rank").asText()))
+//                .summonerTag(tag)
+////                .leaguePoints(Long.valueOf(jsonResponse.get("leaguePoints").asText()))
+//                .matchList(new ArrayList<>())
+////                .totalWins(win)
+////                .totalLosses(loss)
+////                .totalAvgOfWin(winRate)
+//                .build();
     }
 
     private double calculateWinRate(long wins, long losses) {

@@ -1,15 +1,11 @@
 package com.example.reactmapping.domain.member.controller;
-import com.example.reactmapping.domain.member.dto.JoinDTO;
 import com.example.reactmapping.domain.member.dto.LoginRequestDto;
 import com.example.reactmapping.domain.member.dto.LoginResponseDto;
-import com.example.reactmapping.domain.member.domain.Member;
-import com.example.reactmapping.domain.member.dto.ProfileUpdateDto;
 import com.example.reactmapping.global.norm.LOL;
 import com.example.reactmapping.global.norm.Token;
 import com.example.reactmapping.domain.member.service.AuthService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +14,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -36,11 +30,10 @@ public class LoginController {
         log.info("로그인 완료");
         return ResponseEntity.ok().body(responseDto);
     }
-
     @PostMapping("/oauthLogin")
     public ResponseEntity<?> oauthLogin(@CookieValue(name = Token.TokenName.accessToken, defaultValue = "NO") String accessToken, HttpServletResponse httpServletResponse
             , @PageableDefault(size = 10, direction = Sort.Direction.DESC) Pageable pageable) throws JsonProcessingException {
-        LoginResponseDto responseDto = authService.socialLogin(httpServletResponse, accessToken, pageable, LOL.GameType.솔랭.name());
+        LoginResponseDto responseDto = authService.socialLogin(accessToken, pageable, LOL.GameType.솔랭.name());
         log.info("로그인 완료");
         return ResponseEntity.ok().body(responseDto);
     }

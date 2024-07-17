@@ -22,7 +22,7 @@ const Box3 = (searchResult) => {
     const [mouseOverId, setMouseOverId] = useState(null);
     const [objectId, setObjectId] = useState(null);
 
-    const callMatchInfo = useCallback(async (callType) => {
+    const callMatch = useCallback(async (callType) => {
         try {
             const promise = await axios.put('/match/update', {
                 summonerId: summonerInfo.summonerId,
@@ -36,11 +36,11 @@ const Box3 = (searchResult) => {
                 localStorage.setItem('accessToken', promise.headers.access);
                 setToken(promise.headers.access);
             }
-            if (promise.data.matchInfoDtoList.length === 0) {
+            if (promise.data.MatchDtoList.length === 0) {
                 console.log("No results found.");
             } else {
                 setPage(prevPage => prevPage + 1);
-                setMatchList(prevState => [...prevState, ...promise.data.matchInfoDtoList]);
+                setMatchList(prevState => [...prevState, ...promise.data.MatchDtoList]);
                 setIsLast(promise.data.isLast);
             }
         } catch (error) {
@@ -56,14 +56,14 @@ const Box3 = (searchResult) => {
 
     useEffect(() => {
         if (page === 0 && matchList.length === 0 && callType) {
-            callMatchInfo(callType);
+            callMatch(callType);
         }
-    }, [page, matchList, callType, callMatchInfo]);
+    }, [page, matchList, callType, callMatch]);
 
-    const updateMatchInfo = async (callType) => {
+    const updateMatch = async (callType) => {
         setPage(0);
         setMatchList([]);
-        await callMatchInfo(callType);
+        await callMatch(callType);
     }
 
     useEffect(() => {
@@ -73,20 +73,17 @@ const Box3 = (searchResult) => {
         }));
     }, [matchList]);
     useEffect(() => {
-        let storedSummonerInfo
         if(type === "search"){
-            storedSummonerInfo = JSON.parse(localStorage.getItem("searchedSummonerInfo"));
-        }
-        if (storedSummonerInfo) {
+            let storedSummonerInfo = JSON.parse(localStorage.getItem("searchedSummonerInfo"));
             setSummonerInfo(storedSummonerInfo);
         }
+
     }, [type]);
     const updateHandler = async () => {
         setIsUpdateLoading(true)
         try {
             const promise = await axios.put('/summoner/update',     {
-                    summonerName: summonerInfo.summonerName,
-                    summonerTag: summonerInfo.summonerTag
+                    summonerId : summonerInfo.summonerId,
                 },
                 {
                     headers: {'Authorization': `Bearer ${token}`},
@@ -97,7 +94,7 @@ const Box3 = (searchResult) => {
                 setToken(promise.headers.access)
             }
             setSummonerInfo(promise.data)
-            localStorage.setItem("summonerInfo", JSON.stringify(promise.data))
+            localStorage.setItem("mySummonerInfo", JSON.stringify(promise.data))
         }catch (error){
             if(error.response.data.errorCode === "TOKEN_EXPIRED"){
                 alert("토큰 만료. 로그인 화면으로 이동합니다.")
@@ -120,9 +117,6 @@ const Box3 = (searchResult) => {
             setIsModalOpen(!isModalOpen);
         }
     };
-    // const handleCloseModal = () => {
-    //     setIsModalOpen(false);
-    // };
     return(
         <div className="box3">
             <div className="myInfo">
@@ -163,24 +157,21 @@ const Box3 = (searchResult) => {
             <div className="recentMatch">
                 <div className="title">최근전적 (20 게임)</div>
                 <div>
-                    <button onClick={()=>{
-                        updateMatchInfo("솔랭")
-                    }}>버튼1</button>
-                    <button onClick={()=>{
-                        setPage(0)
-                        setMatchList([])
-                        setCallType("자유 랭크")
-                    }}>버튼2</button>
-                    <button onClick={()=>{
-                        setPage(0)
-                        setMatchList([])
-                        setCallType("무작위 총력전")
-                    }}>버튼3</button>
-                    <button onClick={()=>{
-                        setPage(0)
-                        setMatchList([])
-                        setCallType("URF")
-                    }}>버튼4</button>
+                    <button onClick={() =>
+                        updateMatch("ALL")}>전체
+                    </button>
+                    <button onClick={() =>
+                        updateMatch("솔랭")}>솔랭
+                    </button>
+                    <button onClick={() =>
+                        updateMatch("자유 랭크")}>자랭
+                    </button>
+                    <button onClick={() =>
+                        updateMatch("무작위 총력전")}>칼바람
+                    </button>
+                    <button onClick={() =>
+                        updateMatch("URF")}>URF
+                    </button>
                 </div>
                 <p>Most 3</p>
                 <div className="contentContainer">
@@ -192,8 +183,8 @@ const Box3 = (searchResult) => {
                     <div className="mostChampionList">
                         <ul>
                             {summonerInfo.mostChampionList.map((mostChampion, index) => (
-                                <li key={mostChampion.kda} className={index === 0 ? 'first champion' : 'champion'}>
-                                    <img src={require(`../images/champion/${mostChampion.championName}.png`)} alt ="champion"/>
+                                <li key={mostChampion.kda} className={'mostChampion'}>
+                                    <img src={require(`../images/champion/${mostChampion.championName}.png`)} alt ="mostChampion"/>
                                     <div className="championInfo">
                                         {mostChampion.championName} {mostChampion.count}판<br/>
                                         (승률:{mostChampion.avgOfWin}%)<br/>
@@ -218,7 +209,7 @@ const Box3 = (searchResult) => {
                                     <div className={`${match.result} gameType`}>{match.gameType}</div>
                                     <div className="summonerList">
                                         <img className="championImg" src={require(`../images/champion/${match.championName}.png`)} alt={match.championName} />
-                                        <div className="matchInfo">
+                                        <div className="Match">
                                             <div className="summonerImg">
                                                 <div className="runeImg">
                                                     <div className="mouseOn"
@@ -264,7 +255,7 @@ const Box3 = (searchResult) => {
                     )
                 }
                 {!isLast &&(
-                    <button  id="addPostBtn" onClick={callMatchInfo}>
+                    <button  id="addPostBtn" onClick={callMatch}>
                         <img src={addImg} alt="Add post" />
                     </button>
 

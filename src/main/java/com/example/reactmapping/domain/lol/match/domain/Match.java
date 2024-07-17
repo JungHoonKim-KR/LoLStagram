@@ -1,4 +1,4 @@
-package com.example.reactmapping.domain.lol.matchInfo.domain;
+package com.example.reactmapping.domain.lol.match.domain;
 
 import com.example.reactmapping.StringListConverter;
 import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
@@ -18,7 +18,8 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class MatchInfo implements Persistable<String> {
+@Table(name = "matches")
+public class Match implements Persistable<String> {
     @Id
     private String matchId;
     private Long gameStartTimestamp;
@@ -51,11 +52,13 @@ public class MatchInfo implements Persistable<String> {
         return createTime == null;
     }
 
-
-    public void setSummonerInfo(SummonerInfo summonerInfo) {
+    public void updateSummonerInfo(SummonerInfo summonerInfo) {
         this.summonerInfo = summonerInfo;
-        summonerInfo.getMatchList().add(this);
     }
+//    public void setSummonerInfo(SummonerInfo summonerInfo) {
+//        this.summonerInfo = summonerInfo;
+//        summonerInfo.getMatchList().add(this);
+//    }
     // ID 필드에 대한 getter
     @Override
     public String getId() {

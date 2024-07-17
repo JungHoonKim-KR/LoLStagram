@@ -1,6 +1,6 @@
-package com.example.reactmapping.domain.lol.matchInfo.repository;
+package com.example.reactmapping.domain.lol.match.repository;
 
-import com.example.reactmapping.domain.lol.matchInfo.domain.MatchInfo;
+import com.example.reactmapping.domain.lol.match.domain.Match;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,15 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-public interface MatchRepository extends JpaRepository<MatchInfo,String> {
-    @Query("select m from MatchInfo m where m.summonerInfo.summonerId =:summonerId order by m.gameStartTimestamp DESC ")
-    List<MatchInfo> findAllBySummonerId(@Param("summonerId")String summonerId);
-    Page<MatchInfo> findAll(Specification<MatchInfo> spec, Pageable pageable);
+public interface MatchRepository extends JpaRepository<Match,String> {
+    @Query("select m from Match m where m.summonerInfo.summonerId =:summonerId order by m.gameStartTimestamp DESC ")
+    List<Match> findAllBySummonerId(@Param("summonerId")String summonerId);
+    Page<Match> findAll(Specification<Match> spec, Pageable pageable);
 
 
     @Modifying
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    @Query("update MatchInfo s SET " +
+    @Query("update Match s SET " +
             "s.matchId = :matchId, " +
             "s.gameStartTimestamp = :gameStartTimestamp, " +
             "s.kills = :kills, " +
@@ -48,5 +48,7 @@ public interface MatchRepository extends JpaRepository<MatchInfo,String> {
                             @Param("summonerSpellList") List<Integer> summonerSpellList,
                             @Param("result") String result,
                             @Param("originMatchId") String originMatchId);
+
+
 
 }

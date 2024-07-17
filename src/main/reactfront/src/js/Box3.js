@@ -17,7 +17,7 @@ const Box3 = (searchResult) => {
     const [token, setToken] = useState(localStorage.getItem('accessToken'));
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [page, setPage] = useState(1);
-    const [callType, setCallType] = useState(null);
+    const [callType] = useState(null);
     const [isLast, setIsLast] = useState(true);
     const [mouseOverId, setMouseOverId] = useState(null);
     const [objectId, setObjectId] = useState(null);

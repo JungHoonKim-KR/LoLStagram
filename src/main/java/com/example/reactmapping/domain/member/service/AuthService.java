@@ -57,17 +57,14 @@ public class AuthService {
                 .role("ROLE_MEMBER")
                 .riotIdGameName(dto.getSummonerName())
                 .riotIdTagline(dto.getSummonerTag())
-                .summonerId(summonerInfo.getSummonerId())
+                .summonerInfo(summonerInfo)
                 .build();
 
         if(dto.getImg() != null) {
             String imageUrl = imgService.createImg(dto.getImg());
             member = member.toBuilder().profileImg(imageUrl).build();
-            memberRepository.save(member);
         }
-        else {
-            memberRepository.save(member);
-        }
+        memberRepository.save(member);
         return member;
     }
 
@@ -90,7 +87,7 @@ public class AuthService {
     }
 
     private SummonerInfo getSummonerInfo(Member member) {
-        return summonerInfoRepositoryService.findSummonerInfoById(member.getSummonerId());
+        return summonerInfoRepositoryService.findSummonerInfoById(member.getSummonerInfo().getSummonerId());
     }
 
 
@@ -128,7 +125,7 @@ public class AuthService {
         member = member.toBuilder()
                 .riotIdGameName(profileUpdateDto.getSummonerName())
                 .riotIdTagline(profileUpdateDto.getSummonerTag())
-                .summonerId(member.getSummonerId())
+                .summonerInfo(member.getSummonerInfo())
                 .build();
         memberRepository.save(member);
     }

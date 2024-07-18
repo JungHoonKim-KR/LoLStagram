@@ -1,5 +1,6 @@
 package com.example.reactmapping.domain.member.domain;
 
+import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
 import com.example.reactmapping.domain.post.domain.Post;
 import com.example.reactmapping.domain.post.domain.PostComment;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,8 +33,16 @@ public class Member {
     private String riotIdGameName;
     @Schema(description = "라이엇 태그")
     private String riotIdTagline;
+    // member와 summonerInfo는 특이한 구조임
+    // summonerInfo는 여러 member와 연관될 수 있지만 조회는 하지 않음.
+    // 즉 member만 summonerInfo를 조회하기 때문에 cascade 설정을 연관관계의 주인인 member에 하게 됐음.
+    // 단 ALL을 하게 될 경우 member 삭제 시 summoner까지 같이 삭제되면 데이터 무결성에 어긋남. (member가 "다"의 관계이기 때문에 다른 member에 영향이 감)
     @Schema(description = "소환사 아이디")
-    private String summonerId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "summoner_id")
+    private SummonerInfo summonerInfo;
+
+
     @Schema(description = "프로필 사진")
     @Nullable
     private String profileImg;

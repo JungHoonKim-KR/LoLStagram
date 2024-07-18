@@ -15,35 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UpdateMatchService {
     private final MatchService matchService;
-// batch update
-//    @Transactional
-//    public void updateMatchesInBatch(List<Match> matches) {
-//        String sql = "UPDATE Match SET gameStartTimestamp = ?, kills = ?, deaths = ?, assists = ?, kda = ?, " +
-//                "championName = ?, mainRune = ?, subRune = ?, itemList = ?, summonerSpellList = ?, " +
-//                "result = ? WHERE matchId = ?";
-//
-//        jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
-//            public void setValues(PreparedStatement ps, int i) throws SQLException {
-//                Match match = matches.get(i);
-//                ps.setLong(1, match.getGameStartTimestamp());
-//                ps.setLong(2, match.getKills());
-//                ps.setLong(3, match.getDeaths());
-//                ps.setLong(4, match.getAssists());
-//                ps.setString(5, match.getKda());
-//                ps.setString(6, match.getChampionName());
-//                ps.setLong(7, match.getMainRune());
-//                ps.setLong(8, match.getSubRune());
-//                ps.setObject(9, match.getItemList());
-//                ps.setObject(10, match.getSummonerSpellList());
-//                ps.setString(11, match.getResult());
-//                ps.setString(12, match.getMatchId());
-//            }
-//
-//            public int getBatchSize() {
-//                return matches.size();
-//            }
-//        });
-//    }
 
     public void updateMatches(SummonerInfo summonerInfo, int newMatchCount, List<Match> newMatchList) {
         List<Match> originMatchList = summonerInfo.getMatchList(); // 기존 매치 리스트

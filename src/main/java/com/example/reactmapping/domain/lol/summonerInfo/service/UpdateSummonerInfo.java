@@ -31,9 +31,10 @@ public class UpdateSummonerInfo {
     private final GetSummonerInfoWithApi getSummonerInfoWithApi;
     private final CreateMatchService createMatchService;
     private final GetMatchService getMatchService;
-
+    private final SummonerInfoService summonerInfoService;
     public SummonerInfo getUpdatedSummonerInfo(SummonerInfo summonerInfo){
         updateSummonerInfo(summonerInfo);
+        summonerInfoService.saveSummonerInfo(summonerInfo);
         return summonerInfo;
     }
     private void updateSummonerInfo(SummonerInfo summonerInfo) {
@@ -45,6 +46,10 @@ public class UpdateSummonerInfo {
             updateMatchService.updateMatches(summonerInfo,newGameCount, newMatchList);
             updateMostChampionList(summonerInfo);
             updateRecentRecord(summonerInfo);
+
+            for(Match match : newMatchList){
+                summonerInfo.addMatch(match);
+            }
         }
     }
 
@@ -52,7 +57,6 @@ public class UpdateSummonerInfo {
         List<Match> newMatchList = new ArrayList<>();
         for(String matchId : matchIds){
             newMatchList.add(createMatchService.createMatch(matchId, summonerInfo.getSummonerName(), summonerInfo.getSummonerTag()));
-
         }
         return newMatchList;
     }

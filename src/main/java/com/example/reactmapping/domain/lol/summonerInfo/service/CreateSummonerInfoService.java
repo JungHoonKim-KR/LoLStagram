@@ -27,19 +27,29 @@ public class CreateSummonerInfoService {
     private final GetSummonerInfoWithApi getSummonerInfoWithApi;
     private final CalcMostChampion calcMostChampion;
     private final SummonerUtil summonerUtil;
+    private final SummonerInfoService summonerInfoService;
     public SummonerInfo createSummonerInfo(String summonerName, String summonerTag) {
         String puuId = getSummonerInfoWithApi.getPuuId(summonerName, summonerTag);
         String summonerId = getSummonerInfoWithApi.getSummonerId(puuId);
         BasicInfo summonerBasic = getSummonerInfoWithApi.getSummonerBasic(summonerId, summonerTag);
         List<Match> matchList = new LinkedList<>();
         List<String> matchIds = getMatchService.getMatchIds(puuId, 0, LOL.gameCount);
+
         for (String matchId : matchIds) {
             Match match = createMatchService.createMatch(matchId, summonerName, summonerTag);
             matchList.add(match);
         }
+
         RecentRecord recentRecord = summonerUtil.createRecentRecord(matchList);
         List<MostChampion> mostChampions = calcMostChampion.calcMostChampion(matchList);
-        return new SummonerInfo(summonerId,summonerName,summonerTag,puuId,summonerBasic,recentRecord,matchList,mostChampions);
+
+        SummonerInfo summonerInfo = new SummonerInfo(summonerId, summonerName, summonerTag, puuId, summonerBasic, recentRecord, matchList, mostChampions);
+
+        for(Match match : matchList) {
+            summonerInfo.addMatch(match);
+        }
+        summonerInfoService.saveSummonerInfo(summonerInfo);
+        return summonerInfo;
     }
 
 }

@@ -25,7 +25,6 @@ public class CreateMatchService {
                 .matchId(matchId)
                 .gameStartTimestamp(matchInfo.path("gameStartTimestamp").asLong())
                 .gameType(determineGameType(matchInfo));
-
         JsonNode participants = matchInfo.path("participants");
         for (JsonNode participant : participants) {
             if (isDesiredSummoner(participant, summonerName, summonerTag)) {
@@ -36,11 +35,29 @@ public class CreateMatchService {
         return matchBuilder.build();
     }
 
+    private String determineGameType(JsonNode matchInfo) {
+        String gameMode = matchInfo.path("gameMode").asText().replace("\"", "");
+        switch (gameMode) {
+            case "CLASSIC":
+                return switch (matchInfo.path("queueId").asText()) {
+                    case "420" -> LOL.GameType.솔랭.name();
+                    case "490" -> LOL.GameType.빠른대전.name();
+                    default -> LOL.GameType.자유랭크.name();
+                };
+            case "URF":
+                return LOL.GameType.URF.name();
+            case "ARAM":
+                return LOL.GameType.무작위총력전.name();
+            case "CHERRY":
+                return LOL.GameType.아레나.name();
+            default:
+                return "Unknown";
+        }
+    }
     private boolean isDesiredSummoner(JsonNode participant, String summonerName, String summonerTag) {
         return participant.path(LOL.RiotIdGameName).asText().equals(summonerName)
                 && participant.path(LOL.RiotIdTagline).asText().equals(summonerTag);
     }
-
     private void populateMatchDetails(Match.MatchBuilder matchBuilder, JsonNode participant) {
         matchBuilder.kills(participant.path("kills").asLong())
                 .deaths(participant.path("deaths").asLong())
@@ -53,7 +70,6 @@ public class CreateMatchService {
                 .itemList(extractItems(participant))
                 .summonerSpellList(extractSummonerSpells(participant));
     }
-
     private String calculateKDA(JsonNode participant) {
         long kills = participant.path("kills").asLong();
         long deaths = participant.path("deaths").asLong();
@@ -75,7 +91,6 @@ public class CreateMatchService {
                 .findFirst()
                 .orElse(-1L);
     }
-
     private List<Integer> extractItems(JsonNode participant) {
         return IntStream.range(0, 7)
                 .mapToObj(i -> "item" + i)
@@ -83,32 +98,11 @@ public class CreateMatchService {
                 .map(key -> participant.path(key).asInt())
                 .collect(Collectors.toList());
     }
-
     private List<Integer> extractSummonerSpells(JsonNode participant) {
         return IntStream.range(1, 3)
                 .mapToObj(i -> "summoner" + i + "Id")
                 .filter(participant::has)
                 .map(key -> participant.path(key).asInt())
                 .collect(Collectors.toList());
-    }
-
-    private String determineGameType(JsonNode matchInfo) {
-        String gameMode = matchInfo.path("gameMode").asText().replace("\"", "");
-        switch (gameMode) {
-            case "CLASSIC":
-                return switch (matchInfo.path("queueId").asText()) {
-                    case "420" -> LOL.GameType.솔랭.name();
-                    case "490" -> LOL.GameType.빠른대전.name();
-                    default -> LOL.GameType.자유랭크.name();
-                };
-            case "URF":
-                return LOL.GameType.URF.name();
-            case "ARAM":
-                return LOL.GameType.무작위총력전.name();
-            case "CHERRY":
-                return LOL.GameType.아레나.name();
-            default:
-                return "Unknown";
-        }
     }
 }

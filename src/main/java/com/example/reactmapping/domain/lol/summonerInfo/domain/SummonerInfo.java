@@ -28,8 +28,7 @@ public class SummonerInfo implements Persistable<String> {
     private BasicInfo basicInfo;
     @Embedded
     private RecentRecord recentRecord;
-
-    @OneToMany(mappedBy = "summonerInfo")
+    @OneToMany(mappedBy = "summonerInfo", cascade = CascadeType.ALL)
     @JsonManagedReference
     @OrderBy("gameStartTimestamp DESC")
     private List<Match> matchList = new ArrayList<>();

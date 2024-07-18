@@ -9,7 +9,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.Persistable;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,11 +35,11 @@ public class Match implements Persistable<String> {
     @Convert(converter = StringListConverter.class)
     private List<Integer> summonerSpellList;
     private String result;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "summoner_id")
     @JsonBackReference
     private SummonerInfo summonerInfo;
-//
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createTime;
     @PrePersist
@@ -55,10 +54,6 @@ public class Match implements Persistable<String> {
     public void updateSummonerInfo(SummonerInfo summonerInfo) {
         this.summonerInfo = summonerInfo;
     }
-//    public void setSummonerInfo(SummonerInfo summonerInfo) {
-//        this.summonerInfo = summonerInfo;
-//        summonerInfo.getMatchList().add(this);
-//    }
     // ID 필드에 대한 getter
     @Override
     public String getId() {

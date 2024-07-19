@@ -57,10 +57,10 @@ const Box1 = () => {
         const tag = summonerTagSearch.current.value.trim()
         if (!name || !tag) {
             alert('모든 필드를 입력해주세요.');
-            return;
+
         } else {
             try {
-                const result = await axios.put('/summoner/update', {
+                const result = await axios.post('/summoner/search', {
                     summonerName: name,
                     summonerTag: tag,
                 }, {

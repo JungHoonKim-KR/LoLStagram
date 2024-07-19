@@ -27,7 +27,6 @@ public class GetMatchService {
     private final MatchService matchService;
 
     public JsonNode getMatch(String matchId){
-        log.info(matchId);
         return loLApiUtil.getJsonResponse(LOL.BaseUrlAsia, "/lol/match/v5/matches/" + matchId, "경기를 찾을 수 없습니다.")
                 .path("info");
     }

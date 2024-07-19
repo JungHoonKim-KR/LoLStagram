@@ -3,11 +3,13 @@ package com.example.reactmapping.domain.lol.util;
 import com.example.reactmapping.global.norm.LOL;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
 
 @Component
+@Slf4j
 public class LoLApiUtil {
     private final ObjectMapper objectMapper = new ObjectMapper();
     public WebClient.ResponseSpec createWebClient(String baseUrl, String url) {

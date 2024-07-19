@@ -6,14 +6,12 @@ import com.example.reactmapping.domain.lol.util.LoLApiUtil;
 import com.example.reactmapping.global.norm.LOL;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class GetSummonerInfoWithApi {
     private final DataUtil dataUtil;
@@ -42,17 +40,6 @@ public class GetSummonerInfoWithApi {
         double winRate = calculateWinRate(win, loss);
         return new BasicInfo(jsonResponse.get("leagueId").asText(),jsonResponse.get("tier").asText(),dataUtil.convertRomanToArabic(jsonResponse.get("rank").asText())
         ,Long.valueOf(jsonResponse.get("leaguePoints").asText()),win,loss,winRate);
-//        return SummonerInfo.builder()
-////                .leagueId(jsonResponse.get("leagueId").asText())
-////                .tier(jsonResponse.get("tier").asText())
-////                .tierRank(dataUtil.convertRomanToArabic(jsonResponse.get("rank").asText()))
-//                .summonerTag(tag)
-////                .leaguePoints(Long.valueOf(jsonResponse.get("leaguePoints").asText()))
-//                .matchList(new ArrayList<>())
-////                .totalWins(win)
-////                .totalLosses(loss)
-////                .totalAvgOfWin(winRate)
-//                .build();
     }
 
     private double calculateWinRate(long wins, long losses) {

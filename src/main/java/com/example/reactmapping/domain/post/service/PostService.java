@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class PostService {
     private final PostRepository postRepository;
     private final MemberRepository memberRepository;
-    private final ImageCreateService imgService;
+    private final ImageCreateService imageCreateService;
     private final PostCommentRepository postCommentRepository;
 
     public void savePost(PostDto postDto) throws IOException {
@@ -45,8 +45,8 @@ public class PostService {
                 .member(findMember)
                 .createTime(LocalDateTime.now())
                 .build();
-        if (postDto.getServerImg() != null) {
-            String imageUrl = imgService.createImg(postDto.getServerImg());
+        if (postDto.getServerImage() != null) {
+            String imageUrl = imageCreateService.createImage(postDto.getServerImage());
             post = post.toBuilder().imageUrl(imageUrl).build();
         }
         postRepository.save(post);

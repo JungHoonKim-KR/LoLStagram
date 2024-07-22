@@ -3,7 +3,7 @@ import com.example.reactmapping.domain.member.dto.LoginRequestDto;
 import com.example.reactmapping.domain.member.dto.LoginResponseDto;
 import com.example.reactmapping.global.norm.LOL;
 import com.example.reactmapping.global.norm.Token;
-import com.example.reactmapping.domain.member.service.AuthService;
+import com.example.reactmapping.domain.member.service.LoginService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/login")
 @RequiredArgsConstructor
 public class LoginController {
-    private final AuthService authService;
+    private final LoginService authService;
     @Operation(summary = "로그인")
     @PostMapping("/normal")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto, HttpServletResponse httpServletResponse

@@ -22,7 +22,7 @@ public class PostController {
     @PostMapping("/write/post")
     public void writePost(@RequestPart("postDto") PostDto postDto, @RequestPart(name = "image", required = false)MultipartFile image) throws IOException {
         if(image!=null)
-            postDto = postDto.toBuilder().serverImg(image).build();
+            postDto = postDto.toBuilder().serverImage(image).build();
         postService.savePost(postDto);
     }
     @GetMapping("/postList")

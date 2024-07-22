@@ -8,10 +8,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class SearchSummonerService {
+public class GetSummonerInfoService {
     private final SummonerInfoService summonerInfoService ;
     private final CreateSummonerInfoService createSummonerInfoService;
-    public SummonerInfo searchSummonerInfo(SummonerNameAndTagDto summonerNameAndTagDto){
+    public SummonerInfo searchOrCreateSummoner(SummonerNameAndTagDto summonerNameAndTagDto){
         Optional<SummonerInfo> summonerInfoOptional  = summonerInfoService.findSummonerInfoBySummonerNameAndTag(summonerNameAndTagDto);
         return summonerInfoOptional.orElseGet(() -> createSummonerInfoService.createSummonerInfo(summonerNameAndTagDto.getSummonerName(), summonerNameAndTagDto.getSummonerTag()));
     }

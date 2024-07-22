@@ -19,7 +19,7 @@ public class PostDto {
     private Long postId;
     private String title;
     private String content;
-    private MultipartFile serverImg;
+    private MultipartFile serverImage;
     private String frontImage;
     private Long memberId;
     private String memberName;

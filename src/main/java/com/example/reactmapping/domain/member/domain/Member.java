@@ -43,12 +43,15 @@ public class Member {
     private SummonerInfo summonerInfo;
 
 
+    @Setter
     @Schema(description = "프로필 사진")
     @Nullable
-    private String profileImg;
+    private String profileImage;
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
     private List<Post> postList = new ArrayList<>();
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<PostComment> commentList = new ArrayList<>();
+
+    ;
 
 }

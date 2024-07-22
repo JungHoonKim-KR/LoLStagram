@@ -29,10 +29,10 @@ public class Member {
     private String username;
     @Schema(description = "권한")
     private String role;
-    @Schema(description = "라이엇 닉네임")
-    private String riotIdGameName;
-    @Schema(description = "라이엇 태그")
-    private String riotIdTagline;
+//    @Schema(description = "라이엇 닉네임")
+//    private String riotIdGameName;
+//    @Schema(description = "라이엇 태그")
+//    private String riotIdTagline;
     // member와 summonerInfo는 특이한 구조임
     // summonerInfo는 여러 member와 연관될 수 있지만 조회는 하지 않음.
     // 즉 member만 summonerInfo를 조회하기 때문에 cascade 설정을 연관관계의 주인인 member에 하게 됐음.

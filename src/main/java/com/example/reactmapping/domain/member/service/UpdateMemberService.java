@@ -17,8 +17,6 @@ public class UpdateMemberService {
         Member member = memberService.findMemberById(profileUpdateDto.getId()).get();
         SummonerInfo summonerInfo = searchSummonerService.searchOrCreateSummoner(new SummonerNameAndTagDto(profileUpdateDto.getSummonerName(), profileUpdateDto.getSummonerTag()));
         member = member.toBuilder()
-                .riotIdGameName(profileUpdateDto.getSummonerName())
-                .riotIdTagline(profileUpdateDto.getSummonerTag())
                 .summonerInfo(summonerInfo)
                 .build();
         memberService.save(member);

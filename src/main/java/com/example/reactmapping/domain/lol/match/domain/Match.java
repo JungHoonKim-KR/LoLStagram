@@ -4,10 +4,7 @@ import com.example.reactmapping.StringListConverter;
 import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.domain.Persistable;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,6 +32,7 @@ public class Match implements Persistable<String> {
     @Convert(converter = StringListConverter.class)
     private List<Integer> summonerSpellList;
     private String result;
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "summoner_id")
     @JsonBackReference

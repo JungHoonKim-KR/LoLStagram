@@ -43,8 +43,6 @@ public class JoinService {
                 .password(bCryptPasswordEncoder.encode(dto.getPassword()))
                 .username(dto.getUsername())
                 .role("ROLE_MEMBER")
-                .riotIdGameName(dto.getSummonerName())
-                .riotIdTagline(dto.getSummonerTag())
                 .summonerInfo(summonerInfo)
                 .build();
     }

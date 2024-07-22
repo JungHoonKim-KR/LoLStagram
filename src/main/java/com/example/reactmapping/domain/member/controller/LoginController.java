@@ -37,7 +37,4 @@ public class LoginController {
         log.info("로그인 완료");
         return ResponseEntity.ok().body(responseDto);
     }
-
-
-
 }

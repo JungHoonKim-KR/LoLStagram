@@ -6,6 +6,7 @@ import com.example.reactmapping.domain.member.service.JoinService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class JoinController {
     private final JoinService joinService;
     @Operation(summary = "회원가입", description = "새로운 회원 등록")
@@ -23,6 +25,7 @@ public class JoinController {
             , @RequestPart(name ="image", required = false) MultipartFile image) throws IOException {
         dto.setImage(image);
         Member member = joinService.join(dto);
+        log.info("회원가입 완료");
         return ResponseEntity.ok().body(member);
     }
 }

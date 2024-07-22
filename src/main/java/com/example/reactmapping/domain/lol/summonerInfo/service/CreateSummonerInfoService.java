@@ -12,6 +12,7 @@ import com.example.reactmapping.domain.lol.summonerInfo.util.SummonerUtil;
 import com.example.reactmapping.domain.lol.match.domain.Match;
 import com.example.reactmapping.global.norm.LOL;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CreateSummonerInfoService {
     private final CreateMatchService createMatchService;
     private final GetMatchService getMatchService;
@@ -46,7 +48,7 @@ public class CreateSummonerInfoService {
         SummonerInfo summonerInfo = new SummonerInfo(summonerId, summonerName, summonerTag, puuId, summonerBasic, recentRecord, matchList, mostChampions);
 
         for(Match match : matchList) {
-            summonerInfo.addMatch(match);
+            match.setSummonerInfo(summonerInfo);
         }
         summonerInfoService.saveSummonerInfo(summonerInfo);
         return summonerInfo;

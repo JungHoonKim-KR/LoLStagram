@@ -2,7 +2,6 @@ package com.example.reactmapping.domain.member.service;
 
 import com.example.reactmapping.domain.lol.match.dto.MatchDto;
 import com.example.reactmapping.domain.lol.match.service.GetMatchService;
-import com.example.reactmapping.domain.lol.summonerInfo.service.CreateSummonerInfoService;
 import com.example.reactmapping.domain.lol.summonerInfo.service.SummonerInfoService;
 import com.example.reactmapping.global.security.jwt.JwtService;
 import com.example.reactmapping.global.security.jwt.JwtUtil;
@@ -15,7 +14,6 @@ import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerInfoDto;
 import com.example.reactmapping.global.exception.AppException;
 import com.example.reactmapping.global.exception.ErrorCode;
 import com.example.reactmapping.global.norm.Token;
-import com.example.reactmapping.domain.Image.service.ImageCreateService;
 import com.example.reactmapping.global.cookie.CookieUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,7 +24,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,39 +31,14 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
-public class AuthService {
+public class LoginService {
     private final MemberRepository memberRepository;
     private final SummonerInfoService summonerInfoRepositoryService;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
-    private final ImageCreateService imgService;
     private final JwtUtil jwtUtil;
     private final CookieUtil cookieUtil;
-    private final CreateSummonerInfoService createSummonerInfoService;
     private final GetMatchService getMatchService;
-    public Member join(JoinDTO dto) throws IOException {
-        // 회원 아이디가 이미 존재하는지
-        if (memberRepository.findMemberByEmailId(dto.getEmailId()).isPresent()) {
-            throw new AppException(ErrorCode.DUPLICATED, dto.getEmailId() + "는 이미 존재합니다.");
-        }
-        SummonerInfo summonerInfo = createSummonerInfoService.createSummonerInfo(dto.getSummonerName(), dto.getSummonerTag());
-        Member member = Member.builder()
-                .emailId(dto.getEmailId())
-                .password(bCryptPasswordEncoder.encode(dto.getPassword()))
-                .username(dto.getUsername())
-                .role("ROLE_MEMBER")
-                .riotIdGameName(dto.getSummonerName())
-                .riotIdTagline(dto.getSummonerTag())
-                .summonerInfo(summonerInfo)
-                .build();
-
-        if(dto.getImg() != null) {
-            String imageUrl = imgService.createImg(dto.getImg());
-            member = member.toBuilder().profileImg(imageUrl).build();
-        }
-        memberRepository.save(member);
-        return member;
-    }
 
     public LoginResponseDto login(HttpServletResponse response, String requestEmail, String requestPassword,
                                   Pageable pageable, String type) throws JsonProcessingException {
@@ -90,7 +62,6 @@ public class AuthService {
         return summonerInfoRepositoryService.findSummonerInfoById(member.getSummonerInfo().getSummonerId());
     }
 
-
     private void verifyPassword(String requestPassword, Member member) {
         if (!bCryptPasswordEncoder.matches(requestPassword, member.getPassword()))
             throw new AppException(ErrorCode.ACCESS_ERROR, "비밀번호가 일치하지 않습니다.");
@@ -107,27 +78,15 @@ public class AuthService {
     }
 
     private LoginResponseDto getLoginResponseDto(Member member, String accessToken, SummonerInfo summonerInfo, List<MatchDto> matchList) {
-        MemberDto memberDto = new MemberDto(member.getId(), member.getEmailId(), member.getUsername(), member.getProfileImg());
+        MemberDto memberDto = new MemberDto(member.getId(), member.getEmailId(), member.getUsername(), member.getProfileImage());
 
-        LoginResponseDto loginResponseDto = LoginResponseDto.builder()
+        return LoginResponseDto.builder()
                 .accessToken(accessToken)
                 .username(member.getUsername())
                 .summonerInfoDto(SummonerInfoDto.entityToDto(summonerInfo))
                 .memberDto(memberDto)
                 .MatchDtoList(matchList)
                 .build();
-        return loginResponseDto;
-    }
-
-
-    public void updateProfile(ProfileUpdateDto profileUpdateDto){
-        Member member = memberRepository.findMemberById(profileUpdateDto.getId()).get();
-        member = member.toBuilder()
-                .riotIdGameName(profileUpdateDto.getSummonerName())
-                .riotIdTagline(profileUpdateDto.getSummonerTag())
-                .summonerInfo(member.getSummonerInfo())
-                .build();
-        memberRepository.save(member);
     }
 
 }

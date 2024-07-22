@@ -11,5 +11,5 @@ public class MemberDto {
     private String emailId;
     private String username;
     @Nullable
-    private String profileImg;
+    private String profileImage;
 }

@@ -4,7 +4,7 @@ import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerInfoDto;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDto;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.UpdateRequestDto;
-import com.example.reactmapping.domain.lol.summonerInfo.service.SearchSummonerService;
+import com.example.reactmapping.domain.lol.summonerInfo.service.GetSummonerInfoService;
 import com.example.reactmapping.domain.lol.summonerInfo.service.SummonerInfoService;
 import com.example.reactmapping.domain.lol.summonerInfo.service.UpdateSummonerInfo;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class SummonerController {
     private final UpdateSummonerInfo updateSummonerInfo;
     private final SummonerInfoService summonerInfoService;
-    private final SearchSummonerService summonerService;
+    private final GetSummonerInfoService summonerService;
 
     @PutMapping("/update")
     public SummonerInfoDto update(@RequestBody UpdateRequestDto updateRequestDto) throws JsonProcessingException {
@@ -28,7 +28,7 @@ public class SummonerController {
 
     @PostMapping("/search")
     public SummonerInfoDto search(@RequestBody SummonerNameAndTagDto summonerNameAndTagDto){
-        return SummonerInfoDto.entityToDto(summonerService.searchSummonerInfo(summonerNameAndTagDto));
+        return SummonerInfoDto.entityToDto(summonerService.searchOrCreateSummoner(summonerNameAndTagDto));
     }
 
 }

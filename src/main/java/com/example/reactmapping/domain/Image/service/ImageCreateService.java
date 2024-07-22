@@ -24,7 +24,7 @@ public class ImageCreateService {
     private final S3Config s3Config;
     private static final String EMPTY_STRING = "";
 
-    public String createImg(MultipartFile file) throws IOException {
+    public String createImage(MultipartFile file) throws IOException {
         if (isFilenameEmpty(file)) {
             return null;
         }

@@ -20,7 +20,6 @@ public class StringListConverter implements AttributeConverter<List<String>,Stri
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public List<String> convertToEntityAttribute(String dbData) {
         try{

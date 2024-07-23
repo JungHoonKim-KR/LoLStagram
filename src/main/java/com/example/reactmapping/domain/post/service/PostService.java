@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 @Transactional
 public class PostService {
     private final PostRepository postRepository;

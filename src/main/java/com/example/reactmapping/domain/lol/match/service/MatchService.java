@@ -17,11 +17,11 @@ import java.util.List;
 public class MatchService {
     private final MatchRepository matchRepository;
 
-    public void updateAll(String matchId, Long gameStartTimestamp, Long kills, Long deaths,
-                          Long assists, String kda, String championName, Long mainRune,
-                          Long subRune, List<Integer> itemList, List<Integer> summonerSpellList,
-                          String result, String originMatchId) {
-        matchRepository.updateAll(matchId, gameStartTimestamp, kills, deaths, assists, kda,
+    public void update(String matchId, Long gameStartTimestamp, Long kills, Long deaths,
+                       Long assists, String kda, String championName, Long mainRune,
+                       Long subRune, List<Integer> itemList, List<Integer> summonerSpellList,
+                       String result, String originMatchId) {
+        matchRepository.update(matchId, gameStartTimestamp, kills, deaths, assists, kda,
                 championName, mainRune, subRune, itemList, summonerSpellList,
                 result, originMatchId);
     }

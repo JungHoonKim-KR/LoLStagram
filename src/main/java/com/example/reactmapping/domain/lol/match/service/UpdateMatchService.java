@@ -28,9 +28,8 @@ public class UpdateMatchService {
 
             // 기존 매치 정보 업데이트 (in-place 업데이트로 리스트 크기 유지)
             updatedMatchList.set(updateIndex, newMatch);
-
             // 데이터베이스 업데이트 호출
-            matchService.updateAll(newMatch.getMatchId(), newMatch.getGameStartTimestamp(), newMatch.getKills(),
+            matchService.update(newMatch.getMatchId(), newMatch.getGameStartTimestamp(), newMatch.getKills(),
                     newMatch.getDeaths(), newMatch.getAssists(), newMatch.getKda(), newMatch.getChampionName(),
                     newMatch.getMainRune(), newMatch.getSubRune(), newMatch.getItemList(),
                     newMatch.getSummonerSpellList(), newMatch.getResult(),

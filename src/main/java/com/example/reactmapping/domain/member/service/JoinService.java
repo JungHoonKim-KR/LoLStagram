@@ -26,24 +26,23 @@ public class JoinService {
             throw new AppException(ErrorCode.DUPLICATED, dto.getEmailId() + "는 이미 존재합니다.");
         }
         SummonerInfo summonerInfo = createSummonerInfoService.createSummonerInfo(dto.getSummonerName(), dto.getSummonerTag());
-
         Member member = createMember(dto, summonerInfo);
-
-        if(dto.getImage() != null) {
-            String imageUrl = imageCreateService.createImage(dto.getImage());
-            member.setProfileImage(imageUrl);
-        }
         memberService.save(member);
         return member;
     }
 
-    private Member createMember(JoinDTO dto, SummonerInfo summonerInfo) {
-        return Member.builder()
+    private Member createMember(JoinDTO dto, SummonerInfo summonerInfo) throws IOException {
+        Member member = Member.builder()
                 .emailId(dto.getEmailId())
                 .password(bCryptPasswordEncoder.encode(dto.getPassword()))
                 .username(dto.getUsername())
                 .role("ROLE_MEMBER")
                 .summonerInfo(summonerInfo)
                 .build();
+        if(dto.getImage() != null) {
+            String imageUrl = imageCreateService.createImage(dto.getImage());
+            member.setProfileImage(imageUrl);
+        }
+        return member;
     }
 }

@@ -2,10 +2,7 @@ package com.example.reactmapping.domain.post.domain;
 
 import com.example.reactmapping.domain.member.domain.Member;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,6 +24,7 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
+    @Setter
     private String imageUrl;
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostComment> commentList = new ArrayList<>();
@@ -35,4 +33,6 @@ public class Post {
         this.member = member;
         member.getPostList().add(this);
     }
+
+
 }

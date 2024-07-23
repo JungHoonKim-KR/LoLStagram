@@ -35,19 +35,19 @@ public interface MatchRepository extends JpaRepository<Match,String> {
             "s.summonerSpellList = :summonerSpellList, " +
             "s.result = :result " +
             "WHERE s.matchId = :originMatchId")
-    void updateAll(@Param("matchId") String matchId,
-                            @Param("gameStartTimestamp") Long gameStartTimestamp,
-                            @Param("kills") Long kills,
-                            @Param("deaths") Long deaths,
-                            @Param("assists") Long assists,
-                            @Param("kda") String kda,
-                            @Param("championName") String championName,
-                            @Param("mainRune") Long mainRune,
-                            @Param("subRune") Long subRune,
-                            @Param("itemList") List<Integer> itemList,
-                            @Param("summonerSpellList") List<Integer> summonerSpellList,
-                            @Param("result") String result,
-                            @Param("originMatchId") String originMatchId);
+    void update(@Param("matchId") String matchId,
+                @Param("gameStartTimestamp") Long gameStartTimestamp,
+                @Param("kills") Long kills,
+                @Param("deaths") Long deaths,
+                @Param("assists") Long assists,
+                @Param("kda") String kda,
+                @Param("championName") String championName,
+                @Param("mainRune") Long mainRune,
+                @Param("subRune") Long subRune,
+                @Param("itemList") List<Integer> itemList,
+                @Param("summonerSpellList") List<Integer> summonerSpellList,
+                @Param("result") String result,
+                @Param("originMatchId") String originMatchId);
 
 
 

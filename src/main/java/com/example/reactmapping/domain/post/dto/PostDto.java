@@ -1,17 +1,14 @@
 package com.example.reactmapping.domain.post.dto;
 
+import com.example.reactmapping.domain.member.domain.Member;
 import com.example.reactmapping.domain.post.domain.Post;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-@Getter
+@Data
 @Builder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,7 +22,7 @@ public class PostDto {
     private String memberName;
     private List<PostCommentDto> commentList;
     private Boolean isLast;
-
+    private Member member;
   public static PostDto entityToDto(Post post){
       List<PostCommentDto> postCommentDtos = post.getCommentList() != null
               ? post.getCommentList().stream().map(PostCommentDto::entityToDto).collect(Collectors.toList())

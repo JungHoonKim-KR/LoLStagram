@@ -14,7 +14,7 @@ public class UpdateMemberService {
     private final MemberService memberService;
     private final GetSummonerInfoService searchSummonerService;
     public void updateProfile(ProfileUpdateDto profileUpdateDto){
-        Member member = memberService.findMemberById(profileUpdateDto.getId()).get();
+        Member member = memberService.findMemberById(profileUpdateDto.getId());
         SummonerInfo summonerInfo = searchSummonerService.searchOrCreateSummoner(new SummonerNameAndTagDto(profileUpdateDto.getSummonerName(), profileUpdateDto.getSummonerTag()));
         member = member.toBuilder()
                 .summonerInfo(summonerInfo)

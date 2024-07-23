@@ -1,9 +1,14 @@
 package com.example.reactmapping.domain.post.controller;
 
-import com.example.reactmapping.domain.post.service.PostService;
+import com.example.reactmapping.domain.member.domain.Member;
+import com.example.reactmapping.domain.member.service.MemberService;
 import com.example.reactmapping.domain.post.dto.PostCommentDto;
 import com.example.reactmapping.domain.post.dto.PostDto;
 import com.example.reactmapping.domain.post.dto.PostResultDto;
+import com.example.reactmapping.domain.post.service.GetPostService;
+import com.example.reactmapping.domain.post.service.SavePostService;
+import com.example.reactmapping.global.exception.AppException;
+import com.example.reactmapping.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -19,22 +24,24 @@ import java.io.IOException;
 @RequestMapping("/post")
 @Slf4j
 public class PostController {
-    private final PostService postService;
+    private final SavePostService savePostService;
+    private final GetPostService getPostService;
+    private final MemberService memberService;
     @PostMapping("/write/post")
     public void writePost(@RequestPart("postDto") PostDto postDto, @RequestPart(name = "image", required = false)MultipartFile image) throws IOException {
         if(image!=null)
-            postDto = postDto.toBuilder().serverImage(image).build();
-        postService.savePost(postDto);
+            postDto.setServerImage(image);
+        savePostService.savePost(postDto);
         log.info("게시글 등록 완료");
     }
     @GetMapping("/postList")
     public PostResultDto getPostList(@PageableDefault(size = 3,direction = Sort.Direction.DESC)  Pageable pageable) {
         log.info("게시글 불러오기");
-        return postService.getPostList(pageable);
+        return getPostService.getPostList(pageable);
     }
     @PostMapping("/write/comment")
     public void writeComment(@RequestBody PostCommentDto commentDto){
-        postService.saveComment(commentDto);
+        savePostService.saveComment(commentDto);
         log.info("댓글 저장");
     }
 

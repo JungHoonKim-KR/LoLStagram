@@ -30,7 +30,6 @@ public class CompareMatchService {
         Integer gameCount = getGameCount(Match, targetMatchId);
         return Objects.requireNonNullElse(gameCount, LOL.gameCount);
     }
-
     private static @Nullable Integer getGameCount(List<Match> Match, String targetMatchId) {
         int result;
         if (!Match.isEmpty()) {
@@ -44,5 +43,4 @@ public class CompareMatchService {
         }
         return null;
     }
-
 }

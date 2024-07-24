@@ -32,7 +32,4 @@ public class MatchService {
     public List<Match> findAllBySummonerId(String summonerId) {
            return matchRepository.findAllBySummonerId(summonerId);
     }
-    public void matchSaveAll(List<Match> MatchList){
-        matchRepository.saveAll(MatchList);
-    }
 }

@@ -1,6 +1,5 @@
 package com.example.reactmapping.domain.lol.match.service;
 
-import com.example.reactmapping.domain.lol.dto.CompareMatchDto;
 import com.example.reactmapping.domain.lol.match.domain.Match;
 import com.example.reactmapping.global.norm.LOL;
 import jakarta.annotation.Nullable;
@@ -25,19 +24,23 @@ public class CompareMatchService {
     private final MatchService matchService;
 
     public int getCountNewMatch(String puuId, String summonerId) {
-        String targetMatchId = getMatchService.getMatchIds(puuId, LOL.LastIndex, 1).get(0);
-        List<Match> Match = matchService.findAllBySummonerId(summonerId);
-        Integer gameCount = getGameCount(Match, targetMatchId);
+        log.info("gameCount start");
+        String targetMatchId = getMatchService.getMatchIdList(puuId, LOL.LastIndex, 1).get(0);
+        log.info("find match");
+        List<Match> matchList = matchService.findAllBySummonerId(summonerId);
+        log.info("cal gameCount");
+        Integer gameCount = getGameCount(matchList, targetMatchId);
         return Objects.requireNonNullElse(gameCount, LOL.gameCount);
     }
-    private static @Nullable Integer getGameCount(List<Match> Match, String targetMatchId) {
+    private static @Nullable Integer getGameCount(List<Match> matchList, String targetMatchId) {
         int result;
-        if (!Match.isEmpty()) {
-            result = IntStream.range(0, Match.size())
-                    .filter(i -> targetMatchId.equals(Match.get(i).getMatchId()))
+        if (!matchList.isEmpty()) {
+            result = IntStream.range(0, matchList.size())
+                    .filter(i -> targetMatchId.equals(matchList.get(i).getMatchId()))
                     .findFirst()
                     .orElse(-1);  // 찾지 못한 경우 -1 반환
             if (result != -1) {
+                log.info(String.valueOf(LOL.gameCount - (result + 1)));
                 return LOL.gameCount - (result + 1);
             }
         }

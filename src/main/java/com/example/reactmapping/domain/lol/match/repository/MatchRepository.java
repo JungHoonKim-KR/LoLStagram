@@ -20,7 +20,7 @@ public interface MatchRepository extends JpaRepository<Match,String> {
 
 
     @Modifying
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+//    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Query("update Match s SET " +
             "s.matchId = :matchId, " +
             "s.gameStartTimestamp = :gameStartTimestamp, " +

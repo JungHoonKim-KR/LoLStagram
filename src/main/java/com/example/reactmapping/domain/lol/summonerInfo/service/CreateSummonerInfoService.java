@@ -35,7 +35,7 @@ public class CreateSummonerInfoService {
         String summonerId = getSummonerInfoWithApi.getSummonerId(puuId);
         BasicInfo summonerBasic = getSummonerInfoWithApi.getSummonerBasic(summonerId, summonerTag);
         List<Match> matchList = new LinkedList<>();
-        List<String> matchIds = getMatchService.getMatchIds(puuId, 0, LOL.gameCount);
+        List<String> matchIds = getMatchService.getMatchIdList(puuId, 0, LOL.gameCount);
 
         for (String matchId : matchIds) {
             Match match = createMatchService.createMatch(matchId, summonerName, summonerTag);

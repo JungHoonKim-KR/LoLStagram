@@ -17,6 +17,8 @@ import java.util.List;
 @Table(name = "matches")
 public class Match implements Persistable<String> {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String matchId;
     private Long gameStartTimestamp;
     private Long kills;
@@ -32,6 +34,7 @@ public class Match implements Persistable<String> {
     @Convert(converter = StringListConverter.class)
     private List<Integer> summonerSpellList;
     private String result;
+
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "summoner_id")

@@ -33,14 +33,16 @@ public class UpdateSummonerInfo {
     private final SummonerInfoService summonerInfoService;
     public SummonerInfo getUpdatedSummonerInfo(SummonerInfo summonerInfo){
         updateSummonerInfo(summonerInfo);
+        log.info("saveSummonerInfo");
         summonerInfoService.saveSummonerInfo(summonerInfo);
         return summonerInfo;
     }
     private void updateSummonerInfo(SummonerInfo summonerInfo) {
         int newGameCount = getNewGameCount(summonerInfo);
         if(newGameCount != LOL.Up_To_Date){
-            List<String> matchIds = getMatchService.getMatchIds(summonerInfo.getPuuId(), 0, newGameCount);
+            List<String> matchIds = getMatchService.getMatchIdList(summonerInfo.getPuuId(), 0, newGameCount);
             List<Match> newMatchList = getNewMatchList(summonerInfo, matchIds);
+            log.info("updateBasicInfo");
             summonerInfo.updateBasicInfo(getSummonerInfoWithApi.getSummonerBasic(summonerInfo.getSummonerId(), summonerInfo.getSummonerTag()));
             updateMatchService.updateMatches(summonerInfo,newGameCount, newMatchList);
             updateMostChampionList(summonerInfo);
@@ -54,6 +56,7 @@ public class UpdateSummonerInfo {
 
     private List<Match> getNewMatchList(SummonerInfo summonerInfo, List<String> matchIds) {
         List<Match> newMatchList = new ArrayList<>();
+        log.info("getNewMatchList");
         for(String matchId : matchIds){
             newMatchList.add(createMatchService.createMatch(matchId, summonerInfo.getSummonerName(), summonerInfo.getSummonerTag()));
         }
@@ -63,10 +66,13 @@ public class UpdateSummonerInfo {
         return compareMatchService.getCountNewMatch(summonerInfo.getPuuId(), summonerInfo.getSummonerId());
     }
     private void updateRecentRecord(SummonerInfo summonerInfo){
+        log.info("updateRecentRecord");
          summonerInfo.updateRecentRecord(summonerUtil.createRecentRecord(summonerInfo.getMatchList()));
     }
     private void updateMostChampionList(SummonerInfo summonerInfo) {
+        log.info("calMostChamp");
         List<MostChampion> mostChampionList = calcMostChampion.calcMostChampion(summonerInfo.getMatchList());
+        log.info("mapping mostChamp");
         summonerInfo.updateMostChampion(mostChampionList);
     }
 }

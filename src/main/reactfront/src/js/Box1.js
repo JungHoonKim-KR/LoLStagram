@@ -52,14 +52,13 @@ const Box1 = () => {
     }
 
     const handleSearch = async () => {
-        setIsSearchLoading(true)
         const name = summonerNameSearch.current.value.trim()
         const tag = summonerTagSearch.current.value.trim()
         if (!name || !tag) {
             alert('모든 필드를 입력해주세요.');
-
         } else {
             try {
+                setIsSearchLoading(true)
                 const result = await axios.post('/summoner/search', {
                     summonerName: name,
                     summonerTag: tag,
@@ -92,6 +91,7 @@ const Box1 = () => {
             return;
         } else {
             try {
+                setIsSearchLoading(true)
                 await axios.put('/profile/update',
                     {
                         id: memberInfo.id,
@@ -122,6 +122,7 @@ const Box1 = () => {
             return;
         } else {
             try {
+                setIsSearchLoading(true)
                 const formData = new FormData()
                 formData.append("postDto", new Blob([JSON.stringify({
                     title: title.trim(),

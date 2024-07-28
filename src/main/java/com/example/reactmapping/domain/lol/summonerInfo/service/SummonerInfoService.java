@@ -26,6 +26,7 @@ public class SummonerInfoService {
         return summonerInfoRepository.findBySummonerId(summonerId).orElseThrow(() ->new AppException(ErrorCode.NOTFOUND,"존재하지 않는 소환사입니다."));
     }
     public void saveSummonerInfo(SummonerInfo summonerInfo) {
+        log.info("saveSummonerInfo");
         summonerInfoRepository.save(summonerInfo);
     }
 }

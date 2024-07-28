@@ -33,7 +33,6 @@ public class UpdateSummonerInfo {
     private final SummonerInfoService summonerInfoService;
     public SummonerInfo getUpdatedSummonerInfo(SummonerInfo summonerInfo){
         updateSummonerInfo(summonerInfo);
-        log.info("saveSummonerInfo");
         summonerInfoService.saveSummonerInfo(summonerInfo);
         return summonerInfo;
     }
@@ -45,12 +44,10 @@ public class UpdateSummonerInfo {
             log.info("updateBasicInfo");
             summonerInfo.updateBasicInfo(getSummonerInfoWithApi.getSummonerBasic(summonerInfo.getSummonerId(), summonerInfo.getSummonerTag()));
             updateMatchService.updateMatches(summonerInfo,newGameCount, newMatchList);
+            log.info("updateSummonerInfo : "+ summonerInfo.getMatchList().get(3).getMatchId());
+
             updateMostChampionList(summonerInfo);
             updateRecentRecord(summonerInfo);
-
-            for(Match match : newMatchList){
-                summonerInfo.addMatch(match);
-            }
         }
     }
 

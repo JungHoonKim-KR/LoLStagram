@@ -5,6 +5,7 @@ import com.example.reactmapping.domain.lol.util.DataUtil;
 import com.example.reactmapping.global.norm.LOL;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.stream.IntStream;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CreateMatchService {
     private final GetMatchService getMatchService;
 
@@ -34,7 +36,6 @@ public class CreateMatchService {
         }
         return matchBuilder.build();
     }
-
     private String determineGameType(JsonNode matchInfo) {
         String gameMode = matchInfo.path("gameMode").asText().replace("\"", "");
         switch (gameMode) {

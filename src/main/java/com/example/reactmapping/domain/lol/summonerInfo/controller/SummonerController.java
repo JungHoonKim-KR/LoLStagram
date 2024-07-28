@@ -25,6 +25,7 @@ public class SummonerController {
     public SummonerInfoDto update(@RequestBody UpdateRequestDto updateRequestDto) throws JsonProcessingException {
         SummonerInfo summonerInfoById = summonerInfoService.findSummonerInfoById(updateRequestDto.getSummonerId());
         SummonerInfo callSummonerInfoResponse = updateSummonerInfo.getUpdatedSummonerInfo(summonerInfoById);
+
         log.info("소환사 정보 업데이트 완료");
         return SummonerInfoDto.entityToDto(callSummonerInfoResponse);
     }

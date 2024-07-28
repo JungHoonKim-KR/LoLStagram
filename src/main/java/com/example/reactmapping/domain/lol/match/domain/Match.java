@@ -5,17 +5,17 @@ import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.domain.Persistable;
-import java.time.LocalDateTime;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @NoArgsConstructor
-@Getter
 @AllArgsConstructor
+@Getter
 @Builder(toBuilder = true)
 @Table(name = "matches")
-public class Match implements Persistable<String> {
+public class Match{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -41,24 +41,28 @@ public class Match implements Persistable<String> {
     @JsonBackReference
     private SummonerInfo summonerInfo;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createTime;
-    @PrePersist
-    protected void onCreate() {
-        createTime = LocalDateTime.now();
-    }
-    @Override
-    public boolean isNew() {
-        return createTime == null;
-    }
-
     public void updateSummonerInfo(SummonerInfo summonerInfo) {
         this.summonerInfo = summonerInfo;
     }
-    // ID 필드에 대한 getter
-    @Override
-    public String getId() {
-        return matchId;
+
+    public void updateMatch(Match newData) {
+        if (newData == null) {
+            return;  // 새 데이터가 null이면 업데이트를 수행하지 않습니다.
+        }
+        this.matchId = newData.matchId;
+        this.gameStartTimestamp = newData.gameStartTimestamp;
+        this.kills = newData.kills;
+        this.deaths = newData.deaths;
+        this.assists = newData.assists;
+        this.kda = newData.kda;
+        this.championName = newData.championName;
+        this.mainRune = newData.mainRune;
+        this.subRune = newData.subRune;
+        this.gameType = newData.gameType;
+        this.itemList = newData.itemList != null ? new ArrayList<>(newData.itemList) : null;
+        this.summonerSpellList = newData.summonerSpellList != null ? new ArrayList<>(newData.summonerSpellList) : null;
+        this.result = newData.result;
     }
+
 
 }

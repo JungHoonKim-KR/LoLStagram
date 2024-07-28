@@ -1,6 +1,7 @@
 package com.example.reactmapping.domain.lol.summonerInfo.dto;
 
 import com.example.reactmapping.domain.lol.dto.MostChampion;
+import com.example.reactmapping.domain.lol.match.domain.Match;
 import com.example.reactmapping.domain.lol.match.dto.MatchDto;
 import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
 import lombok.AllArgsConstructor;
@@ -35,6 +36,7 @@ public class SummonerInfoDto {
     public static SummonerInfoDto entityToDto(SummonerInfo summonerInfo) {
         //match를 페이징 처리 하려면 제거
         List<MatchDto> MatchDtoList = MatchDto.entityToDto(summonerInfo.getMatchList());
+
 
         return SummonerInfoDto.builder()
                 .summonerId(summonerInfo.getSummonerId())

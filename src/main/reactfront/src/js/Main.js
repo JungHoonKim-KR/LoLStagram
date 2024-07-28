@@ -4,7 +4,7 @@ import Box1 from './Box1';
 import Box3 from './Box3';
 import '../css/Main.css';
 import { useNavigate } from 'react-router-dom';
-import defaultImg from '../images/tierImage/CHALLENGER.png';
+import defaultImg from '../images/tier/CHALLENGER.png';
 import addImg from '../images/더보기.png';
 
 const Main = () => {

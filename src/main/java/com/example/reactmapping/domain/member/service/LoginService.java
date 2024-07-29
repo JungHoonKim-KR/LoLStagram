@@ -40,22 +40,20 @@ public class LoginService {
     private final CookieUtil cookieUtil;
     private final GetMatchService getMatchService;
 
-    public LoginResponseDto login(HttpServletResponse response, String requestEmail, String requestPassword,
-                                  Pageable pageable, String type) throws JsonProcessingException {
+    public LoginResponseDto login(HttpServletResponse response, String requestEmail, String requestPassword) throws JsonProcessingException {
         Member member = getMemberByEmail(requestEmail);
         verifyPassword(requestPassword, member);
         SummonerInfo summonerInfo = getSummonerInfo(member);
-        List<MatchDto> matchList = getMatchService.getMatchList(pageable, type,summonerInfo.getSummonerId()).getMatchDtoList();
         TokenDto tokenDto = jwtService.generateToken(requestEmail);
         response.addCookie(cookieUtil.createCookie(Token.TokenName.refreshToken,tokenDto.getRefreshToken()));
-        return getLoginResponseDto(member, tokenDto.getAccessToken(), summonerInfo, matchList);
+        return getLoginResponseDto(member, tokenDto.getAccessToken(), summonerInfo);
     }
 
     public LoginResponseDto socialLogin(String accessToken,Pageable pageable,String type){
         Member member = getMemberByEmail(jwtUtil.getUserEmail(accessToken));
         SummonerInfo summonerInfo = getSummonerInfo(member);
         List<MatchDto> matchList = getMatchService.getMatchList(pageable, type,summonerInfo.getSummonerId()).getMatchDtoList();
-        return getLoginResponseDto(member, accessToken, summonerInfo, matchList);
+        return getLoginResponseDto(member, accessToken, summonerInfo);
     }
 
     private SummonerInfo getSummonerInfo(Member member) {
@@ -77,7 +75,7 @@ public class LoginService {
         return member;
     }
 
-    private LoginResponseDto getLoginResponseDto(Member member, String accessToken, SummonerInfo summonerInfo, List<MatchDto> matchList) {
+    private LoginResponseDto getLoginResponseDto(Member member, String accessToken, SummonerInfo summonerInfo) {
         MemberDto memberDto = new MemberDto(member.getId(), member.getEmailId(), member.getUsername(), member.getProfileImage());
 
         return LoginResponseDto.builder()
@@ -85,7 +83,6 @@ public class LoginService {
                 .username(member.getUsername())
                 .summonerInfoDto(SummonerInfoDto.entityToDto(summonerInfo))
                 .memberDto(memberDto)
-                .MatchDtoList(matchList)
                 .build();
     }
 

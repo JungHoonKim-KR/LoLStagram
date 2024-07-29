@@ -292,7 +292,6 @@ const Box3 = (searchResult) => {
                                                     <img
                                                         src={imageCheck("item",item)}
                                                         alt={item}
-                                                        onError={(e) => e.target.src = require("../images/item/0.png")}  // 이미지 로드 실패 시 0.png로 대체
                                                     />
                                                 </li>
                                             ))}

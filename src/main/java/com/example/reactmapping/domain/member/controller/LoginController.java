@@ -23,10 +23,8 @@ public class LoginController {
     private final LoginService authService;
     @Operation(summary = "로그인")
     @PostMapping("/normal")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto, HttpServletResponse httpServletResponse
-            , @PageableDefault(size = 10, direction = Sort.Direction.DESC) Pageable pageable) throws JsonProcessingException {
-        LoginResponseDto responseDto = authService.login(httpServletResponse, dto.getEmailId(), dto.getPassword()
-                , pageable, dto.getType());
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto, HttpServletResponse httpServletResponse) throws JsonProcessingException {
+        LoginResponseDto responseDto = authService.login(httpServletResponse, dto.getEmailId(), dto.getPassword());
         log.info("로그인 완료");
         return ResponseEntity.ok().body(responseDto);
     }

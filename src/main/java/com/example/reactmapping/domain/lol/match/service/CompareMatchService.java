@@ -40,7 +40,7 @@ public class CompareMatchService {
                     .findFirst()
                     .orElse(-1);  // 찾지 못한 경우 -1 반환
             if (result != -1) {
-                log.info(String.valueOf(LOL.gameCount - (result + 1)));
+                log.info("새로운 게임 수 : {}",(LOL.gameCount - (result + 1)));
                 return LOL.gameCount - (result + 1);
             }
         }

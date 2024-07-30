@@ -85,11 +85,16 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private void isExpiredRefreshTokenTime(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
+        if (jwtUtil.isExpired(refreshToken)) {
+            log.info("refreshToken 만료");
+            throw new AppException(ErrorCode.TOKEN_EXPIRED, "토큰 만료");
+        }
         if (jwtService.findRefreshTokenBy(refreshToken).isPresent()) {
             regenerateAccessToken(request, response, jwtUtil.getUserEmail(refreshToken));
             log.info("{} 정상", Token.TokenName.refreshToken);
-        } else {
-            throw new AppException(ErrorCode.TOKEN_EXPIRED, "토큰 만료");
+        }
+        else{
+            throw new AppException(ErrorCode.NOTFOUND,"잘못된 토큰 정보입니다.");
         }
     }
 

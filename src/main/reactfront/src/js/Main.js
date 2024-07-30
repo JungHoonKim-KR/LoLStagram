@@ -41,12 +41,8 @@ const Main = () => {
             setPostList(prevState => [...prevState, ...newPosts]);
             setIsLast(res.data.isLast);
         } catch (error) {
-            if (error.response.data.errorCode === "TOKEN_EXPIRED") {
-                alert("토큰 만료. 로그인 화면으로 이동합니다.");
-                navigate("/");
-            } else {
-                alert(error.response.data.errorMessage);
-            }
+            alert(error.response.data.errorMessage)
+            navigate("/")
         }
     }, [token, navigate]);
 
@@ -104,17 +100,8 @@ const Main = () => {
                 setPostList(newPostList);
 
             } catch (error) {
-                console.error('댓글 추가 오류:', error);
-                if (error.response && error.response.data) {
-                    if (error.response.data.errorCode === "TOKEN_EXPIRED") {
-                        alert("토큰 만료. 로그인 화면으로 이동합니다.");
-                        navigate("/");
-                    } else {
-                        alert(error.response.data.errorMessage);
-                    }
-                } else {
-                    alert('댓글을 추가하는 중 오류가 발생했습니다.');
-                }
+                alert(error.response.data.errorMessage);
+                navigate("/");
             }
         } else {
             alert('댓글을 입력해 주세요');

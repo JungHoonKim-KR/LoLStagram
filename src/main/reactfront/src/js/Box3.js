@@ -19,7 +19,7 @@ const Box3 = (searchResult) => {
     const [token, setToken] = useState(localStorage.getItem('accessToken'));
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [page, setPage] = useState(1);
-    const [callType] = useState(null);
+    const [callType,setCallType] = useState(null);
     const [isLast, setIsLast] = useState(true);
     const [mouseOverId, setMouseOverId] = useState(null);
     const [objectId, setObjectId] = useState(null);
@@ -28,12 +28,12 @@ const Box3 = (searchResult) => {
     const runeList = [0,8100,8112,8128,9923,8126,8139,8143,8136,8120,8138,8135,8105,8106,8300,8351,8360,8369,8306,8304,8321,8313,8352,8345,8347,8410,8316,8000,8005,8021,8010,9101,9111,8009,9104,9105,9103,8014,8017,8299,8400,8437,8439,8465,8446,8463,8401,8429,8444,8473,8451,8453,8242,8200,8214,8229,8230,8224,8226,8275,8210,8234,8233,8237,8232,8236]
     const spellList = [0,21,30,39,1,12,4,32,7,13,31,11,2202,2201,55,3,54,14,6]
     const tierList = ["IRON", "BRONZE", "SILVER", "GOLD", "PLATINUM", "EMERALD", "DIAMOND", "MASTER", "GRANDMASTER", "CHALLENGER"]
-    const callMatch = useCallback(async (callType) => {
+
+    const callMatch = useCallback(async () => {
         try {
-            const promise = await axios.put('/match/update', {
+            const promise = await axios.put(`/match/update?page=${page}`, {
                 summonerId: summonerInfo.summonerId,
-                type: callType,
-                page: page
+                type: callType
             }, {
                 headers: { 'Authorization': `Bearer ${token}` },
                 withCredentials: true,
@@ -53,19 +53,20 @@ const Box3 = (searchResult) => {
             alert(error.response.data.errorMessage);
             navigate("/");
         }
-    }, [summonerInfo.summonerId, token, page, navigate]);
+    }, [summonerInfo.summonerId, token, page, callType]);
 
-    useEffect(() => {
-        if (page === 0 && matchList.length === 0 && callType) {
-            callMatch(callType);
-        }
-    }, [page, matchList, callType, callMatch]);
-
-    const updateMatch = async (callType) => {
+    const updateMatch = useCallback((type) => {
         setPage(0);
         setMatchList([]);
-        await callMatch(callType);
-    }
+        setCallType(type);
+    }, []);
+
+    useEffect(() => {
+        if (callType) {
+            console.log(`callType has been updated to: ${callType}`);
+            callMatch();
+        }
+    }, [callType]);  // callType 변경 감지
 
     useEffect(() => {
         setSummonerInfo(prevState => ({
@@ -73,12 +74,12 @@ const Box3 = (searchResult) => {
             matchList: matchList,
         }));
     }, [matchList]);
+
     useEffect(() => {
         if(type === "search"){
             let storedSummonerInfo = JSON.parse(localStorage.getItem("searchedSummonerInfo"));
             setSummonerInfo(storedSummonerInfo);
         }
-
     }, [type]);
     const updateHandler = async () => {
         setIsUpdateLoading(true)
@@ -148,7 +149,7 @@ const Box3 = (searchResult) => {
 
                 <div className="contentContainer">
                     <div className="tier-image">
-                       <img src={imageCheck("tier",summonerInfo.tier)} alt = "tier"/>
+                        <img src={imageCheck("tier",summonerInfo.tier)} alt = "tier"/>
 
                     </div>
                     <div className="summoner">

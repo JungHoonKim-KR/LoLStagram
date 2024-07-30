@@ -53,7 +53,7 @@ const Box3 = (searchResult) => {
             alert(error.response.data.errorMessage);
             navigate("/");
         }
-    }, [summonerInfo.summonerId, token, page, callType]);
+    }, [summonerInfo.summonerId, token, page, callType,navigate()]);
 
     const updateMatch = useCallback((type) => {
         setPage(0);
@@ -66,7 +66,7 @@ const Box3 = (searchResult) => {
             console.log(`callType has been updated to: ${callType}`);
             callMatch();
         }
-    }, [callType]);  // callType 변경 감지
+    }, [callType], callMatch());  // callType 변경 감지
 
     useEffect(() => {
         setSummonerInfo(prevState => ({

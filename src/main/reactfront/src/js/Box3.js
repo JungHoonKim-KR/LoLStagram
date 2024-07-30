@@ -51,12 +51,7 @@ const Box3 = (searchResult) => {
             }
         } catch (error) {
             console.error(error);
-            if (error.response?.data?.errorCode === "TOKEN_EXPIRED") {
-                alert("Token expired. Redirecting to login page.");
-                navigate("/");
-            } else {
-                alert(error.response?.data?.errorMessage);
-            }
+            alert(error.response.data.errorMessage)
         }
     }, [summonerInfo.summonerId, token, page, navigate]);
 
@@ -102,13 +97,8 @@ const Box3 = (searchResult) => {
             setSummonerInfo(promise.data)
             localStorage.setItem("mySummonerInfo", JSON.stringify(promise.data))
         }catch (error){
-            if(error.response.data.errorCode === "TOKEN_EXPIRED"){
-                alert("토큰 만료. 로그인 화면으로 이동합니다.")
-                navigate("/")
-            }
-            else{
-                alert(error.response.data.errorMessage)
-            }
+            alert(error.response.data.errorMessage)
+            navigate("/")
         }finally {
             setIsUpdateLoading(false)
         }

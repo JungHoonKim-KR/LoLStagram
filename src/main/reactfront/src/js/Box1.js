@@ -73,12 +73,8 @@ const Box1 = () => {
                 setSearchResult(result.data)
                 localStorage.setItem("searchedSummonerInfo", JSON.stringify(result.data))
             } catch (error) {
-                if (error.response.data.errorCode === "TOKEN_EXPIRED") {
-                    alert("토큰 만료. 로그인 화면으로 이동합니다.")
-                    navigate("/")
-                } else {
-                    alert(error.response.data.errorMessage)
-                }
+                alert(error.response.data.errorMessage)
+
             } finally {
                 setIsSearchLoading(false)
             }
@@ -106,12 +102,8 @@ const Box1 = () => {
                         navigate("/")
                     })
             } catch (error) {
-                if (error.response.data.errorCode === "TOKEN_EXPIRED") {
-                    alert("토큰 만료. 로그인 화면으로 이동합니다.")
-                    navigate("/")
-                } else {
-                    alert(error.response.data.errorMessage)
-                }
+                alert(error.response.data.errorMessage)
+                navigate("/")
             }
         }
     }
@@ -149,12 +141,8 @@ const Box1 = () => {
                 alert("작성 완료")
                 window.location.reload()
             } catch (error) {
-                if (error.response.data.errorCode === "TOKEN_EXPIRED") {
-                    alert("토큰 만료. 로그인 화면으로 이동합니다.")
-                    navigate("/")
-                } else {
-                    alert(error.response.data.errorMessage)
-                }
+                alert(error.response.data.errorMessage)
+                navigate("/")
             } finally {
                 setImg(null)
             }
@@ -175,12 +163,8 @@ const Box1 = () => {
                 alert("로그아웃 되었습니다.")
                 navigate("/")
             } catch (error) {
-                if (error.response && error.response.status === 403) {
-                    alert("토큰이 만료되었습니다. 로그인 페이지로 이동합니다.")
-                    navigate("/")
-                } else {
-                    alert(error.response.data.errorMessage)
-                }
+                alert(error.response.data.errorMessage)
+                navigate("/")
             }
         }
     }

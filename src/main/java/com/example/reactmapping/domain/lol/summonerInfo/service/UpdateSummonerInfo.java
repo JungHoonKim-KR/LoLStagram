@@ -43,7 +43,7 @@ public class UpdateSummonerInfo {
             List<Match> newMatchList = getNewMatchList(summonerInfo, matchIds);
             log.info("updateBasicInfo");
             summonerInfo.updateBasicInfo(getSummonerInfoWithApi.getSummonerBasic(summonerInfo.getSummonerId(), summonerInfo.getSummonerTag()));
-            updateMatchService.updateMatches(summonerInfo,newGameCount, newMatchList);
+            updateMatchService.updateMatches(summonerInfo, newMatchList);
             log.info("updateSummonerInfo : "+ summonerInfo.getMatchList().get(3).getMatchId());
 
             updateMostChampionList(summonerInfo);

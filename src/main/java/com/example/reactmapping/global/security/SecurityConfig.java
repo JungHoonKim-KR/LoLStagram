@@ -8,7 +8,7 @@ import com.example.reactmapping.oauth2.handler.OAuth2LoginFailureHandler;
 import com.example.reactmapping.oauth2.handler.OAuth2SuccessHandler;
 import com.example.reactmapping.oauth2.CustomOauth2UserService;
 import com.example.reactmapping.domain.member.service.LogoutService;
-import com.example.reactmapping.global.cookie.CookieUtil;
+import com.example.reactmapping.global.security.cookie.CookieUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

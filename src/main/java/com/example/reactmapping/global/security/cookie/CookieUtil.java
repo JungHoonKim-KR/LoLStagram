@@ -1,4 +1,4 @@
-package com.example.reactmapping.global.cookie;
+package com.example.reactmapping.global.security.cookie;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;

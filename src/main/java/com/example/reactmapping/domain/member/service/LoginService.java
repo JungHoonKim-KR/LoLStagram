@@ -14,7 +14,7 @@ import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerInfoDto;
 import com.example.reactmapping.global.exception.AppException;
 import com.example.reactmapping.global.exception.ErrorCode;
 import com.example.reactmapping.global.norm.Token;
-import com.example.reactmapping.global.cookie.CookieUtil;
+import com.example.reactmapping.global.security.cookie.CookieUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

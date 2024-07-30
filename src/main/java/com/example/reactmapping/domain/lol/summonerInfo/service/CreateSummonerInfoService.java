@@ -31,9 +31,11 @@ public class CreateSummonerInfoService {
     private final SummonerUtil summonerUtil;
     private final SummonerInfoService summonerInfoService;
     public SummonerInfo createSummonerInfo(String summonerName, String summonerTag) {
+        log.info("소환사 생성 시작");
         String puuId = getSummonerInfoWithApi.getPuuId(summonerName, summonerTag);
         String summonerId = getSummonerInfoWithApi.getSummonerId(puuId);
         BasicInfo summonerBasic = getSummonerInfoWithApi.getSummonerBasic(summonerId, summonerTag);
+
         List<Match> matchList = new LinkedList<>();
         List<String> matchIds = getMatchService.getMatchIdList(puuId, 0, LOL.gameCount);
 
@@ -51,6 +53,7 @@ public class CreateSummonerInfoService {
             match.setSummonerInfo(summonerInfo);
         }
         summonerInfoService.saveSummonerInfo(summonerInfo);
+        log.info("소환사 생성 완료");
         return summonerInfo;
     }
 

@@ -1,12 +1,13 @@
 package com.example.reactmapping.domain.lol.util;
 
+import com.example.reactmapping.global.exception.AppException;
+import com.example.reactmapping.global.exception.ErrorCode;
 import com.example.reactmapping.global.norm.LOL;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-
 
 @Component
 @Slf4j
@@ -26,7 +27,7 @@ public class LoLApiUtil {
         String jsonResponse = createWebClient(baseUrl, url)
                 .bodyToMono(String.class)
                 .onErrorResume(e -> {
-                    throw new RuntimeException("소환사 아이디를 찾을 수 없습니다. 라이엇 이름 또는 태그가 일치하지 않습니다.");
+                    throw new AppException(ErrorCode.NOTFOUND,"소환사 아이디를 찾을 수 없습니다. 라이엇 이름 또는 태그가 일치하지 않습니다.");
                 })
                 .block();
         try {

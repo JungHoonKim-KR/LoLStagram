@@ -31,8 +31,9 @@ public class GetSummonerInfoWithApi {
         JsonNode jsonResponse =loLApiUtil.getJsonResponse(LOL.BaseUrlKR
                 ,"/lol/league/v4/entries/by-summoner/" + summonerId
                 ,"소환사 아이디를 찾을 수 없습니다. 라이엇 이름 또는 태그가 일치하지 않습니다.");
-        if(!jsonResponse.isNull())
-            jsonResponse = jsonResponse.get(0);
+        if(jsonResponse.isEmpty())
+            return new BasicInfo("Unknown League","Unranked",0L,0L,0L,0L,0.0);
+        else jsonResponse = jsonResponse.get(0);
         return parseBasicInfo(jsonResponse, tag);
     }
 

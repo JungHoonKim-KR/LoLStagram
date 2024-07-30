@@ -1,14 +1,10 @@
 package com.example.reactmapping.domain.post.controller;
 
-import com.example.reactmapping.domain.member.domain.Member;
-import com.example.reactmapping.domain.member.service.MemberService;
 import com.example.reactmapping.domain.post.dto.PostCommentDto;
 import com.example.reactmapping.domain.post.dto.PostDto;
 import com.example.reactmapping.domain.post.dto.PostResultDto;
 import com.example.reactmapping.domain.post.service.GetPostService;
 import com.example.reactmapping.domain.post.service.SavePostService;
-import com.example.reactmapping.global.exception.AppException;
-import com.example.reactmapping.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +22,6 @@ import java.io.IOException;
 public class PostController {
     private final SavePostService savePostService;
     private final GetPostService getPostService;
-    private final MemberService memberService;
     @PostMapping("/write/post")
     public void writePost(@RequestPart("postDto") PostDto postDto, @RequestPart(name = "image", required = false)MultipartFile image) throws IOException {
         if(image!=null)

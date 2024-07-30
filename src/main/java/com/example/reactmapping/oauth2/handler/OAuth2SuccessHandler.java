@@ -6,7 +6,7 @@ import com.example.reactmapping.oauth2.OAuth2.CustomOAuth2User;
 import com.example.reactmapping.domain.member.domain.Member;
 import com.example.reactmapping.global.norm.Token;
 import com.example.reactmapping.domain.member.repository.MemberRepository;
-import com.example.reactmapping.global.cookie.CookieUtil;
+import com.example.reactmapping.global.security.cookie.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

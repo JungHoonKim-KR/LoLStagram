@@ -5,7 +5,7 @@ import com.example.reactmapping.global.exception.ErrorCode;
 import com.example.reactmapping.global.exception.ExceptionManager;
 import com.example.reactmapping.global.norm.Auth;
 import com.example.reactmapping.global.norm.Token;
-import com.example.reactmapping.global.cookie.CookieUtil;
+import com.example.reactmapping.global.security.cookie.CookieUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

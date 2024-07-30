@@ -2,7 +2,7 @@ package com.example.reactmapping.domain.member.service;
 
 import com.example.reactmapping.global.norm.Token;
 import com.example.reactmapping.global.security.jwt.RefreshTokenRepository;
-import com.example.reactmapping.global.cookie.CookieUtil;
+import com.example.reactmapping.global.security.cookie.CookieUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

@@ -35,7 +35,6 @@ const Main = () => {
                 comments: [],
                 newComment: '',
                 postReviewBtnColor: "rgb(199, 235, 245)",
-                likeCount: 0
             }));
 
             setPostList(prevState => [...prevState, ...newPosts]);
@@ -93,7 +92,6 @@ const Main = () => {
                     id: newPostList[index].comments.length,
                     author: member.username,
                     text: newPostList[index].newComment,
-                    liked: false
                 });
                 newPostList[index].newComment = '';
                 newPostList[index].postReviewBtnColor = "rgb(199, 235, 245)";
@@ -154,22 +152,11 @@ const Main = () => {
                             )}
                             <p>{post.content}</p>
                         </div>
-                        <div className="feed__icons">
-                            <div className="feed__icons-left">
-                                <button onClick={() => setPostList(postList.map((p, i) => i === postIndex ? { ...p, likeCount: p.likeCount + 1 } : p))} className="feed__icon-heart">좋아요</button>
-                                <div className="feed__icon-comment"></div>
-                            </div>
-                            <div className="feed__icon-bookmark"></div>
-                        </div>
-                        <div className="feed__likes">
-                            좋아요 <span className="feed__likes-count">{post.likeCount}</span> 개
-                        </div>
                         <div className="feed__comment-field">
                             <input type="text" placeholder="댓글달기..." className="feed__comment-input"
                                    onChange={(e) => handleInputChange(e, postIndex)} value={post.newComment}
                                    onClick={() => handleInputClick(postIndex)}
                             />
-
                             <div className="feed__comment-submit" onClick={() => uploadReview(postIndex)}
                                  style={{ color: post.postReviewBtnColor }}>게시
                             </div>
@@ -188,7 +175,6 @@ const Main = () => {
                             {post.comments.map((review, commentIndex) => (
                                 <li key={commentIndex} className="comment-text">
                                     <strong>{review.author} </strong>{review.text}
-                                    {/*<button onClick={() => pushHeart(postIndex, commentIndex)}>{review.liked ? '<3' : '<>'}</button>*/}
                                     <button onClick={() => removeComm(postIndex, commentIndex)}>삭제</button>
                                 </li>
                             ))}

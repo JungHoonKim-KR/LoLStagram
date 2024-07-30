@@ -50,8 +50,8 @@ const Box3 = (searchResult) => {
                 setIsLast(promise.data.isLast);
             }
         } catch (error) {
-            console.error(error);
-            alert(error.response.data.errorMessage)
+            alert(error.response.data.errorMessage);
+            navigate("/");
         }
     }, [summonerInfo.summonerId, token, page, navigate]);
 

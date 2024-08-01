@@ -145,6 +145,7 @@ const Main = () => {
                             <div className="feed__more-icon"></div>
                         </header>
                         <div className="feed__contents">
+                            <p>{post.title}</p>
                             {post.frontImage ? (
                                 <img src={post.frontImage} alt="Front of the post" />
                             ) : (

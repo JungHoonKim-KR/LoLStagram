@@ -43,7 +43,6 @@ const Box3 = (searchResult) => {
                 setToken(promise.headers.access);
             }
             if (promise.data.MatchDtoList.length === 0) {
-                console.log("No results found.");
             } else {
                 setPage(prevPage => prevPage + 1);
                 setMatchList(prevState => [...prevState, ...promise.data.MatchDtoList]);
@@ -63,7 +62,6 @@ const Box3 = (searchResult) => {
 
     useEffect(() => {
         if (callType) {
-            console.log(`callType has been updated to: ${callType}`);
             callMatch();
         }
     }, [callType,callMatch]);  // callType 변경 감지

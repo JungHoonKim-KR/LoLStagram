@@ -109,7 +109,7 @@ const Box1 = () => {
     }
 
     const handleWrite = async () => {
-        if (!title.trim() || !content.trim()) {
+        if (!title || !content || !title.trim() || !content.trim()) {
             alert("모든 필드를 입력해주세요.")
             return;
         } else {
@@ -125,7 +125,7 @@ const Box1 = () => {
                     type: 'application/json'
                 }))
                 formData.append("image", img)
-                await axios.post('/post/write',
+                await axios.post('/post/write/post',
                     formData,
                     {
                         headers: {'Authorization': `Bearer ${token}`},
@@ -141,7 +141,8 @@ const Box1 = () => {
                 alert("작성 완료")
                 window.location.reload()
             } catch (error) {
-                alert(error.response.data.errorMessage)
+                const errorMessage = error.response?.data?.errorMessage || "알 수 없는 오류 발생";
+                alert(errorMessage);
                 navigate("/")
             } finally {
                 setImg(null)

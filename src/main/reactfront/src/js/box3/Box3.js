@@ -59,7 +59,6 @@ const Box3 = (searchResult) => {
             if (promise.data.matchList.length === 0) {
                 setIsLast(true);
             } else {
-                console.log(page)
                 setPage((prevPage) => prevPage + 1);
                 setMatchList((prevState) => [...prevState, ...promise.data.matchList]);
                 setIsLast(promise.data.isLast);

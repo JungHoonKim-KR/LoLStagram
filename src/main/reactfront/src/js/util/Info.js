@@ -1,5 +1,5 @@
 import {useEffect, useState,useMemo} from "react";
-import "../css/Info.css"
+import "../../css/Info.css"
 function Info(Info) {
     const type = Info.type
     const id = Info.id

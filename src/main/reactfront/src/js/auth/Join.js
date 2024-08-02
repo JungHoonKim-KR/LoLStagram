@@ -1,7 +1,7 @@
 import React, {useEffect, useState,useMemo} from "react";
 import axios from "axios";
 import {useNavigate,useLocation} from 'react-router-dom';
-import "../css/Join.css"
+import "../../css/Join.css"
 
 function Join(){
     const location = useLocation();

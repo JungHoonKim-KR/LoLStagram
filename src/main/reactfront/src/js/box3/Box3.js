@@ -56,18 +56,24 @@ const Box3 = (searchResult) => {
                 localStorage.setItem("accessToken", promise.headers.access);
                 setToken(promise.headers.access);
             }
-            if (promise.data.MatchDtoList.length === 0) {
+            if (promise.data.matchList.length === 0) {
                 setIsLast(true);
             } else {
+                console.log(page)
                 setPage((prevPage) => prevPage + 1);
-                setMatchList((prevState) => [...prevState, ...promise.data.MatchDtoList]);
+                setMatchList((prevState) => [...prevState, ...promise.data.matchList]);
                 setIsLast(promise.data.isLast);
             }
         } catch (error) {
-            alert(error.response.data.errorMessage);
-            navigate("/");
+            const errorMessage =
+                error.response?.data?.errorMessage || "알 수 없는 오류 발생";
+            alert(errorMessage);
+            if (errorMessage === "토큰 만료") {
+                localStorage.clear();
+                navigate("/");
+            }
         }
-    }, [summonerInfo.summonerId, token, page, callType, navigate]);
+    }, [summonerInfo.summonerId,matchList, token,callType, page, navigate]);
 
     const updateMatch = useCallback((type) => {
         setPage(0);
@@ -76,10 +82,10 @@ const Box3 = (searchResult) => {
     }, []);
 
     useEffect(() => {
-        if (callType) {
+        if (callType !== null) {
             callMatch();
         }
-    }, [callType, callMatch]);
+    }, [callType]);
 
     useEffect(() => {
         setSummonerInfo((prevState) => ({
@@ -118,8 +124,13 @@ const Box3 = (searchResult) => {
 
             localStorage.setItem("mySummonerInfo", JSON.stringify(promise.data));
         } catch (error) {
-            alert(error.response.data.errorMessage);
-            navigate("/");
+            const errorMessage =
+                error.response?.data?.errorMessage || "알 수 없는 오류 발생";
+            alert(errorMessage);
+            if (errorMessage === "토큰 만료") {
+                localStorage.clear();
+                navigate("/");
+            }
         } finally {
             setIsUpdateLoading(false);
         }

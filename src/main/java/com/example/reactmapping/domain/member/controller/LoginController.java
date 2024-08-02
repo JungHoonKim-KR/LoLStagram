@@ -29,9 +29,8 @@ public class LoginController {
         return ResponseEntity.ok().body(responseDto);
     }
     @PostMapping("/oauthLogin")
-    public ResponseEntity<?> oauthLogin(@CookieValue(name = Token.TokenName.accessToken, defaultValue = "NO") String accessToken, HttpServletResponse httpServletResponse
-            , @PageableDefault(size = 10, direction = Sort.Direction.DESC) Pageable pageable) throws JsonProcessingException {
-        LoginResponseDto responseDto = authService.socialLogin(accessToken, pageable, LOL.GameType.솔랭.name());
+    public ResponseEntity<?> oauthLogin(@CookieValue(name = Token.TokenName.accessToken, defaultValue = "NO") String accessToken) throws JsonProcessingException {
+        LoginResponseDto responseDto = authService.socialLogin(accessToken);
         log.info("로그인 완료");
         return ResponseEntity.ok().body(responseDto);
     }

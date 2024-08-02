@@ -49,10 +49,9 @@ public class LoginService {
         return getLoginResponseDto(member, tokenDto.getAccessToken(), summonerInfo);
     }
 
-    public LoginResponseDto socialLogin(String accessToken,Pageable pageable,String type){
+    public LoginResponseDto socialLogin(String accessToken){
         Member member = getMemberByEmail(jwtUtil.getUserEmail(accessToken));
         SummonerInfo summonerInfo = getSummonerInfo(member);
-        List<MatchDto> matchList = getMatchService.getMatchList(pageable, type,summonerInfo.getSummonerId()).getMatchDtoList();
         return getLoginResponseDto(member, accessToken, summonerInfo);
     }
 

@@ -73,7 +73,7 @@ const Box3 = (searchResult) => {
                 navigate("/");
             }
         }
-    }, [summonerInfo.summonerId,matchList, token,callType, page, navigate]);
+    }, [summonerInfo.summonerId, token,callType, page, navigate]);
 
     const updateMatch = useCallback((type) => {
         setPage(0);

@@ -1,9 +1,9 @@
 import '../css/App.css';
 import {HashRouter  as Router, Route, Routes} from 'react-router-dom';
-import Login from "./Login"
-import Main from "./Main"
-import Join from "./Join"
-import Oauth from "./Oauth";
+import Login from "./auth/Login"
+import Main from "./main/Main"
+import Join from "./auth/Join"
+import Oauth from "./auth/Oauth";
 function App() {
 
 

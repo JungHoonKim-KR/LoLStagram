@@ -1,8 +1,8 @@
 import axios from "axios";
 import {useState} from "react";
 import {useNavigate} from 'react-router-dom';
-import "../css/Login.css"
-import google_btn from "../images/btn_login_google.png"
+import "../../css/Login.css"
+import google_btn from "../../images/btn_login_google.png"
 //서버로 인증을 요청할 uri (서버의 webSecurityConfig의 base uri와 일치해야 한다)
 export const API_BASE_URL = 'http://ec2-13-209-191-38.ap-northeast-2.compute.amazonaws.com:8080';
 
@@ -24,7 +24,7 @@ function Login() {
     const loginHandler = async (e) => {
         e.preventDefault()
         try {
-            const response = await axios.post('/auth/login', {
+            const response = await axios.post('/login/normal', {
                 emailId: emailId,
                 password: password,
                 type:"솔랭",

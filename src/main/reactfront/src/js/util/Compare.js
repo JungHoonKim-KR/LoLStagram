@@ -1,7 +1,7 @@
 import Modal from "react-modal";
-import "../css/Compare.css";
-import "../css/Box3.css";
-import upperImg from "../images/upper.png";
+import "../../css/Compare.css";
+import "../../css/Box3.css";
+import upperImg from "../../images/upper.png";
 import React, { useState } from "react";
 Modal.setAppElement('#root');
 
@@ -23,7 +23,7 @@ const Compare = ({ isOpen, onClose }) => {
     const tier1 = Tier[summoner1.tier];
     const tier2 = Tier[summoner2.tier];
     const defaultImage = "default";
-    const image = require.context("../images/",true);
+    const image = require.context("../../images/",true);
     const comparedTier = parseFloat((tier1 - tier2).toFixed(1));
     const comparedPoint = parseFloat((summoner1.leaguePoints - summoner2.leaguePoints).toFixed(1));
     const comparedKda = parseFloat((summoner1.totalKda - summoner2.totalKda).toFixed(1));

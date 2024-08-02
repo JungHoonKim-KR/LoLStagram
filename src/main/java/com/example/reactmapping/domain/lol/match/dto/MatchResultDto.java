@@ -10,7 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class MatchResultDto {
-    public List<MatchDto> MatchDtoList;
+    public List<MatchDto> matchList;
     public Boolean isLast;
     public String type;
 }

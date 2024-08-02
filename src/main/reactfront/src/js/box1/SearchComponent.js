@@ -23,7 +23,7 @@ const SearchComponent = ({
         if(!isSearchVisible){
             onSearchVisibility();
         }
-    },[isSearchVisible])
+    },[isSearchVisible,onSearchVisibility])
 
     const handleSearch = async () => {
 

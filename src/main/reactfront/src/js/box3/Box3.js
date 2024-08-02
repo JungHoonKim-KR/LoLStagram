@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState,useRef} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
 import "../../css/Box3.css";
@@ -12,7 +12,6 @@ const Box3 = (searchResult) => {
     const [summonerInfo, setSummonerInfo] = useState(
         JSON.parse(localStorage.getItem("mySummonerInfo"))
     );
-    const callMatchRef = useRef(null);
     const [matchList, setMatchList] = useState(summonerInfo.matchList || []);
     const [type] = useState(searchResult.type);
     const [token, setToken] = useState(localStorage.getItem("accessToken"));
@@ -82,12 +81,9 @@ const Box3 = (searchResult) => {
         setCallType(type);
     }, []);
 
-
-    // useRef로 callMatch를 관리하여 재생성을 방지
-    callMatchRef.current = callMatch;
-
     useEffect(() => {
         callMatch();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [callType]);
 
     useEffect(() => {

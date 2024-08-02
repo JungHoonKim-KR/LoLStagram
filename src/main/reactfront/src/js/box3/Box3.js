@@ -81,7 +81,8 @@ const Box3 = (searchResult) => {
     }, []);
 
     useEffect(() => {
-        callMatch();
+        if(callType !== null)
+            callMatch();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [callType]);
 

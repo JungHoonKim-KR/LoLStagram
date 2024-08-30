@@ -9,6 +9,7 @@ import com.example.reactmapping.oauth2.handler.OAuth2SuccessHandler;
 import com.example.reactmapping.oauth2.CustomOauth2UserService;
 import com.example.reactmapping.domain.member.service.LogoutService;
 import com.example.reactmapping.global.security.cookie.CookieUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -60,38 +62,34 @@ public class SecurityConfig {
                         //cors
                         .cors(cors -> cors.configurationSource(request -> {
                             var corsConfiguration = new CorsConfiguration();
-                                corsConfiguration.setAllowedOrigins(List.of("ec2-13-209-191-38.ap-northeast-2.compute.amazonaws.com:3000"));
-                                corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","DELETE"));
-                                corsConfiguration.setAllowCredentials(true);
+                            corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+                            corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","DELETE"));
+                            corsConfiguration.setAllowCredentials(true);
                             return corsConfiguration;
                         }))
-                        .csrf((auth) -> auth.disable())
-                        .httpBasic((auth)->auth.disable())
+                        .csrf(AbstractHttpConfigurer::disable)
+                        .httpBasic(AbstractHttpConfigurer::disable)
 
                         .headers((headers) -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
                         .sessionManagement((sessionManagement)->sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                         //접근 권한 관리
                         .authorizeHttpRequests(auth -> auth
-                                //react 라우터들에 대한 접근 권한 허용
-                                .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                                .requestMatchers("","/","/login/**","/join/**").permitAll()
+                                        //react 라우터들에 대한 접근 권한 허용
+                                        .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                                        .requestMatchers("","/","/login/**","/join/**").permitAll()
 //                                .requestMatchers("/admin").hasRole("ADMIN")
-                                .anyRequest().authenticated()
+                                        .anyRequest().authenticated()
                         )
                         //권한 불일치 -> login page로 이동
                         .formLogin(auth -> auth.disable())
                         .addFilterBefore(new JwtFilter(jwtUtil,jwtService,exceptionManager,cookieUtil), UsernamePasswordAuthenticationFilter.class)
-                        .logout(logoutConfig -> { logoutConfig
-                                .logoutUrl("/logout")
-                                .addLogoutHandler(logoutService)
+                        .logout(logout -> logout
                                 .logoutSuccessHandler((request, response, authentication) ->
-                                {SecurityContextHolder.clearContext();
-                                    response.setContentType("application/json");
-                                    response.setCharacterEncoding("UTF-8");
-                                    response.getWriter().write("{\"message\":\"로그아웃 합니다.\"}");
-                                });
-                        })
+                                {  response.setStatus(HttpServletResponse.SC_OK);
+                                }))
                         .oauth2Login(oauth -> oauth
+                                .loginPage("/login/normal")
+                                .permitAll()
                                 .successHandler(oAuth2SuccessHandler)
                                 .failureHandler(oAuth2LoginFailureHandler)
                                 .userInfoEndpoint((userInfoEndpointConfig -> userInfoEndpointConfig.userService(customOauth2UserService)))

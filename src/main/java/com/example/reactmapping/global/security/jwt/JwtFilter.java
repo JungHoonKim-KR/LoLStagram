@@ -5,6 +5,7 @@ import com.example.reactmapping.global.exception.ErrorCode;
 import com.example.reactmapping.global.exception.ExceptionManager;
 import com.example.reactmapping.global.norm.Auth;
 import com.example.reactmapping.global.norm.Token;
+import com.example.reactmapping.global.norm.URL;
 import com.example.reactmapping.global.security.cookie.CookieUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -17,6 +18,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -43,7 +45,6 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
-            String userEmail;
             String accessToken;
             String refreshToken;
             // 요청 세션 얻기
@@ -53,9 +54,12 @@ public class JwtFilter extends OncePerRequestFilter {
             // 1 : 인증정보가 있는가
             AuthenticationInfo authenticationInfo = extractAuthorizationInfo(request);
             if (authenticationInfo == null) {
-                log.error("{} is wrong", Auth.KeyWord.Authentication.name());
-                filterChain.doFilter(request, response);
-                return;
+                if(isPermittedPath(requestUrl)){
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+                log.error("{} is wrong", Auth.Authentication.name());
+                throw new AppException(ErrorCode.ACCESS_ERROR, "권한 없음");
             } else {
                 accessToken = authenticationInfo.accessToken;
                 refreshToken = authenticationInfo.refreshToken;
@@ -72,6 +76,15 @@ public class JwtFilter extends OncePerRequestFilter {
             handleException(response, e);
         }
     }
+
+    private Boolean isPermittedPath(String url){
+        AntPathMatcher pathMatcher = new AntPathMatcher();
+        for(String path : URL.Permit.PATHS){
+            if(pathMatcher.match(path,url)){return true;}
+        }
+        return false;
+    }
+
     private void isExpiredAccessTokenTime(HttpServletRequest request, HttpServletResponse response, String accessToken, String refreshToken) {
         if (jwtUtil.isExpired(accessToken)) {
             log.error("{} 만료", Token.TokenName.accessToken);
@@ -89,7 +102,7 @@ public class JwtFilter extends OncePerRequestFilter {
             log.info("refreshToken 만료");
             throw new AppException(ErrorCode.TOKEN_EXPIRED, "토큰 만료");
         }
-        if (jwtService.findRefreshTokenBy(refreshToken).isPresent()) {
+        if (jwtService.findToken(refreshToken,Token.TokenType.REFRESH.name()).isPresent()) {
             regenerateAccessToken(request, response, jwtUtil.getUserEmail(refreshToken));
             log.info("{} 정상", Token.TokenName.refreshToken);
         }
@@ -105,8 +118,8 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private AuthenticationInfo extractAuthorizationInfo(HttpServletRequest request) {
-        String authorization = request.getHeader(Auth.KeyWord.Authorization.name());
-        log.info("{} : {}", Auth.KeyWord.Authorization.name(), authorization);
+        String authorization = request.getHeader(Auth.Authorization.name());
+        log.info("{} : {}", Auth.Authorization.name(), authorization);
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             return null;
         } else {

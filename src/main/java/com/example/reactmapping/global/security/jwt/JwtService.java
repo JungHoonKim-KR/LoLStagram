@@ -12,15 +12,15 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JwtService {
     private final JwtUtil jwtUtil;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenRepository tokenRepository;
 
     public TokenDto generateToken(String userEmail){
         TokenDto tokenDto = new TokenDto(userEmail,jwtUtil.createToken(userEmail, Token.TokenType.ACCESS.name()), jwtUtil.createToken(userEmail, Token.TokenType.REFRESH.name()));
-        refreshTokenRepository.save(tokenDto.getRefreshToken());
+        tokenRepository.save(tokenDto.getRefreshToken(), Token.TokenType.REFRESH.name());
         return tokenDto;
     }
-    public Optional<String> findRefreshTokenBy(String refreshToken){
-         return refreshTokenRepository.findByRefreshToken(refreshToken);
+    public Optional<String> findToken(String token, String type){
+         return tokenRepository.findToken(token, type);
     }
     public String regenerateAccessToken(String userEmail) {
         log.info("{} 확인, {} 재발급", Token.TokenName.refreshToken, Token.TokenName.accessToken);

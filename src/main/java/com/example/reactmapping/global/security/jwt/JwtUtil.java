@@ -45,11 +45,16 @@ public class JwtUtil {
         }
         //토큰이 지금 보다 이전에 expired 됐다면 만료된 것
     }
+
     public String getTokenType(String token){
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get(TokenType,String.class);
     }
+
     public String getUserEmail(String token){
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get(UserEmail,String.class);
     }
 
+    public Date getTokenTime(String token){
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getExpiration();
+    }
 }

@@ -5,10 +5,10 @@ public class Token{
     public enum TokenType{
         ACCESS,REFRESH;
     }
+    @Getter
     public enum TokenTime{
         accessToken(10 * 1000 * 60L),
         refreshToken(60*1000*60L);
-        @Getter
         private final long expiredTime;
 
         TokenTime(long expiredTime){

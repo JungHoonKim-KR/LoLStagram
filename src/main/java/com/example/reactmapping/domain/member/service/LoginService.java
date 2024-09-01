@@ -37,22 +37,19 @@ public class LoginService {
     private final JwtService jwtService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtUtil jwtUtil;
-    private final CookieUtil cookieUtil;
-    private final GetMatchService getMatchService;
 
-    public LoginResponseDto login(HttpServletResponse response, String requestEmail, String requestPassword) throws JsonProcessingException {
+    public LoginInfo login(String requestEmail, String requestPassword) throws JsonProcessingException {
         Member member = getMemberByEmail(requestEmail);
         verifyPassword(requestPassword, member);
         SummonerInfo summonerInfo = getSummonerInfo(member);
         TokenDto tokenDto = jwtService.generateToken(requestEmail);
-        response.addCookie(cookieUtil.createCookie(Token.TokenName.refreshToken,tokenDto.getRefreshToken()));
-        return getLoginResponseDto(member, tokenDto.getAccessToken(), summonerInfo);
+        return getLoginInfo(member, tokenDto.getAccessToken(), tokenDto.getRefreshToken(), summonerInfo);
     }
 
-    public LoginResponseDto socialLogin(String accessToken){
+    public LoginInfo socialLogin(String accessToken){
         Member member = getMemberByEmail(jwtUtil.getUserEmail(accessToken));
         SummonerInfo summonerInfo = getSummonerInfo(member);
-        return getLoginResponseDto(member, accessToken, summonerInfo);
+        return getLoginInfo(member, accessToken, String.valueOf(Optional.empty()), summonerInfo);
     }
 
     private SummonerInfo getSummonerInfo(Member member) {
@@ -74,11 +71,12 @@ public class LoginService {
         return member;
     }
 
-    private LoginResponseDto getLoginResponseDto(Member member, String accessToken, SummonerInfo summonerInfo) {
+    private LoginInfo getLoginInfo(Member member, String accessToken, String refreshToken, SummonerInfo summonerInfo) {
         MemberDto memberDto = new MemberDto(member.getId(), member.getEmailId(), member.getUsername(), member.getProfileImage());
 
-        return LoginResponseDto.builder()
+        return LoginInfo.builder()
                 .accessToken(accessToken)
+                .refreshToken(refreshToken)
                 .username(member.getUsername())
                 .summonerInfoDto(SummonerInfoDto.entityToDto(summonerInfo))
                 .memberDto(memberDto)

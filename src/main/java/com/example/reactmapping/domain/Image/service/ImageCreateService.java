@@ -33,7 +33,6 @@ public class ImageCreateService {
 
         File localFile = createTemporaryFile(file, uuid, fileExtension);
         uploadFileToS3(uuid, fileExtension, localFile);
-
         return generateFileUrl(uuid, fileExtension);
     }
 
@@ -60,7 +59,6 @@ public class ImageCreateService {
     private void uploadFileToS3(String uuid, String fileExtension, File file) {
         s3Config.amazonS3Client().putObject(new PutObjectRequest(bucket, uuid + fileExtension, file)
                 .withCannedAcl(CannedAccessControlList.PublicRead));
-
     }
 
     private String generateFileUrl(String uuid, String fileExtension) {

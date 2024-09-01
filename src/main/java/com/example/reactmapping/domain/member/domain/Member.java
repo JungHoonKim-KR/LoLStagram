@@ -41,8 +41,6 @@ public class Member {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "summoner_id")
     private SummonerInfo summonerInfo;
-
-
     @Setter
     @Schema(description = "프로필 사진")
     @Nullable
@@ -51,7 +49,5 @@ public class Member {
     private List<Post> postList = new ArrayList<>();
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<PostComment> commentList = new ArrayList<>();
-
-    ;
 
 }

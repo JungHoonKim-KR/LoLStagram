@@ -120,7 +120,7 @@ const Box3 = (searchResult) => {
             // Update the summonerInfo and matchList directly from the updated data
             setSummonerInfo(promise.data);
             setMatchList(promise.data.matchList || []); // Ensure matchList is updated
-
+            alert("업데이트 완료.");
             localStorage.setItem("mySummonerInfo", JSON.stringify(promise.data));
         } catch (error) {
             const errorMessage =

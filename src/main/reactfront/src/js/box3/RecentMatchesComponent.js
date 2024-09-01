@@ -46,7 +46,7 @@ const RecentMatches = ({ summonerInfo, updateMatch, matchList, imageCheck, callM
                     <div>결과가 없습니다.</div>
                 ) : (
                     <ul>
-                        {matchList.map((match, index) => (
+                        {summonerInfo.matchList.map((match, index) => (
                             <li className={`matchList ${match.result}`} key={index + 100}>
                                 <div className={`${match.result} gameType`}>{match.gameType}</div>
                                 <div className="summonerList">

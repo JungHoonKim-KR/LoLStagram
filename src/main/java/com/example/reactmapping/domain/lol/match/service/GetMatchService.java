@@ -1,6 +1,6 @@
 package com.example.reactmapping.domain.lol.match.service;
 
-import com.example.reactmapping.domain.lol.match.domain.Match;
+import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.example.reactmapping.domain.lol.match.dto.MatchDto;
 import com.example.reactmapping.domain.lol.match.dto.MatchResultDto;
 import com.example.reactmapping.domain.lol.util.LoLApiUtil;

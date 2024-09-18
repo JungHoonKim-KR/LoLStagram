@@ -1,9 +1,9 @@
 package com.example.reactmapping.domain.member.service;
 
-import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
+import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDto;
 import com.example.reactmapping.domain.lol.summonerInfo.service.GetSummonerInfoService;
-import com.example.reactmapping.domain.member.domain.Member;
+import com.example.reactmapping.domain.member.entity.Member;
 import com.example.reactmapping.domain.member.dto.ProfileUpdateDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

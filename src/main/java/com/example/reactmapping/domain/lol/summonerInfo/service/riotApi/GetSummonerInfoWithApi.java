@@ -1,6 +1,6 @@
 package com.example.reactmapping.domain.lol.summonerInfo.service.riotApi;
 
-import com.example.reactmapping.domain.lol.summonerInfo.domain.BasicInfo;
+import com.example.reactmapping.domain.lol.summonerInfo.entity.BasicInfo;
 import com.example.reactmapping.domain.lol.util.DataUtil;
 import com.example.reactmapping.domain.lol.util.LoLApiUtil;
 import com.example.reactmapping.global.norm.LOL;

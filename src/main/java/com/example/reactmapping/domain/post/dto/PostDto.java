@@ -1,7 +1,7 @@
 package com.example.reactmapping.domain.post.dto;
 
-import com.example.reactmapping.domain.member.domain.Member;
-import com.example.reactmapping.domain.post.domain.Post;
+import com.example.reactmapping.domain.member.entity.Member;
+import com.example.reactmapping.domain.post.entity.Post;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 

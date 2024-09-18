@@ -3,7 +3,7 @@ package com.example.reactmapping.oauth2;
 import com.example.reactmapping.oauth2.OAuth2.CustomOAuth2User;
 import com.example.reactmapping.oauth2.OAuth2.GoogleResponse;
 import com.example.reactmapping.oauth2.OAuth2.NaverResponse;
-import com.example.reactmapping.domain.member.domain.Member;
+import com.example.reactmapping.domain.member.entity.Member;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

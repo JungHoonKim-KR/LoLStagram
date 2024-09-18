@@ -1,7 +1,7 @@
 package com.example.reactmapping.domain.lol.match.dto;
 
 import com.example.reactmapping.StringListConverter;
-import com.example.reactmapping.domain.lol.match.domain.Match;
+import com.example.reactmapping.domain.lol.match.entity.Match;
 import jakarta.persistence.Convert;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

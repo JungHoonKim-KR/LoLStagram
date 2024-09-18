@@ -1,10 +1,10 @@
 package com.example.reactmapping.domain.post.service;
 
 import com.example.reactmapping.domain.Image.service.ImageCreateService;
-import com.example.reactmapping.domain.member.domain.Member;
+import com.example.reactmapping.domain.member.entity.Member;
 import com.example.reactmapping.domain.member.service.MemberService;
-import com.example.reactmapping.domain.post.domain.Post;
-import com.example.reactmapping.domain.post.domain.PostComment;
+import com.example.reactmapping.domain.post.entity.Post;
+import com.example.reactmapping.domain.post.entity.PostComment;
 import com.example.reactmapping.domain.post.dto.PostCommentDto;
 import com.example.reactmapping.domain.post.dto.PostDto;
 import com.example.reactmapping.global.exception.AppException;

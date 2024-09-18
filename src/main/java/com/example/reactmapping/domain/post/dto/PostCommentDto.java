@@ -1,6 +1,6 @@
 package com.example.reactmapping.domain.post.dto;
 
-import com.example.reactmapping.domain.post.domain.PostComment;
+import com.example.reactmapping.domain.post.entity.PostComment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;

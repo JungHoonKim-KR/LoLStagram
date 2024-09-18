@@ -2,8 +2,8 @@ package com.example.reactmapping.domain.lol.summonerInfo.dto;
 
 import com.example.reactmapping.domain.lol.dto.MostChampion;
 import com.example.reactmapping.domain.lol.match.dto.MatchDto;
-import com.example.reactmapping.domain.lol.summonerInfo.domain.BasicInfo;
-import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
+import com.example.reactmapping.domain.lol.summonerInfo.entity.BasicInfo;
+import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

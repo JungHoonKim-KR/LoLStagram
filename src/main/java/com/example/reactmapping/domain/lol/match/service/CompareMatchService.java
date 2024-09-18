@@ -1,6 +1,6 @@
 package com.example.reactmapping.domain.lol.match.service;
 
-import com.example.reactmapping.domain.lol.match.domain.Match;
+import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.example.reactmapping.global.norm.LOL;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;

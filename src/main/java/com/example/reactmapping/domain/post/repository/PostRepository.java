@@ -1,6 +1,6 @@
 package com.example.reactmapping.domain.post.repository;
 
-import com.example.reactmapping.domain.post.domain.Post;
+import com.example.reactmapping.domain.post.entity.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

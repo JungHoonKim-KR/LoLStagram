@@ -1,6 +1,6 @@
 package com.example.reactmapping.domain.lol.summonerInfo.service;
 
-import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
+import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDto;
 import com.example.reactmapping.domain.lol.summonerInfo.repository.SummonerInfoRepository;
 import com.example.reactmapping.global.exception.AppException;

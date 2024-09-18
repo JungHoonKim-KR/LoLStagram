@@ -1,7 +1,7 @@
 package com.example.reactmapping.domain.post.service;
 
-import com.example.reactmapping.domain.post.domain.Post;
-import com.example.reactmapping.domain.post.domain.PostComment;
+import com.example.reactmapping.domain.post.entity.Post;
+import com.example.reactmapping.domain.post.entity.PostComment;
 import com.example.reactmapping.domain.post.dto.PostDto;
 import com.example.reactmapping.domain.post.dto.PostResultDto;
 import lombok.RequiredArgsConstructor;

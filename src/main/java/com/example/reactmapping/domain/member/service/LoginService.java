@@ -1,30 +1,23 @@
 package com.example.reactmapping.domain.member.service;
 
-import com.example.reactmapping.domain.lol.match.dto.MatchDto;
-import com.example.reactmapping.domain.lol.match.service.GetMatchService;
 import com.example.reactmapping.domain.lol.summonerInfo.service.SummonerInfoService;
 import com.example.reactmapping.global.security.jwt.JwtService;
 import com.example.reactmapping.global.security.jwt.JwtUtil;
 import com.example.reactmapping.global.security.jwt.TokenDto;
-import com.example.reactmapping.domain.member.domain.Member;
+import com.example.reactmapping.domain.member.entity.Member;
 import com.example.reactmapping.domain.member.dto.*;
 import com.example.reactmapping.domain.member.repository.MemberRepository;
-import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
+import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerInfoDto;
 import com.example.reactmapping.global.exception.AppException;
 import com.example.reactmapping.global.exception.ErrorCode;
-import com.example.reactmapping.global.norm.Token;
-import com.example.reactmapping.global.security.cookie.CookieUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -72,7 +65,7 @@ public class LoginService {
     }
 
     private LoginInfo getLoginInfo(Member member, String accessToken, String refreshToken, SummonerInfo summonerInfo) {
-        MemberDto memberDto = new MemberDto(member.getId(), member.getEmailId(), member.getUsername(), member.getProfileImage());
+        MemberDto memberDto = new MemberDto(member.getId(), member.getEmailId(), member.getUsername());
 
         return LoginInfo.builder()
                 .accessToken(accessToken)

@@ -1,6 +1,6 @@
 package com.example.reactmapping.domain.lol.match.service;
 
-import com.example.reactmapping.domain.lol.match.domain.Match;
+import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.example.reactmapping.domain.lol.match.repository.MatchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

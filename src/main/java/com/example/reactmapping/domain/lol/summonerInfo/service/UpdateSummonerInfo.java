@@ -2,12 +2,12 @@ package com.example.reactmapping.domain.lol.summonerInfo.service;
 
 import com.example.reactmapping.domain.lol.CalcMostChampion;
 import com.example.reactmapping.domain.lol.dto.MostChampion;
-import com.example.reactmapping.domain.lol.match.domain.Match;
+import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.example.reactmapping.domain.lol.match.service.CompareMatchService;
 import com.example.reactmapping.domain.lol.match.service.CreateMatchService;
 import com.example.reactmapping.domain.lol.match.service.GetMatchService;
 import com.example.reactmapping.domain.lol.match.service.UpdateMatchService;
-import com.example.reactmapping.domain.lol.summonerInfo.domain.SummonerInfo;
+import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.service.riotApi.GetSummonerInfoWithApi;
 import com.example.reactmapping.domain.lol.summonerInfo.util.SummonerUtil;
 import com.example.reactmapping.global.norm.LOL;

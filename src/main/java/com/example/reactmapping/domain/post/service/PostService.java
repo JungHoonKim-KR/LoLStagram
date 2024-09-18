@@ -1,11 +1,10 @@
 package com.example.reactmapping.domain.post.service;
 
-import com.example.reactmapping.domain.post.domain.Post;
-import com.example.reactmapping.domain.post.domain.PostComment;
+import com.example.reactmapping.domain.post.entity.Post;
+import com.example.reactmapping.domain.post.entity.PostComment;
 import com.example.reactmapping.domain.post.repository.PostRepository;
 import com.example.reactmapping.domain.post.repository.PostCommentRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;

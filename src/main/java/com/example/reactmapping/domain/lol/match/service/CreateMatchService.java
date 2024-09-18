@@ -1,6 +1,6 @@
 package com.example.reactmapping.domain.lol.match.service;
 
-import com.example.reactmapping.domain.lol.match.domain.Match;
+import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.example.reactmapping.domain.lol.util.DataUtil;
 import com.example.reactmapping.global.norm.LOL;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -41,16 +41,16 @@ public class CreateMatchService {
         switch (gameMode) {
             case "CLASSIC":
                 return switch (matchInfo.path("queueId").asText()) {
-                    case "420" -> LOL.GameType.솔랭.name();
-                    case "490" -> LOL.GameType.빠른대전.name();
-                    default -> LOL.GameType.자유랭크.name();
+                    case "420" -> LOL.GameType.솔랭.getType();
+                    case "490" -> LOL.GameType.빠른대전.getType();
+                    default -> LOL.GameType.자유랭크.getType();
                 };
             case "URF":
-                return LOL.GameType.URF.name();
+                return LOL.GameType.URF.getType();
             case "ARAM":
-                return LOL.GameType.무작위총력전.name();
+                return LOL.GameType.무작위총력전.getType();
             case "CHERRY":
-                return LOL.GameType.아레나.name();
+                return LOL.GameType.아레나.getType();
             default:
                 return "Unknown";
         }

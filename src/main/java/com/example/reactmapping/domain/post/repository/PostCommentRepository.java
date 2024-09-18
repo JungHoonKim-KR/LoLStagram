@@ -1,6 +1,6 @@
 package com.example.reactmapping.domain.post.repository;
 
-import com.example.reactmapping.domain.post.domain.PostComment;
+import com.example.reactmapping.domain.post.entity.PostComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

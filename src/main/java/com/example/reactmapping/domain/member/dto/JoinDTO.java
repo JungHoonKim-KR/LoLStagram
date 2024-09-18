@@ -14,6 +14,6 @@ public class JoinDTO {
     private String username;
     private String summonerName;
     private String summonerTag;
-    private MultipartFile image;
+//    private MultipartFile image;
 
 }

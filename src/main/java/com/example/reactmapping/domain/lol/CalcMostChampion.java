@@ -1,7 +1,7 @@
 package com.example.reactmapping.domain.lol;
 
 import com.example.reactmapping.domain.lol.dto.MostChampion;
-import com.example.reactmapping.domain.lol.match.domain.Match;
+import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.example.reactmapping.domain.lol.util.DataUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

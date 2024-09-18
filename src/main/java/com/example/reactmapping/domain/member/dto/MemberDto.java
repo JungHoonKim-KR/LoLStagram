@@ -10,6 +10,6 @@ public class MemberDto {
     private Long id;
     private String emailId;
     private String username;
-    @Nullable
-    private String profileImage;
+//    @Nullable
+//    private String profileImage;
 }

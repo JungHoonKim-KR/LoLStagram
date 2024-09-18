@@ -1,7 +1,7 @@
 package com.example.reactmapping.domain.lol.summonerInfo.util;
 
-import com.example.reactmapping.domain.lol.match.domain.Match;
-import com.example.reactmapping.domain.lol.summonerInfo.domain.RecentRecord;
+import com.example.reactmapping.domain.lol.match.entity.Match;
+import com.example.reactmapping.domain.lol.summonerInfo.entity.RecentRecord;
 import com.example.reactmapping.domain.lol.util.DataUtil;
 import com.example.reactmapping.global.norm.LOL;
 import org.springframework.stereotype.Component;

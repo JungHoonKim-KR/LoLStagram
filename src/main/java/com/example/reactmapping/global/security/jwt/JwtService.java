@@ -22,6 +22,15 @@ public class JwtService {
     public Optional<String> findToken(String token, String type){
          return tokenRepository.findToken(token, type);
     }
+
+    public Boolean isBlacklisted(String accessToken){
+        String blackList = tokenRepository.findBlackList(accessToken);
+        if(blackList != null){
+            return accessToken.equals(blackList);
+        }
+        return false;
+    }
+
     public String regenerateAccessToken(String userEmail) {
         log.info("{} 확인, {} 재발급", Token.TokenName.refreshToken, Token.TokenName.accessToken);
         String newAccessToken = jwtUtil.createToken(userEmail, Token.TokenType.ACCESS.name());

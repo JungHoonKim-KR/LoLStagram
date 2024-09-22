@@ -51,7 +51,12 @@ public class JwtUtil {
     }
 
     public String getUserEmail(String token){
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get(UserEmail,String.class);
+        try {
+            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get(UserEmail, String.class);
+        }
+        catch (Exception e){
+            return null;
+        }
     }
 
     public Date getTokenTime(String token){

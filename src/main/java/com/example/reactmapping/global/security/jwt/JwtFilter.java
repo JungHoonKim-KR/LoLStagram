@@ -2,6 +2,7 @@ package com.example.reactmapping.global.security.jwt;
 
 import com.example.reactmapping.global.exception.AppException;
 import com.example.reactmapping.global.exception.ErrorCode;
+import com.example.reactmapping.global.exception.ErrorResponse;
 import com.example.reactmapping.global.exception.ExceptionManager;
 import com.example.reactmapping.global.norm.Auth;
 import com.example.reactmapping.global.norm.Token;
@@ -36,6 +37,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private static class AuthenticationInfo {
         String accessToken;
         String refreshToken;
+
         public AuthenticationInfo(String accessToken, String refreshToken) {
             this.accessToken = accessToken;
             this.refreshToken = refreshToken;
@@ -54,7 +56,7 @@ public class JwtFilter extends OncePerRequestFilter {
             // 1 : 인증정보가 있는가
             AuthenticationInfo authenticationInfo = extractAuthorizationInfo(request);
             if (authenticationInfo == null) {
-                if(isPermittedPath(requestUrl)){
+                if (isPermittedPath(requestUrl)) {
                     filterChain.doFilter(request, response);
                     return;
                 }
@@ -63,58 +65,56 @@ public class JwtFilter extends OncePerRequestFilter {
             } else {
                 accessToken = authenticationInfo.accessToken;
                 refreshToken = authenticationInfo.refreshToken;
-                log.info("accessToken : {}" , accessToken);
-                log.info("refreshToken : {}" , refreshToken);
+                log.info("accessToken : {}", accessToken);
+                log.info("refreshToken : {}", refreshToken);
             }
             // end 1
 
             // 2 : 엑세스 토큰이 만료됐는가
-            isExpiredAccessTokenTime(request, response, accessToken, refreshToken);
-            // end 2
+            isTokenValid(request, accessToken, response, refreshToken);
+
             filterChain.doFilter(request, response);
         } catch (AppException e) {
             handleException(response, e);
         }
     }
 
-    private Boolean isPermittedPath(String url){
+    private void isTokenValid(HttpServletRequest request, String accessToken, HttpServletResponse response, String refreshToken) throws IOException {
+
+        // 엑세스 토큰이 만료
+        if (jwtUtil.isExpired(accessToken)) {
+
+            // 리프레쉬가 만료됐는가?
+            if (jwtUtil.isExpired(refreshToken)) {
+                throw new AppException(ErrorCode.BAD_REQUEST, "잘못된 로그인 요청입니다.");
+            }  else if (jwtService.findToken(refreshToken, Token.TokenType.REFRESH.name()).isPresent()) {
+                regenerateAccessToken(request, response, jwtUtil.getUserEmail(refreshToken));
+                log.info("{} 정상", Token.TokenName.refreshToken);
+            } else {
+                throw new AppException(ErrorCode.NOTFOUND, "잘못된 토큰 정보입니다.");
+            }
+
+        }else if (jwtService.isBlacklisted(accessToken)) {
+            log.error("{} 로그아웃 처리된 토큰", accessToken);
+            throw new AppException(ErrorCode.BAD_REQUEST, "이미 로그아웃된 토큰입니다.");
+        }
+    }
+
+    private Boolean isPermittedPath(String url) {
         AntPathMatcher pathMatcher = new AntPathMatcher();
-        for(String path : URL.Permit.PATHS){
-            if(pathMatcher.match(path,url)){return true;}
+        for (String path : URL.Permit.PATHS) {
+            if (pathMatcher.match(path, url)) {
+                return true;
+            }
         }
         return false;
-    }
-
-    private void isExpiredAccessTokenTime(HttpServletRequest request, HttpServletResponse response, String accessToken, String refreshToken) {
-        if (jwtUtil.isExpired(accessToken)) {
-            log.error("{} 만료", Token.TokenName.accessToken);
-            // 3 : 리프레쉬 토큰이 만료됐는가
-            isExpiredRefreshTokenTime(request, response, refreshToken);
-        } else {
-            log.info("{} 정상", Token.TokenName.accessToken);
-            String userEmail = jwtUtil.getUserEmail(accessToken);
-            setAuthentication(userEmail, request);
-        }
-    }
-
-    private void isExpiredRefreshTokenTime(HttpServletRequest request, HttpServletResponse response, String refreshToken) {
-        if (jwtUtil.isExpired(refreshToken)) {
-            log.info("refreshToken 만료");
-            throw new AppException(ErrorCode.TOKEN_EXPIRED, "토큰 만료");
-        }
-        if (jwtService.findToken(refreshToken,Token.TokenType.REFRESH.name()).isPresent()) {
-            regenerateAccessToken(request, response, jwtUtil.getUserEmail(refreshToken));
-            log.info("{} 정상", Token.TokenName.refreshToken);
-        }
-        else{
-            throw new AppException(ErrorCode.NOTFOUND,"잘못된 토큰 정보입니다.");
-        }
     }
 
     private void regenerateAccessToken(HttpServletRequest request, HttpServletResponse response, String userEmail) {
         String newAccessToken = jwtService.regenerateAccessToken(userEmail);
         response.setHeader(Token.TokenType.ACCESS.name(), newAccessToken);
         setAuthentication(userEmail, request);
+        log.info("재발급 : {}", newAccessToken);
     }
 
     private AuthenticationInfo extractAuthorizationInfo(HttpServletRequest request) {
@@ -124,8 +124,8 @@ public class JwtFilter extends OncePerRequestFilter {
             return null;
         } else {
             String accessToken = authorization.split(" ")[1];
-            String refreshToken = cookieUtil.getCookieValue(request,Token.TokenName.refreshToken);
-            return new AuthenticationInfo(accessToken,refreshToken);
+            String refreshToken = cookieUtil.getCookieValue(request, Token.TokenName.refreshToken);
+            return new AuthenticationInfo(accessToken, refreshToken);
         }
     }
 
@@ -133,7 +133,8 @@ public class JwtFilter extends OncePerRequestFilter {
         response.setStatus(e.getErrorCode().getHttpStatus().value());
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(new ObjectMapper().writeValueAsString(exceptionManager.createErrorResponse(e)));
+        ErrorResponse errorResponse = new ErrorResponse(e.getErrorCode().name(), e.getMessage());
+        response.getWriter().write(new ObjectMapper().writeValueAsString(errorResponse));
     }
 
     public void setAuthentication(String userEmail, HttpServletRequest request) {

@@ -3,7 +3,6 @@ package com.example.reactmapping.domain.lol.match.dto;
 import com.example.reactmapping.StringListConverter;
 import com.example.reactmapping.domain.lol.match.entity.Match;
 import jakarta.persistence.Convert;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,16 +10,30 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Builder(toBuilder = true)
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
-
 public class MatchDto {
     private String matchId;
     private Long kills;
     private Long deaths;
     private Long assists;
+
+    @Builder(toBuilder = true)
+    public MatchDto(String matchId, Long kills, Long deaths, Long assists, String kda, String championName, Long mainRune, Long subRune, String gameType, List<Integer> itemList, List<Integer> summonerSpellList, String result) {
+        this.matchId = matchId;
+        this.kills = kills;
+        this.deaths = deaths;
+        this.assists = assists;
+        this.kda = kda;
+        this.championName = championName;
+        this.mainRune = mainRune;
+        this.subRune = subRune;
+        this.gameType = gameType;
+        this.itemList = itemList;
+        this.summonerSpellList = summonerSpellList;
+        this.result = result;
+    }
+
     private String kda;
     private String championName;
     private Long mainRune;

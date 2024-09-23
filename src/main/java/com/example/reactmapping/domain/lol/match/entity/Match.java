@@ -11,9 +11,7 @@ import java.util.List;
 
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Builder(toBuilder = true)
 @Table(name = "matches")
 public class Match{
     @Id
@@ -34,12 +32,30 @@ public class Match{
     @Convert(converter = StringListConverter.class)
     private List<Integer> summonerSpellList;
     private String result;
-
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "summoner_id")
     @JsonBackReference
     private SummonerInfo summonerInfo;
+
+    @Builder(toBuilder = true)
+    public Match(Long id, String matchId, Long gameStartTimestamp, Long kills, Long deaths, Long assists, String kda, String championName, Long mainRune, Long subRune, String gameType, List<Integer> itemList, List<Integer> summonerSpellList, String result, SummonerInfo summonerInfo) {
+        this.id = id;
+        this.matchId = matchId;
+        this.gameStartTimestamp = gameStartTimestamp;
+        this.kills = kills;
+        this.deaths = deaths;
+        this.assists = assists;
+        this.kda = kda;
+        this.championName = championName;
+        this.mainRune = mainRune;
+        this.subRune = subRune;
+        this.gameType = gameType;
+        this.itemList = itemList;
+        this.summonerSpellList = summonerSpellList;
+        this.result = result;
+        this.summonerInfo = summonerInfo;
+    }
 
     public void updateSummonerInfo(SummonerInfo summonerInfo) {
         this.summonerInfo = summonerInfo;

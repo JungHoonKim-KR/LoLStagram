@@ -25,21 +25,13 @@ function Join(){
     const joinHandler  = async(e)=>{
         e.preventDefault();
         try {
-            const formData = new FormData();
-            formData.append("joinDto", new Blob([JSON.stringify({
-                emailId: emailId.trim(),
-                password: password.trim(),
-                username: username.trim(),
-                summonerName: summonerName.trim(),
-                summonerTag: summonerTag.trim()
-            })], {
-                type: "application/json"
-            }));
-            formData.append("image", img);  // file 객체 추가
             await axios.post("/join",
-                formData,
                 {
-
+                    emailId: emailId.trim(),
+                    password: password.trim(),
+                    username: username.trim(),
+                    summonerName: summonerName.trim(),
+                    summonerTag: summonerTag.trim()
                 }
             ).then((res)=>{
                 alert("회원가입이 완료되었습니다.")
@@ -74,12 +66,6 @@ function Join(){
                     라이엇 태그:
                     <input type="text" value={summonerTag} onChange={e => setSummonerTag(e.target.value)} required />
                 </label>
-                <label>
-                    프로필 사진:
-                    <input type="file" onChange={(e)=>setImg(e.target.files[0])}/>
-                </label>
-
-
 
                 <button type="submit">회원가입</button>
             </form>

@@ -14,10 +14,8 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
-@Builder(toBuilder = true)
-public class SummonerInfo implements Persistable<String> {
+public class SummonerInfo {
     @Id
     @Column(name = "summoner_id")
     private String summonerId;
@@ -47,10 +45,6 @@ public class SummonerInfo implements Persistable<String> {
         createTime = LocalDateTime.now();
     }
 
-    @Override
-    public boolean isNew() {
-        return createTime == null;
-    }
 
 
     // 연관관계의 주인은 Match 이지만 각 Match의 정보를 종합한 후 summoner에 저장하기 때문에 summoner에서 매핑하는 것이 순환참조를 막을 수 있음
@@ -58,6 +52,8 @@ public class SummonerInfo implements Persistable<String> {
         matchList.add(match);
         match.updateSummonerInfo(this);
     }
+
+    @Builder
     public SummonerInfo(String summonerId, String summonerName, String summonerTag, String puuId, BasicInfo basicInfo, RecentRecord recentRecord, List<Match> matchList, List<MostChampion> mostChampionList) {
         this.summonerId = summonerId;
         this.summonerName = summonerName;
@@ -81,11 +77,7 @@ public class SummonerInfo implements Persistable<String> {
     public void updateRecentRecord(RecentRecord recentRecord){
         this.recentRecord = recentRecord;
     }
-    // ID 필드에 대한 getter
-    @Override
-    public String getId() {
-        return summonerId;
-    }
+
 
 
 }

@@ -3,7 +3,6 @@ import "../../css/Box1.css";
 import Box3 from "../box3/Box3";
 import { useNavigate } from "react-router-dom";
 import SearchComponent from "./SearchComponent";
-import ProfileComponent from "./ProfileComponent";
 import WriteComponent from "./WriteComponent";
 import LogoutComponent from "./LogoutComponent";
 
@@ -56,11 +55,6 @@ const Box1 = () => {
                             label="searchResult"
                         />
                     )}
-                    <ProfileComponent
-                        token={token}
-                        memberInfo={memberInfo}
-                        navigate={navigate}
-                    />
                     <WriteComponent
                         token={token}
                         setToken={setToken}

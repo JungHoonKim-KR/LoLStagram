@@ -30,9 +30,10 @@ public class CreateSummonerInfoService {
     private final CalcMostChampion calcMostChampion;
     private final SummonerUtil summonerUtil;
     private final SummonerInfoService summonerInfoService;
-    public SummonerInfo createSummonerInfo(String summonerName, String summonerTag) {
+    public SummonerInfo createSummonerInfo(String puuId, String summonerName, String summonerTag) {
         log.info("소환사 생성 시작");
-        String puuId = getSummonerInfoWithApi.getPuuId(summonerName, summonerTag);
+        if(puuId == null)
+            puuId = getSummonerInfoWithApi.getPuuId(summonerName, summonerTag);
         String summonerId = getSummonerInfoWithApi.getSummonerId(puuId);
         BasicInfo summonerBasic = getSummonerInfoWithApi.getSummonerBasic(summonerId, summonerTag);
 

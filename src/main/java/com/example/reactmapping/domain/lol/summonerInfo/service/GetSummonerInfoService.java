@@ -13,6 +13,6 @@ public class GetSummonerInfoService {
     private final CreateSummonerInfoService createSummonerInfoService;
     public SummonerInfo searchOrCreateSummoner(SummonerNameAndTagDto summonerNameAndTagDto){
         Optional<SummonerInfo> summonerInfoOptional  = summonerInfoService.findSummonerInfoBySummonerNameAndTag(summonerNameAndTagDto);
-        return summonerInfoOptional.orElseGet(() -> createSummonerInfoService.createSummonerInfo(summonerNameAndTagDto.getSummonerName(), summonerNameAndTagDto.getSummonerTag()));
+        return summonerInfoOptional.orElseGet(() -> createSummonerInfoService.createSummonerInfo(null,summonerNameAndTagDto.getSummonerName(), summonerNameAndTagDto.getSummonerTag()));
     }
 }

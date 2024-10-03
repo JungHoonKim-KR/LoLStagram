@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -23,6 +24,7 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 //인증 전 관문
@@ -69,9 +71,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 log.info("refreshToken : {}", refreshToken);
             }
             // end 1
+            if (isLogout(request, response, filterChain, requestUrl, accessToken)) return;
 
             // 2 : 엑세스 토큰이 만료됐는가
-            isTokenValid(request, accessToken, response, refreshToken);
+            isTokenValid(request, jwtUtil.getUserEmail(refreshToken),accessToken, response, refreshToken);
 
             filterChain.doFilter(request, response);
         } catch (AppException e) {
@@ -79,7 +82,17 @@ public class JwtFilter extends OncePerRequestFilter {
         }
     }
 
-    private void isTokenValid(HttpServletRequest request, String accessToken, HttpServletResponse response, String refreshToken) throws IOException {
+    private static boolean isLogout(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, String requestUrl, String accessToken) throws IOException, ServletException {
+        if(requestUrl.equals("/logout")){
+            Authentication authentication = new UsernamePasswordAuthenticationToken(accessToken, null, new ArrayList<>());
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            filterChain.doFilter(request, response);
+            return true;
+        }
+        return false;
+    }
+
+    private void isTokenValid(HttpServletRequest request, String userEmail, String accessToken, HttpServletResponse response, String refreshToken) throws IOException {
 
         // 엑세스 토큰이 만료
         if (jwtUtil.isExpired(accessToken)) {
@@ -88,7 +101,7 @@ public class JwtFilter extends OncePerRequestFilter {
             if (jwtUtil.isExpired(refreshToken)) {
                 throw new AppException(ErrorCode.BAD_REQUEST, "잘못된 로그인 요청입니다.");
             }  else if (jwtService.findToken(refreshToken, Token.TokenType.REFRESH.name()).isPresent()) {
-                regenerateAccessToken(request, response, jwtUtil.getUserEmail(refreshToken));
+                regenerateAccessToken(request, response, userEmail);
                 log.info("{} 정상", Token.TokenName.refreshToken);
             } else {
                 throw new AppException(ErrorCode.NOTFOUND, "잘못된 토큰 정보입니다.");
@@ -97,6 +110,8 @@ public class JwtFilter extends OncePerRequestFilter {
         }else if (jwtService.isBlacklisted(accessToken)) {
             log.error("{} 로그아웃 처리된 토큰", accessToken);
             throw new AppException(ErrorCode.BAD_REQUEST, "이미 로그아웃된 토큰입니다.");
+        }else{
+            setAuthentication(userEmail, request);
         }
     }
 

@@ -83,10 +83,8 @@ public class SecurityConfig {
                         //권한 불일치 -> login page로 이동
                         .formLogin(auth -> auth.disable())
                         .addFilterBefore(new JwtFilter(jwtUtil,jwtService,exceptionManager,cookieUtil), UsernamePasswordAuthenticationFilter.class)
-                        .logout(logout -> logout
-                                .logoutSuccessHandler((request, response, authentication) ->
-                                {  response.setStatus(HttpServletResponse.SC_OK);
-                                }))
+                        .logout(logout -> logout.disable()
+                                )
                         .oauth2Login(oauth -> oauth
                                 .loginPage("/login/normal")
                                 .permitAll()

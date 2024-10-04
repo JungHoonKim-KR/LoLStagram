@@ -1,24 +1,16 @@
 package com.example.reactmapping.domain.member.controller;
 
-import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDto;
-import com.example.reactmapping.domain.lol.summonerInfo.service.SummonerInfoService;
 import com.example.reactmapping.domain.lol.summonerInfo.service.riotApi.GetSummonerInfoWithApi;
 import com.example.reactmapping.domain.member.entity.Member;
 import com.example.reactmapping.domain.member.dto.JoinDTO;
 import com.example.reactmapping.domain.member.service.JoinService;
-import com.example.reactmapping.global.exception.AppException;
-import com.example.reactmapping.global.exception.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Not;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 @RestController

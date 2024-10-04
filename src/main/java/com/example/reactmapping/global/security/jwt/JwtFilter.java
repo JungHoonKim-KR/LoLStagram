@@ -33,7 +33,6 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final JwtService jwtService;
-    private final ExceptionManager exceptionManager;
     private final CookieUtil cookieUtil;
 
     private static class AuthenticationInfo {

@@ -1,9 +1,10 @@
 package com.example.reactmapping.oauth2.handler;
 
+import com.example.reactmapping.global.norm.URL;
 import com.example.reactmapping.global.security.jwt.JwtService;
 import com.example.reactmapping.global.security.jwt.TokenDto;
 import com.example.reactmapping.oauth2.OAuth2.CustomOAuth2User;
-import com.example.reactmapping.domain.member.domain.Member;
+import com.example.reactmapping.domain.member.entity.Member;
 import com.example.reactmapping.global.norm.Token;
 import com.example.reactmapping.domain.member.repository.MemberRepository;
 import com.example.reactmapping.global.security.cookie.CookieUtil;
@@ -26,12 +27,11 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final MemberRepository memberRepository;
     private final JwtService jwtService;
     private final CookieUtil cookieUtil;
-
+    private final URL url;
     //loaduser()를 통해 Authentication에 유저 정보가 들어감
     //여기서 유저 정보를 이용해 토큰을 만들어서 클라이언트에게 전달해야함
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
-        log.info("소셜 로그인 성공");
         CustomOAuth2User customOAuth2User= (CustomOAuth2User) authentication.getPrincipal();
         String emailId = customOAuth2User.getEmail();
         String username = customOAuth2User.getName();
@@ -47,6 +47,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         }
         Member member = memberByEmail.get();
         sendToken(response, member);
+        log.info("소셜 로그인 성공");
 //        sendAuthenticationCode(request, response, emailId);
 
 //        HTTP 응답 헤더에 토큰을 포함시키는 것은 가능하지만, 이 방법을 사용하면 클라이언트가 토큰을 받아올 수 없는 상황이 발생할 수 있습니다.
@@ -63,7 +64,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         TokenDto tokenDto = jwtService.generateToken(member.getEmailId());
         response.addCookie(cookieUtil.createCookie(Token.TokenName.accessToken,tokenDto.getAccessToken()));
         response.addCookie(cookieUtil.createCookie(Token.TokenName.refreshToken,tokenDto.getRefreshToken()));
-        response.sendRedirect("http://ec2-13-209-191-38.ap-northeast-2.compute.amazonaws.com:8080/#/oauth/callback");
+        response.sendRedirect(url.getServer() + "/#/oauth/callback");
     }
     //    private void sendAuthenticationCode(HttpServletRequest request, HttpServletResponse response, String emailId) throws IOException {
 //        HttpSession session = request.getSession();
@@ -76,6 +77,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private void join(HttpServletResponse response, String emailId, String username) throws IOException {
         String encodedEmail = URLEncoder.encode(emailId, StandardCharsets.UTF_8);
         String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8);
-        response.sendRedirect("http://ec2-13-209-191-38.ap-northeast-2.compute.amazonaws.com:8080/#/join?emailId="+encodedEmail + "&username="+encodedUsername);
+        response.sendRedirect(url.getServer() + "/#/join?emailId="+encodedEmail + "&username="+encodedUsername);
     }
 }

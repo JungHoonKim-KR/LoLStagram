@@ -5,7 +5,6 @@ import com.example.reactmapping.oauth2.OAuth2.GoogleResponse;
 import com.example.reactmapping.oauth2.OAuth2.NaverResponse;
 import com.example.reactmapping.domain.member.entity.Member;
 import jakarta.annotation.Nullable;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class CustomOauth2UserService extends DefaultOAuth2UserService {
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
@@ -27,7 +25,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         else return new CustomOAuth2User(getMember(oAuth2Response));
     }
 
-    private static Member getMember(OAuth2Response oAuth2Response) {
+    private Member getMember(OAuth2Response oAuth2Response) {
         Member member = new Member();
         member = member.toBuilder()
                 .emailId(oAuth2Response.getEmail())
@@ -39,7 +37,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         return member;
     }
 
-    private static @Nullable OAuth2Response getOAuth2Response(String registerId, OAuth2User oAuth2User) {
+    private @Nullable OAuth2Response getOAuth2Response(String registerId, OAuth2User oAuth2User) {
         OAuth2Response oAuth2Response;
         if (registerId.equals("naver")) {
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());

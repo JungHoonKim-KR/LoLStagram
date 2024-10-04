@@ -1,13 +1,26 @@
 package com.example.reactmapping.global.norm;
 
-import java.util.List;
+import lombok.Getter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
+@ConfigurationProperties(prefix = "origin")
+@Getter
 public class URL {
+    private final String client;
+    private final String server;
+
+    public URL(String client, String server) {
+        this.client = client;
+        this.server = server;
+    }
+
+
     // permit 카테고리로 분류된 경로들
     public static class Permit {
         public static final String ROOT = "/";
         public static final String LOGIN = "/login/**";
         public static final String JOIN = "/join/**";
+
         public static final String[] PATHS = {
                 "/",
                 "/login/**",

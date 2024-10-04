@@ -23,7 +23,6 @@ public class LogoutService {
         if(refreshTokenObject.isPresent()){
             tokenRepository.delete(refreshToken);
         }
-
         //accessToken 블랙리스트에 등록
         tokenRepository.registerBlacklist(accessToken);
         log.info("로그아웃");

@@ -1,5 +1,6 @@
 package com.example.reactmapping.global.security;
 
+import com.example.reactmapping.global.norm.URL;
 import com.example.reactmapping.global.security.jwt.JwtFilter;
 import com.example.reactmapping.global.security.jwt.JwtService;
 import com.example.reactmapping.global.security.jwt.JwtUtil;
@@ -11,6 +12,7 @@ import com.example.reactmapping.domain.member.service.LogoutService;
 import com.example.reactmapping.global.security.cookie.CookieUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -33,12 +35,11 @@ import java.util.List;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private final URL url;
     private final JwtUtil jwtUtil;
-    private final LogoutService logoutService;
     private final CustomOauth2UserService customOauth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
-    private final ExceptionManager exceptionManager;
     private final CookieUtil cookieUtil;
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder(){
@@ -62,7 +63,7 @@ public class SecurityConfig {
                         //cors
                         .cors(cors -> cors.configurationSource(request -> {
                             var corsConfiguration = new CorsConfiguration();
-                            corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+                            corsConfiguration.setAllowedOrigins(List.of(url.getClient()));
                             corsConfiguration.setAllowedMethods(List.of("GET","POST","PUT","DELETE"));
                             corsConfiguration.setAllowCredentials(true);
                             return corsConfiguration;
@@ -82,7 +83,7 @@ public class SecurityConfig {
                         )
                         //권한 불일치 -> login page로 이동
                         .formLogin(auth -> auth.disable())
-                        .addFilterBefore(new JwtFilter(jwtUtil,jwtService,exceptionManager,cookieUtil), UsernamePasswordAuthenticationFilter.class)
+                        .addFilterBefore(new JwtFilter(jwtUtil,jwtService,cookieUtil), UsernamePasswordAuthenticationFilter.class)
                         .logout(logout -> logout.disable()
                                 )
                         .oauth2Login(oauth -> oauth

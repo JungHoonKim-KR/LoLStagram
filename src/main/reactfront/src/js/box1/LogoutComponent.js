@@ -10,10 +10,8 @@ const LogoutComponent = ({ token, summonerInfo, navigate }) => {
                     "/logout",
                     {},
                     {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                            emailId: summonerInfo.emailId,
-                        },
+                        headers: {Authorization: `Bearer ${token}`},
+                        withCredentials: true,
                     }
                 );
                 localStorage.clear();

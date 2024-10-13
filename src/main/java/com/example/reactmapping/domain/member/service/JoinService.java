@@ -1,8 +1,10 @@
 package com.example.reactmapping.domain.member.service;
 
 import com.example.reactmapping.domain.Image.service.ImageCreateService;
+import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDto;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.service.CreateSummonerInfoService;
+import com.example.reactmapping.domain.lol.summonerInfo.service.SummonerInfoService;
 import com.example.reactmapping.domain.member.entity.Member;
 import com.example.reactmapping.domain.member.dto.JoinDTO;
 import com.example.reactmapping.domain.member.repository.MemberRepository;
@@ -20,6 +22,7 @@ public class JoinService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final AsyncSummonerService asyncSummonerService;
+    private final SummonerInfoService summonerInfoService;
     public Member join(JoinDTO dto, String puuId) throws IOException {
         // 회원 아이디가 이미 존재하는지
         if (memberRepository.findMemberByEmailId(dto.getEmailId()).isPresent()) {
@@ -27,7 +30,10 @@ public class JoinService {
         }
         Member member = createMember(dto, null);
         memberRepository.save(member);
-        asyncSummonerService.createSummonerInfo(member, dto.getSummonerName(), dto.getSummonerTag(),puuId);
+
+        if(summonerInfoService.findSummonerInfoBySummonerNameAndTag(new SummonerNameAndTagDto(dto.getSummonerName(), dto.getSummonerTag())).isEmpty()){
+            asyncSummonerService.createSummonerInfo(member, dto.getSummonerName(), dto.getSummonerTag(),puuId);
+        }
         return member;
     }
 

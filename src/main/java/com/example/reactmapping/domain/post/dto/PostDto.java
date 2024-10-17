@@ -16,8 +16,6 @@ public class PostDto {
     private Long postId;
     private String title;
     private String content;
-    private MultipartFile serverImage;
-    private String frontImage;
     private Long memberId;
     private String memberName;
     private List<PostCommentDto> commentList;
@@ -36,9 +34,6 @@ public class PostDto {
               .commentList(postCommentDtos)
               .build();
 
-      if(post.getImageUrl()!=null){
-           build=build.toBuilder().frontImage(post.getImageUrl()).build();
-       }
       return build;
   }
 }

@@ -64,7 +64,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         TokenDto tokenDto = jwtService.generateToken(member.getEmailId());
         response.addCookie(cookieUtil.createCookie(Token.TokenName.accessToken,tokenDto.getAccessToken()));
         response.addCookie(cookieUtil.createCookie(Token.TokenName.refreshToken,tokenDto.getRefreshToken()));
-        response.sendRedirect(url.getServer() + "/#/oauth/callback");
+        response.sendRedirect(url.getClient() + "/#/oauth/callback");
     }
     //    private void sendAuthenticationCode(HttpServletRequest request, HttpServletResponse response, String emailId) throws IOException {
 //        HttpSession session = request.getSession();
@@ -77,6 +77,6 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private void join(HttpServletResponse response, String emailId, String username) throws IOException {
         String encodedEmail = URLEncoder.encode(emailId, StandardCharsets.UTF_8);
         String encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8);
-        response.sendRedirect(url.getServer() + "/#/join?emailId="+encodedEmail + "&username="+encodedUsername);
+        response.sendRedirect(url.getClient() + "/#/join?emailId="+encodedEmail + "&username="+encodedUsername);
     }
 }

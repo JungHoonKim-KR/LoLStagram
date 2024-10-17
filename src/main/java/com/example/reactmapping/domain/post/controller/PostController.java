@@ -23,9 +23,7 @@ public class PostController {
     private final SavePostService savePostService;
     private final GetPostService getPostService;
     @PostMapping("/write/post")
-    public void writePost(@RequestPart("postDto") PostDto postDto, @RequestPart(name = "image", required = false)MultipartFile image) throws IOException {
-        if(image!=null)
-            postDto.setServerImage(image);
+    public void writePost(@RequestBody PostDto postDto){
         log.info("게시들 등록 시작");
         savePostService.savePost(postDto);
         log.info("게시글 등록 완료");

@@ -21,10 +21,9 @@ import java.time.LocalDateTime;
 @Transactional
 public class SavePostService {
     private final PostService postService;
-    private final ImageCreateService imageCreateService;
     private final MemberService memberService;
 
-    public void savePost(PostDto postDto) throws IOException {
+    public void savePost(PostDto postDto){
         Member findMember = memberService.findMemberById(postDto.getMemberId());
         Post post = createPost(postDto, findMember);
         postService.savePost(post);
@@ -38,16 +37,12 @@ public class SavePostService {
         postService.savePost(post);
     }
 
-    private Post createPost(PostDto postDto, Member member) throws IOException {
+    private Post createPost(PostDto postDto, Member member){
         Post post = Post.builder()
                 .title(postDto.getTitle())
                 .content(postDto.getContent())
                 .createTime(LocalDateTime.now())
                 .build();
-        if (postDto.getServerImage() != null) {
-            String imageUrl = imageCreateService.createImage(postDto.getServerImage());
-            post.setImageUrl(imageUrl);
-        }
         post.setMember(member);
         return post;
     }

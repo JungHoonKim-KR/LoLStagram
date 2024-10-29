@@ -10,6 +10,6 @@ FROM nginx:1.21.4-alpine
  # 빌드이미지에서생성된dist 폴더를nginx이미지로복사
 COPY --from=build /app/dist /usr/share/nginx/html
 
-EXPOSE 70
+EXPOSE 80
 ENTRYPOINT ["nginx"]
 CMD ["-g", "daemon off;"]

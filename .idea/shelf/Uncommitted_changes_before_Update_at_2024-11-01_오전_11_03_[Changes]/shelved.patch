@@ -1,0 +1,98 @@
+Index: backend/src/main/java/com/example/reactmapping/ReactMappingApplication.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.reactmapping;\r\n\r\nimport org.springframework.boot.SpringApplication;\r\nimport org.springframework.boot.autoconfigure.SpringBootApplication;\r\nimport org.springframework.boot.context.properties.ConfigurationPropertiesScan;\r\nimport org.springframework.scheduling.annotation.EnableAsync;\r\n\r\n@SpringBootApplication\r\n@EnableAsync\r\n@ConfigurationPropertiesScan\r\npublic class ReactMappingApplication {\r\n\r\n<<<<<<< HEAD\r\n=======\r\n\r\n\r\n>>>>>>> 7c2b03f94828b8e14a2e5b276463143f5ae47643\r\n\tpublic static void main(String[] args) {\r\n\t\tSpringApplication.run(ReactMappingApplication.class, args);\r\n\t}\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/backend/src/main/java/com/example/reactmapping/ReactMappingApplication.java b/backend/src/main/java/com/example/reactmapping/ReactMappingApplication.java
+--- a/backend/src/main/java/com/example/reactmapping/ReactMappingApplication.java	(revision 09ca5af0e032c1bcb1dfe0bb67121c6d7e39e94c)
++++ b/backend/src/main/java/com/example/reactmapping/ReactMappingApplication.java	(date 1730425893838)
+@@ -10,11 +10,6 @@
+ @ConfigurationPropertiesScan
+ public class ReactMappingApplication {
+ 
+-<<<<<<< HEAD
+-=======
+-
+-
+->>>>>>> 7c2b03f94828b8e14a2e5b276463143f5ae47643
+ 	public static void main(String[] args) {
+ 		SpringApplication.run(ReactMappingApplication.class, args);
+ 	}
+Index: backend/.gitignore
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><<<<<<< HEAD\r\nHELP.md\r\n.gradle\r\nbuild/\r\n!gradle/wrapper/gradle-wrapper.jar\r\n!**/src/main/**/build/\r\n!**/src/test/**/build/\r\n\r\n### STS ###\r\n.apt_generated\r\n.classpath\r\n.factorypath\r\n.project\r\n.settings\r\n.springBeans\r\n.sts4-cache\r\nbin/\r\n!**/src/main/**/bin/\r\n!**/src/test/**/bin/\r\n\r\n### IntelliJ IDEA ###\r\n.idea\r\n*.iws\r\n*.iml\r\n*.ipr\r\nout/\r\n!**/src/main/**/out/\r\n!**/src/test/**/out/\r\n\r\n### NetBeans ###\r\n/nbproject/private/\r\n/nbbuild/\r\n/dist/\r\n/nbdist/\r\n/.nb-gradle/\r\n\r\n### VS Code ###\r\n.vscode/\r\n/src/main/resources/static/static/\r\n/src/main/resources/static/static/\r\n=======\r\nnode_modules/\r\n>>>>>>> ebd5e8dc62cdfa74a89db0aad89d76186eef7b62\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/backend/.gitignore b/backend/.gitignore
+--- a/backend/.gitignore	(revision 09ca5af0e032c1bcb1dfe0bb67121c6d7e39e94c)
++++ b/backend/.gitignore	(date 1730426490950)
+@@ -6,6 +6,7 @@
+ !**/src/main/**/build/
+ !**/src/test/**/build/
+ 
++src/main/resources/application-local.yml
+ ### STS ###
+ .apt_generated
+ .classpath
+Index: .idea/modules.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ProjectModuleManager\">\r\n    <modules>\r\n      <module fileurl=\"file://$PROJECT_DIR$/.idea/modules/com.example.reactMapping.main.iml\" filepath=\"$PROJECT_DIR$/.idea/modules/com.example.reactMapping.main.iml\" />\r\n      <module fileurl=\"file://$PROJECT_DIR$/.idea/reactMapping.iml\" filepath=\"$PROJECT_DIR$/.idea/reactMapping.iml\" />\r\n    </modules>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules.xml b/.idea/modules.xml
+--- a/.idea/modules.xml	(revision 09ca5af0e032c1bcb1dfe0bb67121c6d7e39e94c)
++++ b/.idea/modules.xml	(date 1730426254008)
+@@ -2,6 +2,7 @@
+ <project version="4">
+   <component name="ProjectModuleManager">
+     <modules>
++      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.example.reactMapping.iml" filepath="$PROJECT_DIR$/.idea/modules/com.example.reactMapping.iml" />
+       <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.example.reactMapping.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.example.reactMapping.main.iml" />
+       <module fileurl="file://$PROJECT_DIR$/.idea/reactMapping.iml" filepath="$PROJECT_DIR$/.idea/reactMapping.iml" />
+     </modules>
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"VcsDirectoryMappings\">\r\n    <mapping directory=\"$PROJECT_DIR$\" vcs=\"Git\" />\r\n    <mapping directory=\"$PROJECT_DIR$/backend\" vcs=\"Git\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+--- a/.idea/vcs.xml	(revision 09ca5af0e032c1bcb1dfe0bb67121c6d7e39e94c)
++++ b/.idea/vcs.xml	(date 1730425852401)
+@@ -1,7 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="VcsDirectoryMappings">
+-    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+-    <mapping directory="$PROJECT_DIR$/backend" vcs="Git" />
++    <mapping directory="" vcs="Git" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/modules/com.example.reactMapping.iml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/modules/com.example.reactMapping.iml b/.idea/modules/com.example.reactMapping.iml
+new file mode 100644
+--- /dev/null	(date 1730426253998)
++++ b/.idea/modules/com.example.reactMapping.iml	(date 1730426253998)
+@@ -0,0 +1,9 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<module version="4">
++  <component name="AdditionalModuleElements">
++    <content url="file://$MODULE_DIR$/../../backend" dumb="true">
++      <excludeFolder url="file://$MODULE_DIR$/../../backend/.idea" />
++      <excludeFolder url="file://$MODULE_DIR$/../../backend/out" />
++    </content>
++  </component>
++</module>
+\ No newline at end of file

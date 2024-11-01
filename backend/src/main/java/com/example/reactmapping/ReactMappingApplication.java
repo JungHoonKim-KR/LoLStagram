@@ -10,6 +10,8 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @ConfigurationPropertiesScan
 public class ReactMappingApplication {
 
+
+
 	public static void main(String[] args) {
 		SpringApplication.run(ReactMappingApplication.class, args);
 	}

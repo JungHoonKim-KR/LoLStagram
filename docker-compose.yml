@@ -1,0 +1,51 @@
+version: "3"
+services:
+  db:
+    build: ./database
+    image: database
+    container_name: db
+    networks:
+      - lolstagram
+  backend:
+    build: ./backend
+    image: backend
+    container_name: backend
+    environment:
+      - DB_PASSWORD=${DB_PASSWORD}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+    depends_on:
+      - db
+    networks:
+      - lolstagram
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5  
+      start_period: 30s  # 초기화 대기 시간을 30초로 설정
+      
+  frontend:
+    build: ./frontend
+    image: frontend
+    container_name: frontend
+    ports:
+      - 3000:80
+    depends_on:
+      - backend
+    networks:
+      - lolstagram
+  redis:
+    image: "redis:alpine"
+    container_name: redis
+    ports:
+      - 6979:6379
+    networks:
+      - lolstagram
+networks:
+  lolstagram:
+    driver: bridge

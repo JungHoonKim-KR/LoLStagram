@@ -1,5 +1,8 @@
 package com.example.reactmapping.global.exception;
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

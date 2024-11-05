@@ -38,11 +38,19 @@ public class UpdateMatchService {
             this.cur = front;
         }
 
+<<<<<<< HEAD
         public void update(Match newMatch) {
             if (matches[cur] == null)
                 matches[cur] =  newMatch;
             matches[cur].updateMatch(newMatch);
             matches[cur].updateSummonerInfo(matches[cur].getSummonerInfo());
+=======
+        public void update(Match newMatch, SummonerInfo summonerInfo) {
+            if (matches[cur] == null)
+                matches[cur] =  newMatch;
+            matches[cur].updateMatch(newMatch);
+            matches[cur].updateSummonerInfo(summonerInfo);
+>>>>>>> master
             rotate();
         }
 
@@ -67,7 +75,11 @@ public class UpdateMatchService {
         CircularQueue queue = new CircularQueue(summonerInfo.getMatchList());
         queue.setFront(LOL.gameCount - newMatchList.size());
         for(Match newMatch : newMatchList) {
+<<<<<<< HEAD
             queue.update(newMatch);
+=======
+            queue.update(newMatch, summonerInfo);
+>>>>>>> master
         }
         summonerInfo.updateMatchList(queue.getMatchList());
 

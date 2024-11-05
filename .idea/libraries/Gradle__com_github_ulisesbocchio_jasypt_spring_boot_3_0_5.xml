@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="Gradle: com.github.ulisesbocchio:jasypt-spring-boot:3.0.5" type="java-imported" external-system-id="GRADLE">
+    <properties groupId="com.github.ulisesbocchio" artifactId="jasypt-spring-boot" version="3.0.5" />
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.github.ulisesbocchio/jasypt-spring-boot/3.0.5/b75dd4d668ccaf176e89846b37ef0ba1c80149ec/jasypt-spring-boot-3.0.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

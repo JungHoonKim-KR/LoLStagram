@@ -4,9 +4,12 @@ spring:
     url: jdbc:mysql://db/lolstagram?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
     username: root
     password: ${DB_PASSWORD}
+<<<<<<< HEAD
   retry:
     max-attempts: 5         # 최대 재시도 횟수
     max-delay: 5000         # 재시도 간 최대 대기 시간 (5초)
+=======
+>>>>>>> master
   jpa:
     hibernate:
       ddl-auto: update

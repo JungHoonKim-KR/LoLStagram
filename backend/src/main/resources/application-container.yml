@@ -63,8 +63,8 @@ cloud:
       auto: false
 
 origin:
-  client: "http://${client_host}:${client_port}"
-  server: "http://${server_host}:${server_port}"
+  client: "http://frontend:3000"
+  server: "http://backend:8080"
 
 
 logging:

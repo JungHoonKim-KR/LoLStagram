@@ -39,7 +39,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{secrets.AWS_EC2_HOST}}
-          username: ${{secrets.AWS_EC2_USRNAME}}
+          username: ${{secrets.AWS_EC2_USERNAME}}
           key: ${{secrets.AWS_EC2_KEY}}
           script: |
             docker pull junghoonkim/backend:latest

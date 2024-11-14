@@ -40,7 +40,7 @@ jobs:
         with:
           host: ${AWS_EC2_HOST}
           username: ${AWS_EC2_USRNAME}
-          key: $AWS_EC2_KEY}
+          key: ${AWS_EC2_KEY}
           script: |
             docker pull junghoonkim/backend:latest
             docker stop backend || true

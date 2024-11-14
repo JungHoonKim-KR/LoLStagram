@@ -42,3 +42,4 @@ out/
 node_modules/
 >>>>>>> ebd5e8dc62cdfa74a89db0aad89d76186eef7b62
 /src/main/resources/application-local.yml
+/src/test/

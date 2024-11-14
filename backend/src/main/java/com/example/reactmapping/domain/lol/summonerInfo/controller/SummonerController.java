@@ -22,7 +22,7 @@ public class SummonerController {
     private final GetSummonerInfoService summonerService;
 
     @PutMapping("/update")
-    public SummonerInfoDto update(@RequestBody UpdateRequestDto updateRequestDto) throws JsonProcessingException {
+    public SummonerInfoDto update(@RequestBody UpdateRequestDto updateRequestDto) {
         SummonerInfo summonerInfoById = summonerInfoService.findSummonerInfoById(updateRequestDto.getSummonerId());
         SummonerInfo callSummonerInfoResponse = updateSummonerInfo.getUpdatedSummonerInfo(summonerInfoById);
 

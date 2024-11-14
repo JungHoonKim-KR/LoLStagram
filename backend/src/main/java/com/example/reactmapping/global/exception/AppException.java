@@ -1,11 +1,10 @@
 package com.example.reactmapping.global.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 public class AppException extends RuntimeException {
-    private ErrorCode errorCode;
+    private final ErrorCode errorCode;
 
     public AppException(ErrorCode errorCode) {
         super(errorCode.getMessage()); // 부모 클래스의 message 필드 사용

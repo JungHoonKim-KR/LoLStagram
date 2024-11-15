@@ -1,7 +1,7 @@
 version: "3"
 services:
   db:
-    build: ./database
+    build: junghoonkim/database:latest
     image: database
     container_name: db
     environment:
@@ -13,7 +13,7 @@ services:
     networks:
       - lolstagram
   backend:
-    build: ./backend
+    build: junghoonkim/backend:latest
     image: backend
     container_name: springboot
     environment:
@@ -43,7 +43,7 @@ services:
       start_period: 30s  # 초기화 대기 시간을 30초로 설정
       
   frontend:
-    build: ./frontend
+    build: junghoonkim/frontend:latest
     image: frontend
     container_name: frontend
     ports:

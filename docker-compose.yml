@@ -1,25 +1,32 @@
 version: "3"
 services:
   db:
-    build: junghoonkim/database:latest
-    image: database
+    image: junghoonkim/database:latest
     container_name: db
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_USER=${MYSQL_USERNAME}
-   
+    
     networks:
       - lolstagram
-  backend:
-    build: junghoonkim/backend:latest
-    image: backend
-    container_name: springboot
+  
+      
+  frontend:
+    image: junghoonkim/frontend:latest
+    container_name: frontend
+    ports:
+      - 3000:80
+    depends_on:
+      - backend
     environment:
-      - MYSQL_HOST=${MYSQL_HOST}
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USERNAME=${MYSQL_USERNAME}
+      - BACKEND_HOST=backend
+      - BACKEND_PORT=8080
+    networks:
+      - lolstagram
+
+  backend:
+    image: junghoonkim/backend:latest
+    container_name: backend
+    environment:
       - MYSQL_PASSWORD=${MYSQL_PASSWORD}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
@@ -27,39 +34,20 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-      - REDIS_HOST=${REDIS_HOST}
-      - REDIS_PORT=${REDIS_PORT}
+
+
     ports:
       - 8080:8080
     depends_on:
       - db
     networks:
-      - lolstagram
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-p${MYSQL_ROOT_PASSWORD}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5  
-      start_period: 30s  # 초기화 대기 시간을 30초로 설정
-      
-  frontend:
-    build: junghoonkim/frontend:latest
-    image: frontend
-    container_name: frontend
-    ports:
-      - 3000:80
-    depends_on:
-      - backend
-    environment:
-      - BACKEND_HOST=springboot
-      - BACKEND_PORT=8080
-    networks:
-      - lolstagram
+      - lolstagram 
+
   redis:
     image: "redis:alpine"
     container_name: redis
     ports:
-      - ${REDIS_PORT}:6379
+      - 6379:6379
     networks:
       - lolstagram
 networks:

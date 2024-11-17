@@ -65,4 +65,8 @@ public class ImageCreateService {
         return s3Config.amazonS3Client().getUrl(bucket, uuid + fileExtension).toString();
     }
 
+    public String getImageURL(String type, String id){
+        String filePath = type + "/" + id + ".png";
+        return s3Config.amazonS3Client().getUrl(bucket, filePath).toString();
+    }
 }

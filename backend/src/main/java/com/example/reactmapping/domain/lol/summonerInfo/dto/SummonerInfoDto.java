@@ -21,7 +21,6 @@ public class SummonerInfoDto {
     @Nullable
     private String leagueId;
     @Nullable
-
     private String tier;
     @Nullable
     private Long tierRank;

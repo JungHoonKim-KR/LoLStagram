@@ -1,9 +1,7 @@
 package com.example.reactmapping.domain.member.service;
 
-import com.example.reactmapping.domain.Image.service.ImageCreateService;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDto;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
-import com.example.reactmapping.domain.lol.summonerInfo.service.CreateSummonerInfoService;
 import com.example.reactmapping.domain.lol.summonerInfo.service.SummonerInfoService;
 import com.example.reactmapping.domain.member.entity.Member;
 import com.example.reactmapping.domain.member.dto.JoinDTO;
@@ -39,7 +37,7 @@ public class JoinService {
 
     private Member createMember(JoinDTO dto, SummonerInfo summonerInfo) {
         //        if(dto.getImage() != null) {
-//            String imageUrl = imageCreateService.createImage(dto.getImage());
+//            String imageUrl = imageService.createImage(dto.getImage());
 //            member.setProfileImage(imageUrl);
 //        }
         return Member.builder()

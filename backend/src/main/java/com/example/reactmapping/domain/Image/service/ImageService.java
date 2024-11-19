@@ -63,13 +63,11 @@ public class ImageService {
 
     public void save(Map<String, byte[]> imageDataList, String category) throws Exception {
         List<String> urlList = uploadImageToS3(imageDataList, category);
-        System.out.println(urlList.size());
         List<String> keyList = new ArrayList<>(imageDataList.keySet());
         List<Image> imageList = new ArrayList<>();
 
         for (int i = 0; i < urlList.size(); i++) {
             imageList.add(new Image(category, keyList.get(i), urlList.get(i)));
-            System.out.println(keyList.get(i));
         }
         save(imageList);
     }

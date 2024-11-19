@@ -1,4 +1,4 @@
-package com.example.reactmapping.dataFunctions;
+package com.example.reactmapping.domain.lol;
 
 import com.example.reactmapping.domain.Image.service.ImageService;
 import com.example.reactmapping.global.norm.LOL;
@@ -22,7 +22,7 @@ import java.util.function.Function;
 
 @Service
 @Transactional
-public class ChampionImagesDownloader {
+public class lolDataDownloader {
     private static final String DATA_DRAGON_URL = "https://ddragon.leagueoflegends.com/cdn/";
     private static final String CHAMPION = "champion";
     private static final String ITEM = "item";
@@ -32,12 +32,12 @@ public class ChampionImagesDownloader {
     private final ImageService imageService;
 
     @Autowired
-    public ChampionImagesDownloader(ImageService imageService) {
+    public lolDataDownloader(ImageService imageService) {
         this.imageService = imageService;
         this.httpClient = HttpClient.newHttpClient();
     }
 
-    @Scheduled(fixedRate = 300000 * 1000)
+    @Scheduled(cron = "0 0 12 * * WED")
     public void run() {
         try {
             getVersion();

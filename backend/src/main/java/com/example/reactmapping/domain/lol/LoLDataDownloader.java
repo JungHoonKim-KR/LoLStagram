@@ -22,7 +22,7 @@ import java.util.function.Function;
 
 @Service
 @Transactional
-public class lolDataDownloader {
+public class LoLDataDownloader {
     private static final String DATA_DRAGON_URL = "https://ddragon.leagueoflegends.com/cdn/";
     private static final String CHAMPION = "champion";
     private static final String ITEM = "item";
@@ -32,7 +32,7 @@ public class lolDataDownloader {
     private final ImageService imageService;
 
     @Autowired
-    public lolDataDownloader(ImageService imageService) {
+    public LoLDataDownloader(ImageService imageService) {
         this.imageService = imageService;
         this.httpClient = HttpClient.newHttpClient();
     }
@@ -136,6 +136,7 @@ public class lolDataDownloader {
         Map<String, JSONObject> runesMap = new LinkedHashMap<>();
         List<String> newDataList = new ArrayList<>();
         List<String> oldDataList = imageService.findAllName(RUNE);
+
         for (int i = 0; i < runesData.length(); i++) {
             JSONObject runeCategory = runesData.getJSONObject(i);
             JSONArray slots = runeCategory.getJSONArray("slots");
@@ -174,7 +175,7 @@ public class lolDataDownloader {
         return findNewData(oldDataList, newDataList);
     }
 
-    private Map<String, byte[]> makeImgData(List<String> newEntries, Function<String, String> imageUrlGenerator) throws Exception {
+    private Map<String, byte[]> makeImgData(List<String> newEntries, Function<String, String> imageUrlGenerator){
         // 사용자 정의 스레드 풀 생성
         ExecutorService executor = Executors.newFixedThreadPool(10); // 스레드 수 조정
 
@@ -206,7 +207,7 @@ public class lolDataDownloader {
     /**
      * 데이터 다운로드 메서드
      */
-    public String downloadData(String url) throws Exception {
+    private String downloadData(String url) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .build();

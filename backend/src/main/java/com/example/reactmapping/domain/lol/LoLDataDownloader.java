@@ -175,7 +175,7 @@ public class LoLDataDownloader {
         return findNewData(oldDataList, newDataList);
     }
 
-    private Map<String, byte[]> makeImgData(List<String> newEntries, Function<String, String> imageUrlGenerator){
+    private Map<String, byte[]> makeImgData(List<String> newEntries, Function<String, String> imageUrlGenerator) throws Exception {
         // 사용자 정의 스레드 풀 생성
         ExecutorService executor = Executors.newFixedThreadPool(10); // 스레드 수 조정
 

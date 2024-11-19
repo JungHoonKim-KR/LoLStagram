@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Transactional
@@ -43,22 +46,52 @@ public class ImageService {
     }
 
     public List<String> uploadImageToS3(Map<String, byte[]> imageDataMap, String category) throws Exception {
-        List<String> urlList = new ArrayList<>();
-        List<CompletableFuture<Void>> futures = new ArrayList<>();
-        imageDataMap.forEach((key, imageData) ->
-                //비동기 처리
-                futures.add(CompletableFuture.runAsync(() -> {
-                    ObjectMetadata metadata = new ObjectMetadata();
-                    metadata.setContentLength(imageData.length);
-                    metadata.setContentType("image/png");
-                    String path = category + "/" + key + ".png";
-                    ByteArrayInputStream inputStream = new ByteArrayInputStream(imageData);
-                    s3Client.putObject(bucket, path, inputStream, metadata);
-                    urlList.add(s3Client.getUrl(bucket, path).toString());
-                })));
-        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        // 스레드 세이프한 URL 리스트
+        List<String> urlList = Collections.synchronizedList(new ArrayList<>());
 
-        return urlList;
+        // 사용자 정의 스레드 풀 생성
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+
+        try {
+            // CompletableFuture 리스트 생성
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            imageDataMap.forEach((key, imageData) ->
+                    futures.add(CompletableFuture.runAsync(() -> {
+                        try {
+                            ObjectMetadata metadata = new ObjectMetadata();
+                            metadata.setContentLength(imageData.length);
+                            metadata.setContentType("image/png");
+                            String path = category + "/" + key + ".png";
+
+                            ByteArrayInputStream inputStream = new ByteArrayInputStream(imageData);
+                            s3Client.putObject(bucket, path, inputStream, metadata);
+
+                            // 스레드 세이프하게 URL 추가
+                            urlList.add(s3Client.getUrl(bucket, path).toString());
+                        } catch (Exception e) {
+                            throw new RuntimeException("Failed to upload image: " + key, e);
+                        }
+                    }, executor))
+            );
+
+            // 모든 비동기 작업 완료 대기
+            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+            return urlList; // 업로드된 URL 반환
+        } catch (Exception e) {
+            throw new RuntimeException("Error uploading images to S3", e);
+        } finally {
+            // 스레드 풀 종료
+            executor.shutdown();
+            try {
+                if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+                    executor.shutdownNow(); // 강제 종료
+                }
+            } catch (InterruptedException ex) {
+                executor.shutdownNow();
+                Thread.currentThread().interrupt(); // 인터럽트 상태 복원
+            }
+        }
     }
 
     public void save(Map<String, byte[]> imageDataList, String category) throws Exception {

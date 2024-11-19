@@ -67,6 +67,8 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+
 ////react
 //def frontendDir = "$projectDir/src/main/reactfront"
 //

@@ -12,6 +12,6 @@ FROM openjdk:17
 COPY --from=build /app/build/libs/*.jar /app/reactMapping.jar
 
 EXPOSE 8080
-# 시작 지연 추가 (5초 대기 후 애플리케이션 시작)
-ENTRYPOINT ["sh", "-c", "sleep 5 && java -jar /app/reactMapping.jar"]
+# 시작 지연 추가 (10초 대기 후 애플리케이션 시작)
+ENTRYPOINT ["sh", "-c", "sleep 10 && java -jar /app/reactMapping.jar"]
 

@@ -42,7 +42,6 @@ jobs:
           username: ${{secrets.AWS_EC2_USERNAME}}
           key: ${{secrets.AWS_EC2_KEY}}
           script: |
-            docker pull junghoonkim/backend:latest
-            docker stop backend || true
-            docker rm backend || true
-            docker run -d --name backend -p 8080:8080 junghoonkim/backend:latest
+            docker-compose pull backend
+            docker-compose down backend || true  # backend 컨테이너 중지 및 삭제
+            docker-compose up -d backend

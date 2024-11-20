@@ -1,6 +1,5 @@
 package com.example.reactmapping.domain.post.service;
 
-import com.example.reactmapping.domain.Image.service.ImageCreateService;
 import com.example.reactmapping.domain.member.entity.Member;
 import com.example.reactmapping.domain.member.service.MemberService;
 import com.example.reactmapping.domain.post.entity.Post;

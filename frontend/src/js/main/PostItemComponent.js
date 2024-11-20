@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import defaultImg from "../../images/tier/CHALLENGER.png";
 import CommentSection from "./CommentSectionComponent";
 
 const PostItem = ({ post, postIndex, postList, setPostList, token, setToken, member, navigate }) => {
@@ -81,10 +80,7 @@ const PostItem = ({ post, postIndex, postList, setPostList, token, setToken, mem
         } else {
             alert("댓글을 입력해 주세요");
         }
-
-        
     };
-
 
     return (
         <div className="feed" ref={containerRef}>

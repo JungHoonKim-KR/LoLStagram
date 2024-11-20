@@ -1,11 +1,12 @@
 name: Docker CI/CD Pipeline
 
 on:
+  push:
+    paths:
+      - 'backend/**'
   pull_request:
-    branches:
-      - master
-    types:
-      - closed
+    paths:
+      - 'backend/**'
 
 jobs:
   build-and-deploy:
@@ -42,6 +43,6 @@ jobs:
           username: ${{secrets.AWS_EC2_USERNAME}}
           key: ${{secrets.AWS_EC2_KEY}}
           script: |
-            docker-compose pull backend
-            docker-compose down backend || true  # backend 컨테이너 중지 및 삭제
-            docker-compose up -d backend
+            docker compose pull backend
+            docker compose down backend || true  # backend 컨테이너 중지 및 삭제
+            docker compose up -d backend

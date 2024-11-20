@@ -80,7 +80,6 @@ const PostItem = ({ post, postIndex, postList, setPostList, token, setToken, mem
         } else {
             alert("댓글을 입력해 주세요");
         }
-
     };
 
 

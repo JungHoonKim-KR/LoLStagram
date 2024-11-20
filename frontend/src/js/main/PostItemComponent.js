@@ -82,6 +82,7 @@ const PostItem = ({ post, postIndex, postList, setPostList, token, setToken, mem
         }
     };
 
+    
     return (
         <div className="feed" ref={containerRef}>
             <header className="feed__header">

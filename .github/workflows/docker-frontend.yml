@@ -1,11 +1,13 @@
 name: Docker Image CI
 
 on:
+  push:
+    paths:
+      - 'frontend/**'
   pull_request:
-    branches:
-      - master
-    types:
-      - cloesd
+    paths:
+      - 'frontend/**'
+
 
 jobs:
 

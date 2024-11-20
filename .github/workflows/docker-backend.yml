@@ -1,11 +1,12 @@
 name: Docker CI/CD Pipeline
 
 on:
+  push:
+    paths:
+      - 'backend/**'
   pull_request:
-    branches:
-      - master
-    types:
-      - closed
+    paths:
+      - 'backend/**'
 
 jobs:
   build-and-deploy:

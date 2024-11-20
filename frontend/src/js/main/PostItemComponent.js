@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import defaultImg from "../../images/tier/CHALLENGER.png";
 import CommentSection from "./CommentSectionComponent";
 
 const PostItem = ({ post, postIndex, postList, setPostList, token, setToken, member, navigate }) => {

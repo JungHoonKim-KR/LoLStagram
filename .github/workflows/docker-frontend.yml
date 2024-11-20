@@ -10,10 +10,11 @@ on:
 
 
 jobs:
-
-  build-and-deploy:
+  run-on-merge:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true &&
+        github.event.pull_request.base.ref == 'master' &&
+        github.event.pull_request.head.ref == 'frontend'
 
     steps:
       # 1. 코드 체크아웃

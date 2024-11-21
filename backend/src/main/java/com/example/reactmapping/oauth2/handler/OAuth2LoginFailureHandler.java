@@ -17,10 +17,15 @@ public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
     public OAuth2LoginFailureHandler(URL url) {
         this.url = url;
     }
-
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
-        log.info("로그인 실패");
-        response.sendRedirect(url.getServer());
+        log.info("로그인 실패: {}", exception.getMessage());
+
+        // 실패 메시지 포함 (예: /login?error=access_denied)
+        String targetUrl = String.format("%s/login?error=%s", url.getServer(), exception.getMessage());
+
+        // 리다이렉트 수행
+        response.sendRedirect(targetUrl);
     }
+
 }

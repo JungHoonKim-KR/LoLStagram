@@ -3,6 +3,7 @@ package com.example.reactmapping.domain.lol.match.dto;
 import com.example.reactmapping.StringListConverter;
 import com.example.reactmapping.domain.lol.match.entity.Match;
 import jakarta.persistence.Convert;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,72 +13,61 @@ import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class MatchDto {
+
     private String matchId;
     private Long kills;
     private Long deaths;
     private Long assists;
-
-    @Builder(toBuilder = true)
-    public MatchDto(String matchId, Long kills, Long deaths, Long assists, String kda, String championName, Long mainRune, Long subRune, String gameType, List<Integer> itemList, List<Integer> summonerSpellList, String result) {
-        this.matchId = matchId;
-        this.kills = kills;
-        this.deaths = deaths;
-        this.assists = assists;
-        this.kda = kda;
-        this.championName = championName;
-        this.mainRune = mainRune;
-        this.subRune = subRune;
-        this.gameType = gameType;
-        this.itemList = itemList;
-        this.summonerSpellList = summonerSpellList;
-        this.result = result;
-    }
-
     private String kda;
     private String championName;
     private Long mainRune;
     private Long subRune;
     private String gameType;
     @Convert(converter = StringListConverter.class)
-    private List<Integer> itemList ;
+    private List<Integer> itemList;
     @Convert(converter = StringListConverter.class)
     private List<Integer> summonerSpellList;
     private String result;
 
-    public static List<MatchDto> entityToDto(List<Match> MatchList){
-        return MatchList.stream()
-                .map(Match -> {
-                            MatchDto build = MatchDto.builder()
-                                    .matchId(Match.getMatchId())
-                                    .kills(Match.getKills())
-                                    .deaths(Match.getDeaths())
-                                    .assists(Match.getAssists())
-                                    .kda(Match.getKda())
-                                    .championName(Match.getChampionName())
-                                    .mainRune(Match.getMainRune())
-                                    .subRune(Match.getSubRune())
-                                    .gameType(Match.getGameType())
-                                    .result(Match.getResult())
-                                    .build();
-                            return build.toBuilder().itemList(Match.getItemList()).summonerSpellList(Match.getSummonerSpellList()).build();
-                        }
+
+    // 엔티티 리스트를 DTO 리스트로 변환
+    public static List<MatchDto> entityToDto(List<Match> matchList) {
+        return matchList.stream()
+                .map(match -> MatchDto.builder()
+                        .matchId(match.getMatchId())
+                        .kills(match.getKills())
+                        .deaths(match.getDeaths())
+                        .assists(match.getAssists())
+                        .kda(match.getKda())
+                        .championName(match.getChampionName())
+                        .mainRune(match.getMainRune())
+                        .subRune(match.getSubRune())
+                        .gameType(match.getGameType())
+                        .itemList(match.getItemList())  // 바로 설정
+                        .summonerSpellList(match.getSummonerSpellList()) // 바로 설정
+                        .result(match.getResult())
+                        .build()
                 ).collect(Collectors.toList());
     }
 
-    public static Match dtoToEntity(MatchDto MatchDto){
+    // DTO를 엔티티로 변환
+    public static Match dtoToEntity(MatchDto matchDto) {
         return Match.builder()
-                .matchId(MatchDto.getMatchId())
-                .kills(MatchDto.getKills())
-                .deaths(MatchDto.getDeaths())
-                .assists(MatchDto.getAssists())
-                .kda(MatchDto.getKda())
-                .championName(MatchDto.getChampionName())
-                .mainRune(MatchDto.getMainRune())
-                .subRune(MatchDto.getSubRune())
-                .itemList(MatchDto.getItemList())
-                .summonerSpellList(MatchDto.getSummonerSpellList())
-                .result(MatchDto.getResult())
+                .matchId(matchDto.getMatchId())
+                .kills(matchDto.getKills())
+                .deaths(matchDto.getDeaths())
+                .assists(matchDto.getAssists())
+                .kda(matchDto.getKda())
+                .championName(matchDto.getChampionName())
+                .mainRune(matchDto.getMainRune())
+                .subRune(matchDto.getSubRune())
+                .gameType(matchDto.getGameType())
+                .itemList(matchDto.getItemList())
+                .summonerSpellList(matchDto.getSummonerSpellList())
+                .result(matchDto.getResult())
                 .build();
     }
 }

@@ -5,11 +5,10 @@ import "../../css/Login.css"
 import google_btn from "../../images/btn_login_google.png"
 
 //서버에서 인증을 완료한 후에 프론트엔드로 돌아올 redirect uri (app.oauth2.authorized-redirect-uri와 일치해야 한다)
-export const API_BASE_URL = "http://ec2-3-39-119-168.ap-northeast-2.compute.amazonaws.com:8080";
+export const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 //서버에서 인증을 완료한 후에 프론트엔드로 돌아올 redirect uri (app.oauth2.authorized-redirect-uri와 일치해야 한다)
-
-export const OAUTH2_REDIRECT_URI = "http://ec2-3-39-119-168.ap-northeast-2.compute.amazonaws.com:3000/oauth2/redirect";
+export const OAUTH2_REDIRECT_URI = process.env.REACT_APP_OAUTH2_REDIRECT_URI;
 
 export const GOOGLE_AUTH_URL = API_BASE_URL + '/oauth2/authorization/google?redirect_uri=' + OAUTH2_REDIRECT_URI;
 export const FACEBOOK_AUTH_URL = API_BASE_URL + '/oauth2/authorization/facebook?redirect_uri=' + OAUTH2_REDIRECT_URI;
@@ -34,7 +33,6 @@ function Login() {
             },
                 );
 
-                
             localStorage.setItem('accessToken', response.data.accessToken);
             localStorage.setItem('userName',response.data.username)
             localStorage.setItem('mySummonerInfo', JSON.stringify(response.data.summonerInfoDto));

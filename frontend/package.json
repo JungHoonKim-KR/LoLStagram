@@ -6,6 +6,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.4",
+    "cross-env": "^7.0.3",
     "http-proxy-middleware": "^2.0.6",
     "react": "^18.2.0",
     "react-cookie": "^7.1.4",
@@ -16,7 +17,7 @@
     "react-spinners": "^0.13.8",
     "web-vitals": "^2.1.4"
   },
-  "proxy": "http://192.168.0.206:8080",
+  "proxy": "http://localhost:8080",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

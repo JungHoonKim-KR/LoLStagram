@@ -3,30 +3,31 @@ name: Docker Image CI
 on:
   push:
     branches:
-      - frontend # frontend 브랜치에서의 push를 감지
+      - master # master 브랜치에서의 push를 감지
     paths:
-      - 'frontend/**'
+      - 'frontend/**' # frontend 폴더 하위 변화만 감지
   pull_request:
     types:
       - closed # PR이 닫힐 때 (병합 포함)
     branches:
       - master # 대상 브랜치가 master일 때
+    paths:
+      - 'frontend/**' # frontend 폴더 하위 변화만 감지
 
 jobs:
-  run-on-merge:
+  run-on-master:
     runs-on: ubuntu-latest
 
-    if: github.event.pull_request.merged == true &&
-        github.event.pull_request.base.ref == 'master' &&
-        github.event.pull_request.head.ref == 'frontend'
+    if: github.event.pull_request.merged == true || github.event_name == 'push'
 
     steps:
-      # 1. 디버깅: 병합 이벤트 정보 출력
+      # 1. 디버깅: 이벤트 정보 출력
       - name: Debug Event Info
         run: |
-          echo "Base Branch: ${{ github.event.pull_request.base.ref }}"
-          echo "Head Branch: ${{ github.event.pull_request.head.ref }}"
-          echo "Merged: ${{ github.event.pull_request.merged }}"
+          echo "Event: ${{ github.event_name }}"
+          echo "Base Branch: ${{ github.event.pull_request.base.ref || 'N/A' }}"
+          echo "Head Branch: ${{ github.event.pull_request.head.ref || 'N/A' }}"
+          echo "Merged: ${{ github.event.pull_request.merged || 'N/A' }}"
 
       # 2. 코드 체크아웃
       - name: Checkout code

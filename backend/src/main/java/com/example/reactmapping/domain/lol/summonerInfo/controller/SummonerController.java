@@ -1,5 +1,6 @@
 package com.example.reactmapping.domain.lol.summonerInfo.controller;
 
+import com.example.reactmapping.domain.Image.service.ImageService;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerInfoDto;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDto;
@@ -20,20 +21,20 @@ public class SummonerController {
     private final UpdateSummonerInfo updateSummonerInfo;
     private final SummonerInfoService summonerInfoService;
     private final GetSummonerInfoService summonerService;
-
+    private final ImageService imageService;
     @PutMapping("/update")
     public SummonerInfoDto update(@RequestBody UpdateRequestDto updateRequestDto) {
         SummonerInfo summonerInfoById = summonerInfoService.findSummonerInfoById(updateRequestDto.getSummonerId());
         SummonerInfo callSummonerInfoResponse = updateSummonerInfo.getUpdatedSummonerInfo(summonerInfoById);
 
         log.info("소환사 정보 업데이트 완료");
-        return SummonerInfoDto.entityToDto(callSummonerInfoResponse);
+        return SummonerInfoDto.entityToDto(callSummonerInfoResponse, imageService);
     }
 
     @PostMapping("/search")
     public SummonerInfoDto search(@RequestBody SummonerNameAndTagDto summonerNameAndTagDto){
         log.info("소환사 검색 완료");
-        return SummonerInfoDto.entityToDto(summonerService.searchOrCreateSummoner(summonerNameAndTagDto));
+        return SummonerInfoDto.entityToDto(summonerService.searchOrCreateSummoner(summonerNameAndTagDto), imageService);
     }
 
 }

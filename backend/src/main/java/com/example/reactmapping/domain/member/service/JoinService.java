@@ -27,9 +27,9 @@ public class JoinService {
             throw new AppException(ErrorCode.DUPLICATED, dto.getEmailId() + "는 이미 존재합니다.");
         }
         Member member = createMember(dto, null);
-        memberRepository.save(member);
 
         if(summonerInfoService.findSummonerInfoBySummonerNameAndTag(new SummonerNameAndTagDto(dto.getSummonerName(), dto.getSummonerTag())).isEmpty()){
+            memberRepository.save(member);
             asyncSummonerService.createSummonerInfo(member, dto.getSummonerName(), dto.getSummonerTag(),puuId);
         }
         return member;

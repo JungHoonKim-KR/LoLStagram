@@ -11,8 +11,9 @@ import java.util.Optional;
 
 @Repository
 public interface ImageRepository extends JpaRepository<Image,Long> {
-    @Query("select i.url from Image i where i.type = :type AND i.name = :name")
-    Optional<String> findURL(@Param("type") String type, @Param("name") String name);
+    @Query("SELECT i.url FROM Image i WHERE i.type = :type AND i.name = :name")
+    Optional<String> findUrlByTypeAndName(@Param("type") String type, @Param("name") String name);
+
 
     @Query("select i.url from Image i where i.type = :type")
     List<String> findAllUrl(@Param("type") String type);

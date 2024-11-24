@@ -60,6 +60,11 @@ public class JwtUtil {
     }
 
     public Date getTokenTime(String token){
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getExpiration();
+        try{
+            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getExpiration();
+        }
+        catch (Exception e){
+            return  null;
+        }
     }
 }

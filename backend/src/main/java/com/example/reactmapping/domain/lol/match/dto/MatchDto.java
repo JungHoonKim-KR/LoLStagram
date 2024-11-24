@@ -1,6 +1,7 @@
 package com.example.reactmapping.domain.lol.match.dto;
 
 import com.example.reactmapping.StringListConverter;
+import com.example.reactmapping.domain.Image.service.ImageService;
 import com.example.reactmapping.domain.lol.match.entity.Match;
 import jakarta.persistence.Convert;
 import lombok.AllArgsConstructor;
@@ -16,58 +17,42 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 public class MatchDto {
-
     private String matchId;
     private Long kills;
     private Long deaths;
     private Long assists;
     private String kda;
-    private String championName;
-    private Long mainRune;
-    private Long subRune;
+    private String championURL;
+    private String mainRuneURL;
+    private String subRuneURL;
     private String gameType;
     @Convert(converter = StringListConverter.class)
-    private List<Integer> itemList;
+    private List<String> itemURLList;
     @Convert(converter = StringListConverter.class)
-    private List<Integer> summonerSpellList;
+    private List<String> summonerSpellURLList;
     private String result;
 
-
     // 엔티티 리스트를 DTO 리스트로 변환
-    public static List<MatchDto> entityToDto(List<Match> matchList) {
+    public static List<MatchDto> entityToDto(List<Match> matchList, ImageService imageService) {
         return matchList.stream()
-                .map(match -> MatchDto.builder()
-                        .matchId(match.getMatchId())
-                        .kills(match.getKills())
-                        .deaths(match.getDeaths())
-                        .assists(match.getAssists())
-                        .kda(match.getKda())
-                        .championName(match.getChampionName())
-                        .mainRune(match.getMainRune())
-                        .subRune(match.getSubRune())
-                        .gameType(match.getGameType())
-                        .itemList(match.getItemList())  // 바로 설정
-                        .summonerSpellList(match.getSummonerSpellList()) // 바로 설정
-                        .result(match.getResult())
-                        .build()
-                ).collect(Collectors.toList());
+                .map(match -> {
+
+                    return MatchDto.builder()
+                            .matchId(match.getMatchId())
+                            .kills(match.getKills())
+                            .deaths(match.getDeaths())
+                            .assists(match.getAssists())
+                            .kda(match.getKda())
+                            .championURL(imageService.getImageURL("champion", match.getChampionName()))
+                            .mainRuneURL(imageService.getImageURL("rune", match.getMainRune()))
+                            .subRuneURL(imageService.getImageURL("rune", match.getSubRune()))
+                            .gameType(match.getGameType())
+                            .itemURLList(match.getItemList().stream().map(item -> imageService.getImageURL("item", item)).toList())  // 바로 설정
+                            .summonerSpellURLList(match.getSummonerSpellList().stream().map(spell -> imageService.getImageURL("spell", spell)).toList()) // 바로 설정
+                            .result(match.getResult())
+                            .build();
+                }).collect(Collectors.toList());
     }
 
-    // DTO를 엔티티로 변환
-    public static Match dtoToEntity(MatchDto matchDto) {
-        return Match.builder()
-                .matchId(matchDto.getMatchId())
-                .kills(matchDto.getKills())
-                .deaths(matchDto.getDeaths())
-                .assists(matchDto.getAssists())
-                .kda(matchDto.getKda())
-                .championName(matchDto.getChampionName())
-                .mainRune(matchDto.getMainRune())
-                .subRune(matchDto.getSubRune())
-                .gameType(matchDto.getGameType())
-                .itemList(matchDto.getItemList())
-                .summonerSpellList(matchDto.getSummonerSpellList())
-                .result(matchDto.getResult())
-                .build();
-    }
+
 }

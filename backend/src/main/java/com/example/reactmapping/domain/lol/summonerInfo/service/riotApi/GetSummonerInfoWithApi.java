@@ -17,9 +17,9 @@ public class GetSummonerInfoWithApi {
     private final DataUtil dataUtil;
     private final LoLApiUtil loLApiUtil;
 
-    public String getPuuId(String summonerName,String summonerTage){
+    public String getPuuId(String summonerName,String summonerTag){
        return loLApiUtil.getJsonResponse(LOL.BaseUrlAsia
-                , "/riot/account/v1/accounts/by-riot-id/" + summonerName + "/" + summonerTage
+                , "/riot/account/v1/accounts/by-riot-id/" + summonerName + "/" + summonerTag
                 , "라이엇 이름 또는 태그가 일치하지 않습니다.").get("puuid").asText();
     }
     public String getSummonerId(String puuId) {

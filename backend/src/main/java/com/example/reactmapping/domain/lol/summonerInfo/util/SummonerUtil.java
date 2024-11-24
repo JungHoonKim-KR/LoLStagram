@@ -13,6 +13,7 @@ import java.util.List;
 public class SummonerUtil {
     public RecentRecord createRecentRecord(List<Match> matchList) {
         long totalkill = 0, totaldeath = 0, totalassist = 0;
+        System.out.println(matchList.size());
         for (Match match : matchList) {
             totalkill += match.getKills();
             totaldeath += match.getDeaths();

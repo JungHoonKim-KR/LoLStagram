@@ -27,7 +27,7 @@ public class LoLApiUtil {
         String jsonResponse = createWebClient(baseUrl, url)
                 .bodyToMono(String.class)
                 .onErrorResume(e -> {
-                    throw new AppException(ErrorCode.NOTFOUND,"소환사 아이디를 찾을 수 없습니다. 라이엇 이름 또는 태그가 일치하지 않습니다.");
+                    throw new AppException(ErrorCode.NOTFOUND,errorMessage);
                 })
                 .block();
         try {

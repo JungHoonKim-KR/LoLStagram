@@ -32,9 +32,8 @@ public class ImageService {
     private final ImageJDBCRepository imageJDBCRepository;
     private final AmazonS3Client s3Client;
 
-    public String getImageURL(String type, String id) {
-        String filePath = type + "/" + id + ".png";
-        return s3Config.amazonS3Client().getUrl(bucket, filePath).toString();
+    public String getImageURL(String type, String name) {
+        return imageRepository.findUrlByTypeAndName(type, name).orElse(null);
     }
 
     public List<String> findAllName(String type) {
@@ -46,53 +45,36 @@ public class ImageService {
     }
 
     public List<String> uploadImageToS3(Map<String, byte[]> imageDataMap, String category) throws Exception {
-        // 스레드 세이프한 URL 리스트
-        List<String> urlList = Collections.synchronizedList(new ArrayList<>());
-
-        // 사용자 정의 스레드 풀 생성
-        ExecutorService executor = Executors.newFixedThreadPool(10);
+        // URL 리스트
+        List<String> urlList = new ArrayList<>();
 
         try {
-            // CompletableFuture 리스트 생성
-            List<CompletableFuture<Void>> futures = new ArrayList<>();
-            imageDataMap.forEach((key, imageData) ->
-                    futures.add(CompletableFuture.runAsync(() -> {
-                        try {
-                            ObjectMetadata metadata = new ObjectMetadata();
-                            metadata.setContentLength(imageData.length);
-                            metadata.setContentType("image/png");
-                            String path = category + "/" + key + ".png";
+            for (Map.Entry<String, byte[]> entry : imageDataMap.entrySet()) {
+                String key = entry.getKey();
+                byte[] imageData = entry.getValue();
 
-                            ByteArrayInputStream inputStream = new ByteArrayInputStream(imageData);
-                            s3Client.putObject(bucket, path, inputStream, metadata);
+                try {
+                    ObjectMetadata metadata = new ObjectMetadata();
+                    metadata.setContentLength(imageData.length);
+                    metadata.setContentType("image/png");
+                    String path = category + "/" + key + ".png";
 
-                            // 스레드 세이프하게 URL 추가
-                            urlList.add(s3Client.getUrl(bucket, path).toString());
-                        } catch (Exception e) {
-                            throw new RuntimeException("Failed to upload image: " + key, e);
-                        }
-                    }, executor))
-            );
+                    ByteArrayInputStream inputStream = new ByteArrayInputStream(imageData);
+                    s3Client.putObject(bucket, path, inputStream, metadata);
 
-            // 모든 비동기 작업 완료 대기
-            CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+                    // 업로드된 S3 URL 추가
+                    urlList.add(s3Client.getUrl(bucket, path).toString());
+                } catch (Exception e) {
+                    throw new RuntimeException("Failed to upload image: " + key, e);
+                }
+            }
 
             return urlList; // 업로드된 URL 반환
         } catch (Exception e) {
             throw new RuntimeException("Error uploading images to S3", e);
-        } finally {
-            // 스레드 풀 종료
-            executor.shutdown();
-            try {
-                if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
-                    executor.shutdownNow(); // 강제 종료
-                }
-            } catch (InterruptedException ex) {
-                executor.shutdownNow();
-                Thread.currentThread().interrupt(); // 인터럽트 상태 복원
-            }
         }
     }
+
 
     public void save(Map<String, byte[]> imageDataList, String category) throws Exception {
         List<String> urlList = uploadImageToS3(imageDataList, category);

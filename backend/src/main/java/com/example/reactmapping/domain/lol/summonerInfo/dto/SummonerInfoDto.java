@@ -1,5 +1,6 @@
 package com.example.reactmapping.domain.lol.summonerInfo.dto;
 
+import com.example.reactmapping.domain.Image.service.ImageService;
 import com.example.reactmapping.domain.lol.dto.MostChampion;
 import com.example.reactmapping.domain.lol.match.dto.MatchDto;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.BasicInfo;
@@ -43,9 +44,9 @@ public class SummonerInfoDto {
     private List<MatchDto> matchList;
 
     // SummonerInfo 엔티티를 SummonerInfoDto로 변환하는 메서드
-    public static SummonerInfoDto entityToDto(SummonerInfo summonerInfo) {
+    public static SummonerInfoDto entityToDto(SummonerInfo summonerInfo, ImageService imageService) {
         //match를 페이징 처리 하려면 제거
-        List<MatchDto> MatchDtoList = MatchDto.entityToDto(summonerInfo.getMatchList());
+        List<MatchDto> MatchDtoList = MatchDto.entityToDto(summonerInfo.getMatchList(), imageService);
         BasicInfo basicInfo = Optional.ofNullable(summonerInfo.getBasicInfo()).orElse(new BasicInfo());
 
         return SummonerInfoDto.builder()

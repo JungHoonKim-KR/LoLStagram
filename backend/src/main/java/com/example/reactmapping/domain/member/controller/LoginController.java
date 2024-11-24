@@ -1,4 +1,5 @@
 package com.example.reactmapping.domain.member.controller;
+import com.example.reactmapping.domain.Image.service.ImageService;
 import com.example.reactmapping.domain.member.dto.LoginInfo;
 import com.example.reactmapping.domain.member.dto.LoginRequestDto;
 import com.example.reactmapping.domain.member.dto.LoginResponseDto;
@@ -21,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
     private final LoginService loginService;
     private final CookieUtil cookieUtil;
-
     @Operation(summary = "로그인")
     @PostMapping("/normal")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto, HttpServletResponse httpServletResponse) throws JsonProcessingException {
@@ -33,7 +33,7 @@ public class LoginController {
 
     @PostMapping("/oauthLogin")
     public ResponseEntity<?> oauthLogin(@CookieValue(name = Token.TokenName.accessToken, defaultValue = "NO") String accessToken,
-                                        HttpServletResponse response) throws JsonProcessingException {
+                                        HttpServletResponse response){
         LoginInfo loginInfo = loginService.socialLogin(accessToken);
 
         Cookie cookie = new Cookie(Token.TokenName.accessToken, "expiredAccessToken");

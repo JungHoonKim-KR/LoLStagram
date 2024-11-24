@@ -1,5 +1,6 @@
 package com.example.reactmapping.domain.lol.match.service;
 
+import com.example.reactmapping.domain.Image.service.ImageService;
 import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.example.reactmapping.domain.lol.match.dto.MatchDto;
 import com.example.reactmapping.domain.lol.match.dto.MatchResultDto;
@@ -25,7 +26,7 @@ import java.util.List;
 public class GetMatchService {
     private final LoLApiUtil loLApiUtil;
     private final MatchService matchService;
-
+    private final ImageService imageService;
     public JsonNode getMatch(String matchId){
         return loLApiUtil.getJsonResponse(LOL.BaseUrlAsia, "/lol/match/v5/matches/" + matchId, "경기를 찾을 수 없습니다.")
                 .path("info");
@@ -44,7 +45,7 @@ public class GetMatchService {
         log.info(String.valueOf(pageable.getPageNumber()));
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "gameStartTimestamp"));
         Page<Match> content = matchService.findAll(spec, pageRequest);
-        List<MatchDto> MatchDtos = MatchDto.entityToDto(content.getContent());
+        List<MatchDto> MatchDtos = MatchDto.entityToDto(content.getContent(), imageService);
 
         return new MatchResultDto(MatchDtos,content.isLast(),type);
     }

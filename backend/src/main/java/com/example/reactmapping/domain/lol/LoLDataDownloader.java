@@ -37,7 +37,7 @@ public class LoLDataDownloader {
         this.httpClient = HttpClient.newHttpClient();
     }
 
-    @Scheduled(cron = "0 0 12 * * WED")
+    @Scheduled(fixedRate = 36000)
     public void run() {
         try {
             getVersion();
@@ -139,25 +139,28 @@ public class LoLDataDownloader {
 
         for (int i = 0; i < runesData.length(); i++) {
             JSONObject runeCategory = runesData.getJSONObject(i);
+            processRuneData(runesData.getJSONObject(i),runesMap, newDataList);
             JSONArray slots = runeCategory.getJSONArray("slots");
+
             for (int j = 0; j < slots.length(); j++) {
                 JSONArray runes = slots.getJSONObject(j).getJSONArray("runes");
                 for (int k = 0; k < runes.length(); k++) {
-                    JSONObject rune = runes.getJSONObject(k);
-                    String key = String.valueOf(rune.getInt("id"));
-                    runesMap.put(key, rune);
-                    newDataList.add(key);
+                    processRuneData(runes.getJSONObject(k), runesMap, newDataList);
                 }
             }
         }
         // parseAndGetNewEntries와 동일
         List<String> newEntries = findNewData(oldDataList, newDataList);
-
         if (!newEntries.isEmpty()) {
             Map<String, byte[]> imgDataMap = makeImgData(newEntries,
                     entry -> DATA_DRAGON_URL + "img/" + runesMap.get(entry).getString("icon"));
             imageService.save(imgDataMap,RUNE);
         }
+    }
+    private void processRuneData(JSONObject runeData, Map<String, JSONObject> runeMap, List<String> newDataList){
+        String key = String.valueOf(runeData.getInt("id"));
+        runeMap.put(key, runeData);
+        newDataList.add(key);
     }
 
     private List<String> parseAndGetNewEntries(String category, JSONObject data) {

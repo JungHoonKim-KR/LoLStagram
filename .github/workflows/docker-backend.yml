@@ -3,7 +3,7 @@ name: Docker CI/CD Pipeline
 on:
   push:
     branches:
-      - backend # frontend 브랜치에서의 push를 감지
+      - master 
     paths:
       - 'backend/**'
 

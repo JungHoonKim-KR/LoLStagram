@@ -3,8 +3,7 @@ import {useState} from "react";
 import {useNavigate} from 'react-router-dom';
 import "../../css/Login.css"
 import google_btn from "../../images/btn_login_google.png"
-
-//서버에서 인증을 완료한 후에 프론트엔드로 돌아올 redirect uri (app.oauth2.authorized-redirect-uri와 일치해야 한다)
+//서버로 인증을 요청할 uri (서버의 webSecurityConfig의 base uri와 일치해야 한다)
 export const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 //서버에서 인증을 완료한 후에 프론트엔드로 돌아올 redirect uri (app.oauth2.authorized-redirect-uri와 일치해야 한다)

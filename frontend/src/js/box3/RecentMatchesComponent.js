@@ -26,7 +26,7 @@ const RecentMatches = ({ summonerInfo, updateMatch, matchList, imageCheck, callM
                         {summonerInfo.mostChampionList.map((mostChampion) => (
                             <li key={mostChampion.kda} className="mostChampion">
                                 <img
-                                    src={imageCheck("champion", mostChampion.championName)}
+                                    src={mostChampion.championURL}
                                     alt="mostChampion"
                                 />
                                 <div className="championInfo">
@@ -52,8 +52,7 @@ const RecentMatches = ({ summonerInfo, updateMatch, matchList, imageCheck, callM
                                 <div className="summonerList">
                                     <img
                                         className="championImg"
-                                        src={imageCheck("champion", match.championName)}
-                                        alt={match.championName}
+                                        src={match.championURL}
                                     />
                                     <div className="Match">
                                         <div className="summonerImg">
@@ -62,20 +61,20 @@ const RecentMatches = ({ summonerInfo, updateMatch, matchList, imageCheck, callM
                                                     <img
                                                         id="mainRune"
                                                         key={match.matchId}
-                                                        src={imageCheck("rune", match.mainRune)}
+                                                        src={match.mainRuneURL}
                                                         alt="mainRune"
                                                     />
                                                 </div>
                                                 <img
                                                     id="subRune"
-                                                    src={imageCheck("rune", match.subRune)}
+                                                    src={match.subRuneURL}
                                                     alt="subRune"
                                                 />
                                             </div>
                                             <div className="spellImg">
-                                                {match.summonerSpellList.map((spell, spellIndex) => (
+                                                {match.summonerSpellURLList.map((spellURL, spellIndex) => (
                                                     <span key={spellIndex}>
-                            <img src={imageCheck("spell", spell)} alt={spell} />
+                            <img src={spellURL} alt={spellURL} />
                           </span>
                                                 ))}
                                             </div>
@@ -93,9 +92,9 @@ const RecentMatches = ({ summonerInfo, updateMatch, matchList, imageCheck, callM
                                 </div>
                                 <div className="itemList">
                                     <ul>
-                                        {match.itemList.map((item, itemIndex) => (
+                                        {match.itemURLList.map((itemURL, itemIndex) => (
                                             <li key={itemIndex}>
-                                                <img src={imageCheck("item", item)} alt={item} />
+                                                <img src={itemURL} alt={itemURL} />
                                             </li>
                                         ))}
                                     </ul>

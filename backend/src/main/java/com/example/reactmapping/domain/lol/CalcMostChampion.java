@@ -1,5 +1,6 @@
 package com.example.reactmapping.domain.lol;
 
+import com.example.reactmapping.domain.Image.service.ImageService;
 import com.example.reactmapping.domain.lol.dto.MostChampion;
 import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.example.reactmapping.domain.lol.util.DataUtil;
@@ -18,7 +19,7 @@ public class CalcMostChampion {
     private static final int TopSize = 3;
     private final String True = "true";
     private final DataUtil dataUtil;
-
+    private final ImageService imageService;
     public List<MostChampion> calcMostChampion(List<Match> MatchList) {
         Map<String, List<Match>> sortedChampionList = MatchList.stream().collect(Collectors.groupingBy(Match::getChampionName));
         List<String> topThreeChampions = getTopThreeChampions(sortedChampionList);
@@ -45,7 +46,7 @@ public class CalcMostChampion {
                 .deaths(totalDeaths)
                 .assists(totalAssists)
                 .kda(kda)
-                .championName(champion)
+                .championURL(imageService.getImageURL("champion", champion))
                 .count(count)
                 .win(winCount)
                 .loss(lossCount)

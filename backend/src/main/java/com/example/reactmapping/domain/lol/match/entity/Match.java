@@ -24,13 +24,13 @@ public class Match{
     private Long assists;
     private String kda;
     private String championName;
-    private Long mainRune;
-    private Long subRune;
+    private String mainRune;
+    private String subRune;
     private String gameType;
     @Convert(converter = StringListConverter.class)
-    private List<Integer> itemList;
+    private List<String> itemList;
     @Convert(converter = StringListConverter.class)
-    private List<Integer> summonerSpellList;
+    private List<String> summonerSpellList;
     private String result;
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,7 +39,7 @@ public class Match{
     private SummonerInfo summonerInfo;
 
     @Builder(toBuilder = true)
-    public Match(Long id, String matchId, Long gameStartTimestamp, Long kills, Long deaths, Long assists, String kda, String championName, Long mainRune, Long subRune, String gameType, List<Integer> itemList, List<Integer> summonerSpellList, String result, SummonerInfo summonerInfo) {
+    public Match(Long id, String matchId, Long gameStartTimestamp, Long kills, Long deaths, Long assists, String kda, String championName, String mainRune, String subRune, String gameType, List<String> itemList, List<String> summonerSpellList, String result, SummonerInfo summonerInfo) {
         this.id = id;
         this.matchId = matchId;
         this.gameStartTimestamp = gameStartTimestamp;

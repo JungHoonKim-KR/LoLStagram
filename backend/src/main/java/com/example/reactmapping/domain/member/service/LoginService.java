@@ -1,5 +1,6 @@
 package com.example.reactmapping.domain.member.service;
 
+import com.example.reactmapping.domain.Image.service.ImageService;
 import com.example.reactmapping.domain.lol.summonerInfo.service.SummonerInfoService;
 import com.example.reactmapping.global.security.jwt.JwtService;
 import com.example.reactmapping.global.security.jwt.JwtUtil;
@@ -29,9 +30,10 @@ public class LoginService {
     private final SummonerInfoService summonerInfoRepositoryService;
     private final JwtService jwtService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final ImageService imageService;
     private final JwtUtil jwtUtil;
 
-    public LoginInfo login(String requestEmail, String requestPassword) throws JsonProcessingException {
+    public LoginInfo login(String requestEmail, String requestPassword) {
         Member member = getMemberByEmail(requestEmail);
         verifyPassword(requestPassword, member);
         SummonerInfo summonerInfo = getSummonerInfo(member);
@@ -71,7 +73,7 @@ public class LoginService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .username(member.getUsername())
-                .summonerInfoDto(SummonerInfoDto.entityToDto(summonerInfo))
+                .summonerInfoDto(SummonerInfoDto.entityToDto(summonerInfo, imageService))
                 .memberDto(memberDto)
                 .build();
     }

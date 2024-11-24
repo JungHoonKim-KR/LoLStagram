@@ -56,7 +56,7 @@ public class CreateMatchService {
         }
     }
     private boolean isDesiredSummoner(JsonNode participant, String summonerName, String summonerTag) {
-        return participant.path(LOL.RiotIdGameName).asText().equals(summonerName)
+        return participant.path(LOL.RiotIdGameName).asText().equalsIgnoreCase(summonerName)
                 && participant.path(LOL.RiotIdTagline).asText().equals(summonerTag);
     }
     private void populateMatchDetails(Match.MatchBuilder matchBuilder, JsonNode participant) {
@@ -79,31 +79,31 @@ public class CreateMatchService {
         return (deaths == 0) ? "perfect" : df.format((double) (kills + assists) / deaths);
     }
 
-    private Long extractMainRune(JsonNode participant) {
+    private String extractMainRune(JsonNode participant) {
         return participant.path("perks").path("styles").findValuesAsText("perk").stream()
-                .map(Long::valueOf)
+                .map(String::valueOf)
                 .findFirst()
-                .orElse(-1L);
+                .orElse(null);
     }
 
-    private Long extractSubRune(JsonNode participant) {
+    private String extractSubRune(JsonNode participant) {
         return participant.path("perks").path("styles").findValuesAsText("style").stream()
-                .map(Long::valueOf)
+                .map(String::valueOf)
                 .findFirst()
-                .orElse(-1L);
+                .orElse(null);
     }
-    private List<Integer> extractItems(JsonNode participant) {
+    private List<String> extractItems(JsonNode participant) {
         return IntStream.range(0, 7)
                 .mapToObj(i -> "item" + i)
                 .filter(participant::has)
-                .map(key -> participant.path(key).asInt())
+                .map(key -> participant.path(key).asText())
                 .collect(Collectors.toList());
     }
-    private List<Integer> extractSummonerSpells(JsonNode participant) {
+    private List<String> extractSummonerSpells(JsonNode participant) {
         return IntStream.range(1, 3)
                 .mapToObj(i -> "summoner" + i + "Id")
                 .filter(participant::has)
-                .map(key -> participant.path(key).asInt())
+                .map(key -> participant.path(key).asText())
                 .collect(Collectors.toList());
     }
 }

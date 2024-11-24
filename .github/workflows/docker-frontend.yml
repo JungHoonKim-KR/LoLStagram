@@ -1,0 +1,66 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches:
+      - master # master 브랜치에서의 push를 감지
+    paths:
+      - 'frontend/**' # frontend 폴더 하위 변화만 감지
+  pull_request:
+    types:
+      - closed # PR이 닫힐 때 (병합 포함)
+    branches:
+      - master # 대상 브랜치가 master일 때
+    paths:
+      - 'frontend/**' # frontend 폴더 하위 변화만 감지
+
+jobs:
+  run-on-master:
+    runs-on: ubuntu-latest
+
+    if: github.event.pull_request.merged == true || github.event_name == 'push'
+
+    steps:
+      # 1. 디버깅: 이벤트 정보 출력
+      - name: Debug Event Info
+        run: |
+          echo "Event: ${{ github.event_name }}"
+          echo "Base Branch: ${{ github.event.pull_request.base.ref || 'N/A' }}"
+          echo "Head Branch: ${{ github.event.pull_request.head.ref || 'N/A' }}"
+          echo "Merged: ${{ github.event.pull_request.merged || 'N/A' }}"
+
+      # 2. 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 3. Docker Buildx 설정
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      # 4. Docker 로그인 (Docker Hub)
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # 5. Docker 이미지 빌드 및 푸시
+      - name: Build and Push Docker Image
+        run: |
+          docker build \
+            --build-arg REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }} \
+            --build-arg REACT_APP_OAUTH2_REDIRECT_URI=${{ secrets.REACT_APP_OAUTH2_REDIRECT_URI }} \
+            -t junghoonkim/frontend:latest ./frontend
+          docker push junghoonkim/frontend:latest
+
+      # 6. 배포 서버에 SSH로 접속하여 최신 Docker 이미지 배포
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USERNAME }}
+          key: ${{ secrets.AWS_EC2_KEY }}
+          script: |
+            docker compose pull frontend
+            docker compose down frontend || true
+            docker compose up -d frontend

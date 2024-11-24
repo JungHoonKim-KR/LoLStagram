@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: ${DB_URL}
-    username: ubuntu
-    password: ${DB_PASSWORD}
+    url: jdbc:mysql://db/lolstagram?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
+    username: root
+    password: ${MYSQL_PASSWORD}
   jpa:
     hibernate:
       ddl-auto: update
@@ -30,9 +30,9 @@ spring:
               - profile
   data:
     redis:
-      host: ${REDIS_HOST}
+      host: redis
       port: 6379
-      password: ${REDIS_PASSWORD}
+
   web:
     resources:
       static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
@@ -61,5 +61,5 @@ cloud:
       auto: false
 
 origin:
-  client: ""
-  server: ""
+  client: "http://ec2-3-39-119-168.ap-northeast-2.compute.amazonaws.com:3000"
+  server: "http://ec2-3-39-119-168.ap-northeast-2.compute.amazonaws.com:8080"

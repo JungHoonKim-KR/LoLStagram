@@ -37,7 +37,7 @@ public class LoLDataDownloader {
         this.httpClient = HttpClient.newHttpClient();
     }
 
-    @Scheduled(fixedRate = 36000)
+    @Scheduled(cron = "0 0 12 * * WED")
     public void run() {
         try {
             getVersion();

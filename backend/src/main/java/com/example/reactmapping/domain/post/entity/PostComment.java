@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Builder(toBuilder = true)
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 public class PostComment {
@@ -18,12 +16,21 @@ public class PostComment {
     @Column(name = "postComment_id")
     private Long id;
     private String comment;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post")
     private Post post;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer")
     private Member writer;
+
+    @Builder
+    public PostComment(String comment, Post post, Member writer) {
+        this.comment = comment;
+        this.post = post;
+        this.writer = writer;
+    }
+
     public void setPost(Post post) {
         this.post = post;
         post.getCommentList().add(this);

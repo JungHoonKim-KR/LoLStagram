@@ -7,6 +7,7 @@ import com.example.reactmapping.domain.post.repository.PostCommentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,8 +19,10 @@ import java.util.Optional;
 @Transactional
 public class PostService {
     private final PostRepository postRepository;
-    private final PostCommentRepository postCommentRepository;
 
+    public Page<Post> findAll(Pageable pageable) {
+        return postRepository.findAll(pageable);
+    }
     public void savePost(Post post){
         postRepository.save(post);
     }
@@ -29,7 +32,5 @@ public class PostService {
     public Page<Post> findAllPost(PageRequest pageRequest) {
         return postRepository.findAll(pageRequest);
     }
-    public List<PostComment> findAllComments(List<Long> postIds) {
-        return postCommentRepository.findAllComments(postIds);
-    }
+
 }

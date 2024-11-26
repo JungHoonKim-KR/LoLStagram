@@ -3,22 +3,14 @@ name: Docker CI/CD Pipeline
 on:
   push:
     branches:
-      - backend # frontend 브랜치에서의 push를 감지
+      - master 
     paths:
       - 'backend/**'
-  pull_request:
-    types:
-      - closed # PR이 닫힐 때 (병합 포함)
-    branches:
-      - master # 대상 브랜치가 master일 때
-    paths:
-      - 'backend/**'
+
 
 jobs:
   run-on-merge:
     runs-on: ubuntu-latest
-
-    if: github.event.pull_request.merged == true && github.event_name == 'push'
 
     steps:
       # 1. 코드 체크아웃

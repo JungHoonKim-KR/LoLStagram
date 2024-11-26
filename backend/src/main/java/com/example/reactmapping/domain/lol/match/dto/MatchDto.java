@@ -36,7 +36,6 @@ public class MatchDto {
     public static List<MatchDto> entityToDto(List<Match> matchList, ImageService imageService) {
         return matchList.stream()
                 .map(match -> {
-
                     return MatchDto.builder()
                             .matchId(match.getMatchId())
                             .kills(match.getKills())

@@ -51,10 +51,10 @@ jwt:
 cloud:
   aws:
     credentials:
-      access-key: ${AWS_ACCESS_KEY_ID}
-      secret-key: ${AWS_SECRET_ACCESS_KEY}
+      access-key: ${AWS_ACCESS_KEY}
+      secret-key: ${AWS_SECRET_KEY}
     s3:
-      bucket: pmm-s3-1
+      bucket: ddoons-bucket
     region:
       static: ap-northeast-2
     stack:

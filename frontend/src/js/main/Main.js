@@ -27,16 +27,15 @@ const Main = () => {
                     localStorage.setItem("accessToken", res.headers.access);
                     setToken(res.headers.access);
                 }
-
-                const newPosts = res.data.postDtoList.map((post) => ({
+                const newPosts = res.data.content.map((post) => ({
                     ...post,
                     comments: [],
                     newComment: "",
                     postReviewBtnColor: "rgb(199, 235, 245)",
                 }));
-
+                
                 setPostList((prevState) => [...prevState, ...newPosts]);
-                setIsLast(res.data.isLast);
+                setIsLast(res.data.last);
             } catch (error) {
                 const errorMessage = error.response?.data?.errorMessage || "알 수 없는 오류 발생";
                 alert(errorMessage);
@@ -80,7 +79,6 @@ const Main = () => {
         </div>
     );
 };
-
 const LoadMoreButton = ({ onClick }) => (
     <button id="addPostBtn" onClick={onClick}>
         <img src={addImg} alt="Add more posts" />

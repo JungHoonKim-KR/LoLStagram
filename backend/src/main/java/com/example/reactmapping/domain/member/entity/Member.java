@@ -4,7 +4,6 @@ import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import com.example.reactmapping.domain.post.entity.Post;
 import com.example.reactmapping.domain.post.entity.PostComment;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,8 +12,6 @@ import java.util.List;
 
 @Entity
 @Getter
-@Builder(toBuilder = true)
-@AllArgsConstructor
 @NoArgsConstructor
 public class Member {
     @Id
@@ -29,10 +26,6 @@ public class Member {
     private String username;
     @Schema(description = "권한")
     private String role;
-//    @Schema(description = "라이엇 닉네임")
-//    private String riotIdGameName;
-//    @Schema(description = "라이엇 태그")
-//    private String riotIdTagline;
     // member와 summonerInfo는 특이한 구조임
     // summonerInfo는 여러 member와 연관될 수 있지만 조회는 하지 않음.
     // 즉 member만 summonerInfo를 조회하기 때문에 cascade 설정을 연관관계의 주인인 member에 하게 됐음.
@@ -42,12 +35,25 @@ public class Member {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "summoner_id")
     private SummonerInfo summonerInfo;
-//    @Schema(description = "프로필 사진")
-//    @Nullable
-//    private String profileImage;
+
     @OneToMany(mappedBy = "member",cascade = CascadeType.ALL)
     private List<Post> postList = new ArrayList<>();
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL)
     private List<PostComment> commentList = new ArrayList<>();
+
+    @Builder
+    public Member(String emailId, String password, String username, String role, SummonerInfo summonerInfo) {
+        this.emailId = emailId;
+        this.password = password;
+        this.username = username;
+        this.role = role;
+        this.summonerInfo = summonerInfo;
+    }
+
+
+    public void setOauthInfo(String emailId, String username){
+        this.emailId = emailId;
+        this.username = username;
+    };
 
 }

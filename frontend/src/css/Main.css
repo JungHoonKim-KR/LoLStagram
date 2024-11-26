@@ -167,8 +167,9 @@ li {
     border-top: 1px solid #dbdbdb; /* 댓글 간 구분선 추가 */
 }
 
-.comment p {
-    margin: 0;
+.comment p:first-child {
+    margin-right: 20px;
+    display: inline;
 }
 
 .comment strong {

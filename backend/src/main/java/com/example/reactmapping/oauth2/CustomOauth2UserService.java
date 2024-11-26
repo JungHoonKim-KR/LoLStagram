@@ -27,11 +27,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
     private Member getMember(OAuth2Response oAuth2Response) {
         Member member = new Member();
-        member = member.toBuilder()
-                .emailId(oAuth2Response.getEmail())
-                .username(oAuth2Response.getName())
-                .build();
-
+        member.setOauthInfo(oAuth2Response.getEmail(), oAuth2Response.getName());
         log.info(member.getEmailId());
         log.info(member.getUsername());
         return member;

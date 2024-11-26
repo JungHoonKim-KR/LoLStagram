@@ -38,9 +38,8 @@ public class Match{
     @JsonBackReference
     private SummonerInfo summonerInfo;
 
-    @Builder(toBuilder = true)
-    public Match(Long id, String matchId, Long gameStartTimestamp, Long kills, Long deaths, Long assists, String kda, String championName, String mainRune, String subRune, String gameType, List<String> itemList, List<String> summonerSpellList, String result, SummonerInfo summonerInfo) {
-        this.id = id;
+    @Builder
+    public Match(String matchId, Long gameStartTimestamp, Long kills, Long deaths, Long assists, String kda, String championName, String mainRune, String subRune, String gameType, List<String> itemList, List<String> summonerSpellList, String result, SummonerInfo summonerInfo) {
         this.matchId = matchId;
         this.gameStartTimestamp = gameStartTimestamp;
         this.kills = kills;

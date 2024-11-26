@@ -79,7 +79,6 @@ const Main = () => {
         </div>
     );
 };
-
 const LoadMoreButton = ({ onClick }) => (
     <button id="addPostBtn" onClick={onClick}>
         <img src={addImg} alt="Add more posts" />

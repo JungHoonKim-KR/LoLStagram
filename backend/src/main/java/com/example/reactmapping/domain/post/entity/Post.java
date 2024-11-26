@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -26,9 +25,17 @@ public class Post {
     private Member member;
     @Setter
     private String imageUrl;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<PostComment> commentList = new ArrayList<>();
 
+    @Builder
+    public Post(String title, String content, LocalDateTime createTime, String imageUrl) {
+        this.title = title;
+        this.content = content;
+        this.createTime = createTime;
+        this.imageUrl = imageUrl;
+    }
     public void setMember(Member member) {
         this.member = member;
         member.getPostList().add(this);

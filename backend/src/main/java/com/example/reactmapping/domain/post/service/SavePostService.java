@@ -12,7 +12,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Service
@@ -32,7 +31,7 @@ public class SavePostService {
                 .orElseThrow(() -> new AppException(ErrorCode.NOTFOUND, "게시글을 찾지 못했습니다."));
         Member writer = memberService.findMemberById(postCommentDto.writeId);
 
-        createPostComment(postCommentDto, writer, post);
+        setPostComment(postCommentDto, writer, post);
         postService.savePost(post);
     }
 
@@ -45,8 +44,9 @@ public class SavePostService {
         post.setMember(member);
         return post;
     }
-    private static void createPostComment(PostCommentDto postCommentDto, Member writer, Post post) {
-        PostComment postComment = new PostComment().toBuilder()
+    private static void setPostComment(PostCommentDto postCommentDto, Member writer, Post post) {
+
+        PostComment postComment = PostComment.builder()
                 .writer(writer)
                 .comment(postCommentDto.comment)
                 .build();

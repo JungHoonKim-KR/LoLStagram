@@ -1,4 +1,4 @@
-package com.example.reactmapping.domain.lol;
+package com.example.reactmapping.domain.lol.summonerInfo.service;
 
 import com.example.reactmapping.domain.Image.service.ImageService;
 import com.example.reactmapping.domain.lol.dto.MostChampion;

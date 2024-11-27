@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -40,8 +41,13 @@ public class ImageService {
         return imageRepository.findAllName(type);
     }
 
-    public List<Image> findAll(String type) {
-        return imageRepository.findAllByType(type);
+    public Map<String, String> findUrlsByTypeAndKeys(String type, List<String>keys){
+        List<String[]> urlsByTypeAndKeys = imageRepository.findUrlsByTypeAndKeys(type, keys);
+        return urlsByTypeAndKeys.stream().collect(Collectors.toMap(
+                obj -> obj[0],
+                obj -> obj[1]
+        ));
+
     }
 
     public List<String> uploadImageToS3(Map<String, byte[]> imageDataMap, String category) throws Exception {

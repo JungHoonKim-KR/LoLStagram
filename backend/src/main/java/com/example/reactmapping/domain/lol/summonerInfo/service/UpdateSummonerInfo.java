@@ -1,6 +1,5 @@
 package com.example.reactmapping.domain.lol.summonerInfo.service;
 
-import com.example.reactmapping.domain.lol.CalcMostChampion;
 import com.example.reactmapping.domain.lol.dto.MostChampion;
 import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.example.reactmapping.domain.lol.match.service.CompareMatchService;

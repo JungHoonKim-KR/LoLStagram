@@ -5,7 +5,7 @@
 
 
 
-## LoLStagram 🎮📸
+## 🎮 LoLStagram 
 LoLStagram은 목표로 하는 플레이어를 등록하거나 검색하여 해당 플레이어의 전적을 확인하고 동기를 얻으며, 인상 깊었던 오늘의 플레이를 공유할 수 있는 플랫폼입니다.
 
 ## 📌 프로젝트 목표
@@ -28,3 +28,6 @@ LoLStagram은 목표로 하는 플레이어를 등록하거나 검색하여 해�
 
 **DevOps**<br>
 - Docker: 컨테이너화를 통한 일관된 개발 및 배포 환경 제공
+- CI/CD : Git Actions + Docker
+  -  CI 단계: 코드 푸시 -> 빌드 -> Docker Hub에 배포.
+  -  CD 단계: Docker Hub에서 새로운 이미지를 Pull -> EC2에서 컨테이너 재배포.

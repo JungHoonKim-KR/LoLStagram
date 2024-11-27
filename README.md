@@ -26,7 +26,7 @@ LoLStagram은 목표로 하는 플레이어를 등록하거나 검색하여 해�
 **Database**<br>
 - MySQL
 - S3 bucket
-- 
+- Redis
 **Frontend**<br>
 - React: 사용자 인터페이스 설계 및 구현
 

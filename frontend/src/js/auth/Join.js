@@ -55,16 +55,16 @@ function Join(){
                     <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
                 </label>
                 <label>
-                    사용자 이름:
+                     이름:
                     <input type="text" value={username} onChange={e => setUsername(e.target.value)} required />
                 </label>
                 <label>
-                    라이엇 이름:
-                    <input type="text" value={summonerName} onChange={e => setSummonerName(e.target.value)} required />
+                    소환사 이름:
+                    <input type="text" value={summonerName} onChange={e => setSummonerName(e.target.value)} placeholder="정확히 입력" required />
                 </label>
                 <label>
-                    라이엇 태그:
-                    <input type="text" value={summonerTag} onChange={e => setSummonerTag(e.target.value)} required />
+                    소환사 태그:
+                    <input type="text" value={summonerTag} onChange={e => setSummonerTag(e.target.value)} placeholder="정확히 입력" required />
                 </label>
 
                 <button type="submit">회원가입</button>

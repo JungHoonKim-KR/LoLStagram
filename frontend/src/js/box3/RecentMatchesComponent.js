@@ -6,13 +6,13 @@ const RecentMatches = ({ summonerInfo, updateMatch, matchList, imageCheck, callM
     return (
         <div className="recentMatch">
             <div className="title">최근 전적 (20 게임)</div>
-            <div>
+            {/* <div>
                 <button onClick={() => updateMatch("ALL")}>전체</button>
                 <button onClick={() => updateMatch("솔랭")}>솔랭</button>
                 <button onClick={() => updateMatch("자유 랭크")}>자랭</button>
                 <button onClick={() => updateMatch("무작위 총력전")}>칼바람</button>
                 <button onClick={() => updateMatch("URF")}>URF</button>
-            </div>
+            </div> */}
             <p>Most 3</p>
             <div className="contentContainer">
                 <div className="donut-chart">

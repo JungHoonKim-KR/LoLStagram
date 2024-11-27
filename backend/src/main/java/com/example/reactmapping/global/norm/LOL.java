@@ -25,8 +25,19 @@ public class LOL {
         아레나("아레나");
 
         private String type;
-
         GameType(String type){
+            this.type = type;
+        }
+    }
+    @Getter
+    public enum ResourceType{
+        CHAMPION("champion"),
+        ITEM("item"),
+        SPELL("spell"),
+        RUNE("rune");
+
+        private String type;
+        ResourceType(String type){
             this.type = type;
         }
     }

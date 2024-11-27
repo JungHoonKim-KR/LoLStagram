@@ -14,11 +14,12 @@ public interface ImageRepository extends JpaRepository<Image,Long> {
     @Query("SELECT i.url FROM Image i WHERE i.type = :type AND i.name = :name")
     Optional<String> findUrlByTypeAndName(@Param("type") String type, @Param("name") String name);
 
-
     @Query("select i.url from Image i where i.type = :type")
     List<String> findAllUrl(@Param("type") String type);
 
     @Query("select i.name from Image i where i.type = :type")
     List<String> findAllName(@Param("type") String type);
-    List<Image> findAllByType(String type);
+
+    @Query("select i.name, i.url from Image i where i.type = :type AND i.name IN :keys")
+    List<String[]> findUrlsByTypeAndKeys(@Param("type")String type, @Param("keys")List<String> keys);
 }

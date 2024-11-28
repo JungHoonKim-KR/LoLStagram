@@ -22,8 +22,8 @@ public class PostDto {
         this.postId = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
-        this.memberId = post.getId();
-        this.memberName = post.getContent();
+        this.memberId = post.getMember().getId();
+        this.memberName = post.getMember().getUsername();
         this.commentList = Optional.ofNullable(post.getCommentList())
                 .map(comment -> comment.stream().map(PostCommentDto::new).collect(Collectors.toList()))
                 .orElse(new ArrayList<>());

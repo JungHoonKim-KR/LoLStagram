@@ -18,9 +18,11 @@ form {
 }
 
 form label {
+    
     margin-bottom: .5em;
     color: #333;
     font-weight: bold;
+    width: 100%;
 }
 
 form input {

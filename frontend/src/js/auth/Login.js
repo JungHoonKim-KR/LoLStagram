@@ -49,6 +49,7 @@ function Login() {
     return (
         <div className={'login'}>
             <h1>Login</h1>
+            <h3>(회원가입이 어려우시면 아이디 : test@naver.com 비밀번호: 1234를 입력하세요)</h3>
             <form className={'form'}>
                 <input
                     type="text"

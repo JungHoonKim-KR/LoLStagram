@@ -24,7 +24,7 @@ public class LoginController {
     private final CookieUtil cookieUtil;
     @Operation(summary = "로그인")
     @PostMapping("/normal")
-    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto, HttpServletResponse httpServletResponse) throws JsonProcessingException {
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto, HttpServletResponse httpServletResponse) {
         LoginInfo loginInfo = loginService.login(dto.getEmailId(), dto.getPassword());
         httpServletResponse.addCookie(cookieUtil.createCookie(Token.TokenName.refreshToken,loginInfo.getRefreshToken()));
         log.info("로그인 완료");

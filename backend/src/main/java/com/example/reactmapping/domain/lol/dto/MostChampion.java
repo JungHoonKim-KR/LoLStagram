@@ -9,7 +9,7 @@ public class MostChampion {
     private Long kills;
     private Long deaths;
     private Long assists;
-    private String kda;
+    private double kda;
     private String championURL;
     private Long win;
     private Long loss;

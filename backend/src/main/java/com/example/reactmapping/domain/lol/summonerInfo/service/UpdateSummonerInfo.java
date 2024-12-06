@@ -7,7 +7,7 @@ import com.example.reactmapping.domain.lol.match.service.CreateMatchService;
 import com.example.reactmapping.domain.lol.match.service.GetMatchService;
 import com.example.reactmapping.domain.lol.match.service.UpdateMatchService;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
-import com.example.reactmapping.domain.lol.summonerInfo.service.riotApi.GetSummonerInfoWithApi;
+import com.example.reactmapping.domain.lol.summonerInfo.riotApi.GetSummonerInfoWithApi;
 import com.example.reactmapping.domain.lol.summonerInfo.util.SummonerUtil;
 import com.example.reactmapping.global.norm.LOL;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,6 @@ import java.util.List;
 @Transactional
 public class UpdateSummonerInfo {
     private final CompareMatchService compareMatchService;
-    private final CalcMostChampion calcMostChampion;
     private final UpdateMatchService updateMatchService;
     private final SummonerUtil summonerUtil;
     private final GetSummonerInfoWithApi getSummonerInfoWithApi;
@@ -67,7 +66,7 @@ public class UpdateSummonerInfo {
     }
     private void updateMostChampionList(SummonerInfo summonerInfo) {
         log.info("calMostChamp");
-        List<MostChampion> mostChampionList = calcMostChampion.calcMostChampion(summonerInfo.getMatchList());
+        List<MostChampion> mostChampionList = summonerUtil.calcMostChampion(summonerInfo.getMatchList());
         log.info("mapping mostChamp");
         summonerInfo.updateMostChampion(mostChampionList);
     }

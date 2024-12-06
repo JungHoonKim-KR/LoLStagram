@@ -36,6 +36,4 @@ public class LoLApiUtil {
             throw new RuntimeException("Error parsing JSON response", e);
         }
     }
-
-
 }

@@ -1,11 +1,9 @@
 package com.example.reactmapping.domain.lol.util;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
 
-@RequiredArgsConstructor
 @Component
 public class DataUtil {
 

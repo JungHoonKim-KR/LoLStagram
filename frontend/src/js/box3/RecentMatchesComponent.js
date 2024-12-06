@@ -94,7 +94,7 @@ const RecentMatches = ({ summonerInfo, updateMatch, matchList, imageCheck, callM
                                     <ul>
                                         {match.itemURLList.map((itemURL, itemIndex) => (
                                             <li key={itemIndex}>
-                                                <img src={itemURL} alt={itemURL} />
+                                                <img src={itemURL || imageCheck("item")} alt={itemURL} />
                                             </li>
                                         ))}
                                     </ul>

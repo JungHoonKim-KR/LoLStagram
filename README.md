@@ -18,10 +18,10 @@ LoLStagram은 목표로 하는 플레이어를 등록하거나 검색하여 해�
 ## 🛠️ 기술 스택
 **Backend**<br>
 - Java
-- Spring Boot: RESTful API 설계 및 구현
-- Spring Security: JWT 기반 인증 및 소셜 로그인(OAuth 2.0)
-- JPA: ORM을 활용한 데이터베이스 연동
-- Redis: 캐시 저장 및 세션 관리
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- Redis
 
 **Database**<br>
 - MySQL

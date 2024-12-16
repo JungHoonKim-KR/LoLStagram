@@ -72,7 +72,7 @@ public class SecurityConfig {
                         .authorizeHttpRequests(auth -> auth
                                         //react 라우터들에 대한 접근 권한 허용
                                         .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                                        .requestMatchers("","/","/login/**","/join/**").permitAll()
+                                        .requestMatchers("","/","/login/**","/join/**","/actuator/**").permitAll()
 //                                .requestMatchers("/admin").hasRole("ADMIN")
                                         .anyRequest().authenticated()
                         )

@@ -1,8 +1,16 @@
 :root {
     --percent: 50;
+    overflow:auto;
+
 }
 * {
     font-weight: bold;
+}
+.container {
+    margin: 0;
+    padding: 0;
+    height: 100%; /* 기본 높이 설정 */
+    overflow: auto; /* 스크롤 허용 */
 }
 ul {
     list-style-type: none;

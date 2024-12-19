@@ -48,34 +48,37 @@ function Login() {
     }
     return (
         <div className={'login'}>
-            <h1>Login</h1>
-            <h3>(회원가입이 어려우시면 아이디 : test@naver.com 비밀번호: 1234를 입력하세요)</h3>
-            <form className={'form'}>
-                <input
-                    type="text"
-                    className="input"
-                    value={emailId}
-                    onChange={e => setEmail(e.target.value)}
-                    placeholder="이메일"
-                />
-                <input
-                    type="password"
-                    className="input"
-                    value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    placeholder="비밀번호"
-                />
-                <button type="submit" className="button" onClick={loginHandler}>로그인</button>
-            </form>
-            <button type="button" onClick={joinHandler}>회원가입</button>
-            <a href={GOOGLE_AUTH_URL} className="btn btn-sm btn-success active" role="button">
-                <button className="google-btn">
-                    <img src={google_btn} alt="Google logo" target="_self" className="google-logo" />
-                </button>
-            </a>
 
+            
+            {/* 새로운 컨테이너 추가 */}
+            <div className="login-box">
+                <h1>LoLStagram</h1>
+                <h3>(회원가입이 어려우시면 아이디 : test@naver.com 비밀번호: 1234를 입력하세요)</h3>
+                <form className={'form'}>
+                    <input
+                        type="text"
+                        className="input"
+                        value={emailId}
+                        onChange={e => setEmail(e.target.value)}
+                        placeholder="이메일"
+                    />
+                    <input
+                        type="password"
+                        className="input"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        placeholder="비밀번호"
+                    />
+                    <button type="submit" className="button" onClick={loginHandler}>로그인</button>
+                </form>
+                <button type="button" className="button join-button" onClick={joinHandler}>회원가입</button>
+                <a href={GOOGLE_AUTH_URL} className="btn google-btn" role="button">
+                    <img src={google_btn} alt="Google logo" className="google-logo" />
+                </a>
+            </div>
         </div>
-    )
+    );
+    
 }
 
 export default Login;

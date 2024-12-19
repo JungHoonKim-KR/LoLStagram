@@ -25,5 +25,4 @@ function Oauth() {
 
     return null;
 }
-
 export default Oauth;

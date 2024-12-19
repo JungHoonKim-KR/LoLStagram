@@ -63,3 +63,11 @@ cloud:
 origin:
   client: "http://ec2-3-39-119-168.ap-northeast-2.compute.amazonaws.com:3000"
   server: "http://ec2-3-39-119-168.ap-northeast-2.compute.amazonaws.com:8080"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  server:
+    port: 9292

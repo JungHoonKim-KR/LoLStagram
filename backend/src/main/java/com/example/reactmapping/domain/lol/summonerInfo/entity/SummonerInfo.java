@@ -26,12 +26,14 @@ public class SummonerInfo {
     private BasicInfo basicInfo;
     @Embedded
     private RecentRecord recentRecord;
+
     @OneToMany(mappedBy = "summonerInfo", cascade = CascadeType.ALL)
     @JsonManagedReference
     @OrderBy("gameStartTimestamp DESC")
     private List<Match> matchList = new ArrayList<>();
 
     @Convert(converter = StringListConverter.class)
+    @Column(length = 1000)
     private List<MostChampion> mostChampionList = new ArrayList<>();
     @Column(nullable = false, updatable = false)
     private LocalDateTime createTime;

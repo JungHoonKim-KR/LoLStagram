@@ -20,11 +20,12 @@ public class URL {
         public static final String ROOT = "/";
         public static final String LOGIN = "/login/**";
         public static final String JOIN = "/join/**";
-
+        public static final String Actuator = "/actuator/**";
         public static final String[] PATHS = {
                 "/",
                 "/login/**",
                 "/join/**",
+                "/actuator/**",
         };
     }
 }

@@ -16,13 +16,15 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class PostService {
     private final PostRepository postRepository;
+
 
     public Page<Post> findAll(Pageable pageable) {
         return postRepository.findAll(pageable);
     }
+    @Transactional
     public void savePost(Post post){
         postRepository.save(post);
     }

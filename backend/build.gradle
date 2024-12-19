@@ -62,6 +62,10 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+
+    //Monitoring
+    implementation 'org.springframework.boot:spring-boot-starter-actuator' //actuator 추가
+    implementation 'io.micrometer:micrometer-registry-prometheus' //추가
 }
 
 tasks.named('test') {

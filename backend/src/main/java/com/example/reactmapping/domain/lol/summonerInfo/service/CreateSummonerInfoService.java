@@ -1,13 +1,12 @@
 package com.example.reactmapping.domain.lol.summonerInfo.service;
 
-import com.example.reactmapping.domain.Image.service.ImageService;
 import com.example.reactmapping.domain.lol.dto.MostChampion;
 import com.example.reactmapping.domain.lol.match.service.CreateMatchService;
 import com.example.reactmapping.domain.lol.match.service.GetMatchService;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.BasicInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.RecentRecord;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
-import com.example.reactmapping.domain.lol.summonerInfo.service.riotApi.GetSummonerInfoWithApi;
+import com.example.reactmapping.domain.lol.summonerInfo.riotApi.GetSummonerInfoWithApi;
 import com.example.reactmapping.domain.lol.summonerInfo.util.SummonerUtil;
 import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.example.reactmapping.global.norm.LOL;
@@ -27,10 +26,8 @@ public class CreateSummonerInfoService {
     private final CreateMatchService createMatchService;
     private final GetMatchService getMatchService;
     private final GetSummonerInfoWithApi getSummonerInfoWithApi;
-    private final CalcMostChampion calcMostChampion;
     private final SummonerUtil summonerUtil;
     private final SummonerInfoService summonerInfoService;
-    private final ImageService imageService;
     public SummonerInfo createSummonerInfo(String puuId, String summonerName, String summonerTag) {
         log.info("소환사 생성 시작");
         if(puuId == null)
@@ -47,7 +44,7 @@ public class CreateSummonerInfoService {
         }
 
         RecentRecord recentRecord = summonerUtil.createRecentRecord(matchList);
-        List<MostChampion> mostChampions = calcMostChampion.calcMostChampion(matchList);
+        List<MostChampion> mostChampions = summonerUtil.calcMostChampion(matchList);
 
         SummonerInfo summonerInfo = new SummonerInfo(summonerId, summonerName, summonerTag, puuId, summonerBasic, recentRecord, matchList, mostChampions);
 

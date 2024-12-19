@@ -7,6 +7,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -21,7 +22,6 @@ import java.util.concurrent.Executors;
 import java.util.function.Function;
 
 @Service
-@Transactional
 public class LoLDataDownloader {
     private static final String DATA_DRAGON_URL = "https://ddragon.leagueoflegends.com/cdn/";
     private static final String CHAMPION = "champion";

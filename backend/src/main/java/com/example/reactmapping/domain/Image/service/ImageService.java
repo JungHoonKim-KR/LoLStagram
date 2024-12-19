@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
@@ -81,7 +82,8 @@ public class ImageService {
         }
     }
 
-
+    // 스케쥴링에 의해 실행되는 save 이므로 기존 비니지스 로직과 구분되는 작업 단위 실행을 위함
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void save(Map<String, byte[]> imageDataList, String category) throws Exception {
         List<String> urlList = uploadImageToS3(imageDataList, category);
         List<String> keyList = new ArrayList<>(imageDataList.keySet());

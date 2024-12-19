@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Slf4j
 public class SummonerInfoService {
     private final SummonerInfoRepository summonerInfoRepository;
@@ -25,6 +25,7 @@ public class SummonerInfoService {
         log.info(summonerId);
         return summonerInfoRepository.findBySummonerId(summonerId).orElseThrow(() ->new AppException(ErrorCode.NOTFOUND,"존재하지 않는 소환사입니다."));
     }
+    @Transactional
     public void saveSummonerInfo(SummonerInfo summonerInfo) {
         log.info("saveSummonerInfo");
         summonerInfoRepository.save(summonerInfo);

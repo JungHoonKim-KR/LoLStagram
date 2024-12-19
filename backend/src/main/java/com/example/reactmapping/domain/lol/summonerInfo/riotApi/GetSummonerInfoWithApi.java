@@ -1,4 +1,4 @@
-package com.example.reactmapping.domain.lol.summonerInfo.service.riotApi;
+package com.example.reactmapping.domain.lol.summonerInfo.riotApi;
 
 import com.example.reactmapping.domain.lol.summonerInfo.entity.BasicInfo;
 import com.example.reactmapping.domain.lol.util.DataUtil;
@@ -6,13 +6,13 @@ import com.example.reactmapping.domain.lol.util.LoLApiUtil;
 import com.example.reactmapping.global.norm.LOL;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
-@Service
+@Component
 @RequiredArgsConstructor
-@Transactional
 public class GetSummonerInfoWithApi {
     private final DataUtil dataUtil;
     private final LoLApiUtil loLApiUtil;

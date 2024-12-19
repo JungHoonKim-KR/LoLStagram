@@ -5,13 +5,14 @@ import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerInfoDto;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDto;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.UpdateRequestDto;
-import com.example.reactmapping.domain.lol.summonerInfo.service.GetSummonerInfoService;
+import com.example.reactmapping.domain.lol.summonerInfo.service.CreateSummonerInfoService;
 import com.example.reactmapping.domain.lol.summonerInfo.service.SummonerInfoService;
 import com.example.reactmapping.domain.lol.summonerInfo.service.UpdateSummonerInfo;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +21,9 @@ import org.springframework.web.bind.annotation.*;
 public class SummonerController {
     private final UpdateSummonerInfo updateSummonerInfo;
     private final SummonerInfoService summonerInfoService;
-    private final GetSummonerInfoService summonerService;
     private final ImageService imageService;
+    private final CreateSummonerInfoService createSummonerInfoService;
+
     @PutMapping("/update")
     public SummonerInfoDto update(@RequestBody UpdateRequestDto updateRequestDto) {
         SummonerInfo summonerInfoById = summonerInfoService.findSummonerInfoById(updateRequestDto.getSummonerId());
@@ -33,8 +35,11 @@ public class SummonerController {
 
     @PostMapping("/search")
     public SummonerInfoDto search(@RequestBody SummonerNameAndTagDto summonerNameAndTagDto){
+
+        Optional<SummonerInfo> summonerInfoOptional  = summonerInfoService.findSummonerInfoBySummonerNameAndTag(summonerNameAndTagDto);
+        SummonerInfo summonerInfo = summonerInfoOptional.orElseGet(() -> createSummonerInfoService.createSummonerInfo(null, summonerNameAndTagDto.getSummonerName(), summonerNameAndTagDto.getSummonerTag()));
         log.info("소환사 검색 완료");
-        return SummonerInfoDto.entityToDto(summonerService.searchOrCreateSummoner(summonerNameAndTagDto), imageService);
+        return SummonerInfoDto.entityToDto(summonerInfo, imageService);
     }
 
 }

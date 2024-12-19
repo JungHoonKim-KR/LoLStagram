@@ -1,4 +1,4 @@
-import React, {useEffect, useState,useMemo} from "react";
+import React, {useEffect, useState,useMemo, useRef} from "react";
 import axios from "axios";
 import {useNavigate,useLocation} from 'react-router-dom';
 import "../../css/Join.css"
@@ -22,6 +22,9 @@ function Join(){
         }
     },[urlParams])
 
+    const cancelButton = ()=>{
+        navigate('/');
+    }
     const joinHandler  = async(e)=>{
         e.preventDefault();
         try {
@@ -66,8 +69,10 @@ function Join(){
                     소환사 태그:
                     <input type="text" value={summonerTag} onChange={e => setSummonerTag(e.target.value)} placeholder="정확히 입력" required />
                 </label>
-
-                <button type="submit">회원가입</button>
+                <div className="buttongroup">
+                <button type="submit" style={{marginRight:10}}>회원가입</button>
+                <button id="cancelButton" type="button" onClick={cancelButton} >취소</button>
+                </div>
             </form>
         </div>
     )

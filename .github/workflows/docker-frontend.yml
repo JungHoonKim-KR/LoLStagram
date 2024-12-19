@@ -47,11 +47,12 @@ jobs:
       # 5. Docker 이미지 빌드 및 푸시
       - name: Build and Push Docker Image
         run: |
-          docker build \
+          docker build --no-cache \
             --build-arg REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }} \
             --build-arg REACT_APP_OAUTH2_REDIRECT_URI=${{ secrets.REACT_APP_OAUTH2_REDIRECT_URI }} \
             -t junghoonkim/frontend:latest ./frontend
           docker push junghoonkim/frontend:latest
+
 
       # 6. 배포 서버에 SSH로 접속하여 최신 Docker 이미지 배포
       - name: Deploy to Server

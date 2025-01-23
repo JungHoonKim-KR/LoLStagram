@@ -38,7 +38,6 @@ public class LoginController {
         cookie.setPath("/");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
-
         log.info("로그인 완료");
         return ResponseEntity.ok().body(new LoginResponseDto(loginInfo.getAccessToken(), loginInfo.getUsername(), loginInfo.getSummonerInfoDto(), loginInfo.getMemberDto()));
     }

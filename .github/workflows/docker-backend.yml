@@ -94,6 +94,9 @@ jobs:
             # 활성 환경 업데이트
             echo $NEW_ENV > /home/ubuntu/active.txt
 
-            # 이전 환경 중지
-            PREV_ENV=$ACTIVE_ENV
-            docker compose stop backend_${PREV_ENV}
+              # 이전 환경 중지 (존재하는 경우에만)
+            if docker compose ps | grep -q "backend_${ACTIVE_ENV}"; then
+              docker compose stop backend_${ACTIVE_ENV}
+            else
+              echo "No running container found for backend_${ACTIVE_ENV}, skipping stop."
+            fi

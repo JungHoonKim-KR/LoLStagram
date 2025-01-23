@@ -15,7 +15,6 @@ public class LoginInfo {
         this.summonerInfoDto = summonerInfoDto;
         this.memberDto = memberDto;
     }
-
     private String accessToken;
     private String refreshToken;
     private String username;

@@ -6,7 +6,6 @@ import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.domain.Persistable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

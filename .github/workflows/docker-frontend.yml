@@ -48,8 +48,8 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           docker build --no-cache \
-            --build-arg REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }} \
-            --build-arg REACT_APP_OAUTH2_REDIRECT_URI=${{ secrets.REACT_APP_OAUTH2_REDIRECT_URI }} \
+            # --build-arg REACT_APP_API_BASE_URL=${{ secrets.REACT_APP_API_BASE_URL }} \
+            # --build-arg REACT_APP_OAUTH2_REDIRECT_URI=${{ secrets.REACT_APP_OAUTH2_REDIRECT_URI }} \
             -t junghoonkim/frontend:latest ./frontend
           docker push junghoonkim/frontend:latest
 

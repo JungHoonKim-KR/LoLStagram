@@ -29,29 +29,34 @@ public class UpdateSummonerInfo {
     private final CreateMatchService createMatchService;
     private final GetMatchService getMatchService;
     private final SummonerInfoService summonerInfoService;
+
     public SummonerInfo getUpdatedSummonerInfo(SummonerInfo summonerInfo){
-        updateSummonerInfo(summonerInfo);
+        int newGameCount = getNewGameCount(summonerInfo);
+        if (newGameCount == LOL.Up_To_Date) {
+            return summonerInfo;
+        }
+        updateSummonerInfo(newGameCount, summonerInfo);
         summonerInfoService.saveSummonerInfo(summonerInfo);
         return summonerInfo;
     }
-    private void updateSummonerInfo(SummonerInfo summonerInfo) {
-        int newGameCount = getNewGameCount(summonerInfo);
-        if(newGameCount != LOL.Up_To_Date){
-            List<String> matchIds = getMatchService.getMatchIdList(summonerInfo.getPuuId(), 0, newGameCount);
-            List<Match> newMatchList = getNewMatchList(summonerInfo, matchIds);
-            log.info("updateBasicInfo");
+    private void updateSummonerInfo(int newGameCount, SummonerInfo summonerInfo) {
+            List<Match> newMatchList = getNewMatchList(summonerInfo, newGameCount);
+
             summonerInfo.updateBasicInfo(getSummonerInfoWithApi.getSummonerBasic(summonerInfo.getSummonerId(), summonerInfo.getSummonerTag()));
             updateMatchService.updateMatches(summonerInfo, newMatchList);
-            log.info("updateSummonerInfo : "+ summonerInfo.getMatchList().get(3).getMatchId());
 
             updateMostChampionList(summonerInfo);
             updateRecentRecord(summonerInfo);
-        }
+    }
+
+    private List<Match> getNewMatchList(SummonerInfo summonerInfo, int newGameCount) {
+        List<String> matchIds = getMatchService.getMatchIdList(summonerInfo.getPuuId(), 0, newGameCount);
+        List<Match> newMatchList = getNewMatchList(summonerInfo, matchIds);
+        return newMatchList;
     }
 
     private List<Match> getNewMatchList(SummonerInfo summonerInfo, List<String> matchIds) {
         List<Match> newMatchList = new ArrayList<>();
-        log.info("getNewMatchList");
         for(String matchId : matchIds){
             newMatchList.add(createMatchService.createMatch(matchId, summonerInfo.getSummonerName(), summonerInfo.getSummonerTag()));
         }

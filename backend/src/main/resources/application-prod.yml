@@ -55,6 +55,8 @@ cloud:
       secret-key: ${AWS_SECRET_KEY}
     s3:
       bucket: ddoons-bucket
+    cloudfront:
+      domain: ${AWS_CLOUDFRONT_URL}
     region:
       static: ap-northeast-2
     stack:

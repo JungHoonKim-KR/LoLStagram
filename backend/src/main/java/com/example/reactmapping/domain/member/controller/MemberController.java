@@ -1,6 +1,6 @@
 package com.example.reactmapping.domain.member.controller;
 
-import com.example.reactmapping.domain.lol.summonerInfo.riotApi.GetSummonerInfoWithApi;
+import com.example.reactmapping.domain.lol.summonerInfo.riotAPI.GetSummonerInfoWithApi;
 import com.example.reactmapping.domain.member.entity.Member;
 import com.example.reactmapping.domain.member.dto.JoinDTO;
 import com.example.reactmapping.domain.member.service.JoinService;

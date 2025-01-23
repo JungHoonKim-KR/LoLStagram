@@ -27,7 +27,7 @@ public class SummonerInfoService {
     }
     @Transactional
     public void saveSummonerInfo(SummonerInfo summonerInfo) {
-        log.info("saveSummonerInfo");
+        log.info("소환사 정보 저장");
         summonerInfoRepository.save(summonerInfo);
     }
 }

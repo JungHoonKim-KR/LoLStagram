@@ -7,6 +7,7 @@ import com.example.reactmapping.domain.lol.summonerInfo.entity.RecentRecord;
 import com.example.reactmapping.domain.lol.util.DataUtil;
 import com.example.reactmapping.global.norm.LOL;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class SummonerUtil {
 
     private static final int TopSize = 3;
@@ -26,13 +28,13 @@ public class SummonerUtil {
 
     public List<MostChampion> calcMostChampion(List<Match> MatchList) {
         Map<String, List<Match>> sortedChampionList = MatchList.stream().collect(Collectors.groupingBy(Match::getChampionName));
-        List<String> topThreeChampions = getTopThreeChampions(sortedChampionList);
-
-        return topThreeChampions.stream()
-                .map(champion -> calculateChampionStats(champion, sortedChampionList)).collect(Collectors.toList());
+        List<String> topThreeChampionNames = getTopThreeChampionNames(sortedChampionList);
+        Map<String, String> urlsByTypeAndKeys = imageService.findUrlsByTypeAndKeys(LOL.ResourceType.CHAMPION.getType(),topThreeChampionNames);
+        return topThreeChampionNames.stream()
+                .map(champion -> calculateChampionStats(champion, urlsByTypeAndKeys.get(champion), sortedChampionList)).collect(Collectors.toList());
     }
 
-    private MostChampion calculateChampionStats(String champion, Map<String, List<Match>> sortedChampionList) {
+    private MostChampion calculateChampionStats(String champion, String championURL, Map<String, List<Match>> sortedChampionList) {
         List<Match> Matchs = sortedChampionList.get(champion);
         long totalKills = Matchs.stream().mapToLong(Match::getKills).sum();
         long totalDeaths = Matchs.stream().mapToLong(Match::getDeaths).sum();
@@ -40,7 +42,7 @@ public class SummonerUtil {
         long count = sortedChampionList.get(champion).stream().count();
         long winCount = Matchs.stream().filter(match -> True.equals(match.getResult())).count();
         long lossCount = count - winCount;
-        double kda = calKda(totalKills, totalDeaths, totalAssists);
+        String kda = dataUtil.calculateKDA(totalKills, totalDeaths, totalAssists);
         double avgOfWin = calWinRate((double) winCount, count);
 
         return MostChampion.builder()
@@ -48,7 +50,7 @@ public class SummonerUtil {
                 .deaths(totalDeaths)
                 .assists(totalAssists)
                 .kda(kda)
-                .championURL(imageService.getImageURL("champion", champion))
+                .championURL(championURL)
                 .count(count)
                 .win(winCount)
                 .loss(lossCount)
@@ -63,13 +65,12 @@ public class SummonerUtil {
             totalassist += match.getAssists();
         }
         Long win = calWin(matchList);
-        double kda = calKda(totalkill, totaldeath, totalassist);
+        String kda = dataUtil.calculateKDA(totalkill, totaldeath, totalassist);
 
         return new RecentRecord(win, LOL.gameCount - win, kda);
     }
 
-
-    private static List<String> getTopThreeChampions(Map<String, List<Match>> sortedChampionList) {
+    private static List<String> getTopThreeChampionNames(Map<String, List<Match>> sortedChampionList) {
         return sortedChampionList.entrySet().stream()
                 .sorted(Comparator.comparingInt((Map.Entry<String, List<Match>> entry) -> entry.getValue().size()).reversed())
                 .limit(TopSize)
@@ -82,13 +83,13 @@ public class SummonerUtil {
         return Double.parseDouble(df.format(winCount / count * 100));
     }
     private double calKda(Long totalkill, Long totaldeath, Long totalassist) {
-        DecimalFormat df = DataUtil.getDecimalFormat();
+        DecimalFormat df = dataUtil.getDecimalFormat();
         return Double.parseDouble(df.format(((double) (totalkill + totalassist)) / ((double) totaldeath)));
     }
     private Long calWin(List<Match> MatchList) {
         Long win = 0L;
         for (Match Match : MatchList) {
-            if (Match.getResult().equals("true")) {
+            if (Match.getResult().equals(True)) {
                 win++;
             }
         }

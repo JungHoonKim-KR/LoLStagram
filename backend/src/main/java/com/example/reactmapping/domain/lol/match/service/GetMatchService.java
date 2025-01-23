@@ -24,19 +24,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class GetMatchService {
-    private final LoLApiUtil loLApiUtil;
     private final MatchService matchService;
     private final ImageService imageService;
-    public JsonNode getMatch(String matchId){
-        return loLApiUtil.getJsonResponse(LOL.BaseUrlAsia, "/lol/match/v5/matches/" + matchId, "경기를 찾을 수 없습니다.")
-                .path("info");
-    }
-    // 최근 대전기록 가져오기
-    public List<String> getMatchIdList(String puuId, int startGame, int count) {
-        String Url = String.format("/lol/match/v5/matches/by-puuid/%s/ids?start=%s&count=%s", puuId, startGame, count);
-        log.info("get matchIdList");
-        return loLApiUtil.createWebClient(LOL.BaseUrlAsia, Url).bodyToMono(List.class).block();
-    }
+
     public MatchResultDto getMatchList(Pageable pageable, String type, String summonerId){
         //pageable 조건문 all 예외 처리
         log.info("callType : {}",type);

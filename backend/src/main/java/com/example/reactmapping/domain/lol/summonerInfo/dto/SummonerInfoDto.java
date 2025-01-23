@@ -26,7 +26,7 @@ public class SummonerInfoDto {
     @Nullable
     private Long tierRank;
     @Nullable
-    private double totalKda;
+    private String totalKda;
     private String summonerName;
     private String summonerTag;
     @Nullable

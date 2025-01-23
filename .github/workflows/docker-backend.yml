@@ -52,10 +52,10 @@ jobs:
           echo "Deploying to $NEW_ENV environment."
 
           # Docker 이미지 빌드
-          docker build -t ${{ secrets.DOCKER_IMAGE_NAME }}:${IMAGE_TAG} ./backend
+          docker build -t junghoonkim/backend:${IMAGE_TAG} ./backend
 
           # Docker 이미지 푸시
-          docker push ${{ secrets.DOCKER_IMAGE_NAME }}:${IMAGE_TAG}
+          docker push junghoonkim/backend:${IMAGE_TAG}
 
       # 6. 배포 서버에 SSH로 접속하여 최신 Docker 이미지 배포
       - name: Deploy to Server

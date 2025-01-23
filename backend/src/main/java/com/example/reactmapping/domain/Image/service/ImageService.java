@@ -10,6 +10,7 @@ import com.example.reactmapping.global.etcConfig.S3Config;
 import java.util.concurrent.CompletableFuture;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -23,13 +24,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class ImageService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+    @Value("${cloud.aws.cloudfront.domain}")
+    private String cdnBaseURL;
     private final S3Config s3Config;
-    private static final String EMPTY_STRING = "";
     private final ImageRepository imageRepository;
     private final ImageJDBCRepository imageJDBCRepository;
     private final AmazonS3Client s3Client;
@@ -37,20 +40,19 @@ public class ImageService {
     public String getImageURL(String type, String name) {
         return imageRepository.findUrlByTypeAndName(type, name).orElse(null);
     }
-
     public List<String> findAllName(String type) {
         return imageRepository.findAllName(type);
     }
 
     public Map<String, String> findUrlsByTypeAndKeys(String type, List<String>keys){
+        log.info("뭔가 발생?");
         List<String[]> urlsByTypeAndKeys = imageRepository.findUrlsByTypeAndKeys(type, keys);
         return urlsByTypeAndKeys.stream().collect(Collectors.toMap(
                 obj -> obj[0],
                 obj -> obj[1]
         ));
-
     }
-
+    @Transactional
     public List<String> uploadImageToS3(Map<String, byte[]> imageDataMap, String category) throws Exception {
         // URL 리스트
         List<String> urlList = new ArrayList<>();
@@ -64,13 +66,16 @@ public class ImageService {
                     ObjectMetadata metadata = new ObjectMetadata();
                     metadata.setContentLength(imageData.length);
                     metadata.setContentType("image/png");
+                    metadata.setCacheControl("max-age=86400"); // 1일 동안 캐시
                     String path = category + "/" + key + ".png";
 
                     ByteArrayInputStream inputStream = new ByteArrayInputStream(imageData);
                     s3Client.putObject(bucket, path, inputStream, metadata);
 
+                    String cdnImageURL = String.format("%s/%s", cdnBaseURL, path);
+                    urlList.add(cdnImageURL);
                     // 업로드된 S3 URL 추가
-                    urlList.add(s3Client.getUrl(bucket, path).toString());
+//                    urlList.add(s3Client.getUrl(bucket, path).toString());
                 } catch (Exception e) {
                     throw new RuntimeException("Failed to upload image: " + key, e);
                 }

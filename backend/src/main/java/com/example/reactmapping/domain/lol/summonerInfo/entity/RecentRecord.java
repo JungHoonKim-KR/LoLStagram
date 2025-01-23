@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 public class RecentRecord {
     private Long recentWins;
     private Long recentLosses;
-    private double totalKda;
+    private String totalKda;
 
-    public RecentRecord(Long recentWins, Long recentLosses, double totalKda) {
+    public RecentRecord(Long recentWins, Long recentLosses, String totalKda) {
         this.recentWins = recentWins;
         this.recentLosses = recentLosses;
         this.totalKda = totalKda;

@@ -1,5 +1,6 @@
 package com.example.reactmapping.domain.lol.util;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.stereotype.Component;
 
 import java.text.DecimalFormat;
@@ -7,7 +8,7 @@ import java.text.DecimalFormat;
 @Component
 public class DataUtil {
 
-    public static DecimalFormat getDecimalFormat() {
+    public DecimalFormat getDecimalFormat() {
         DecimalFormat df = new DecimalFormat("0.0");
         return df;
     }
@@ -24,5 +25,9 @@ public class DataUtil {
             default:
                 throw new IllegalArgumentException("Invalid Roman numeral");
         }
+    }
+    public String calculateKDA(long kill, long death, long assist) {
+        DecimalFormat df = getDecimalFormat();
+        return (death == 0) ? "perfect" : df.format((double) (kill + assist) / death);
     }
 }

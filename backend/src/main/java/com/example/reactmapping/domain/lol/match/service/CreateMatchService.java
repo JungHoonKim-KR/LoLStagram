@@ -1,6 +1,7 @@
 package com.example.reactmapping.domain.lol.match.service;
 
 import com.example.reactmapping.domain.lol.match.entity.Match;
+import com.example.reactmapping.domain.lol.match.riotAPI.GetMatchInfoWithAPI;
 import com.example.reactmapping.domain.lol.util.DataUtil;
 import com.example.reactmapping.global.norm.LOL;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,15 +20,18 @@ import java.util.stream.IntStream;
 @Transactional
 @Slf4j
 public class CreateMatchService {
-    private final GetMatchService getMatchService;
+    private final GetMatchInfoWithAPI getMatchInfoWithAPI;
+    private final DataUtil dataUtil;
 
     public Match createMatch(String matchId, String summonerName, String summonerTag) {
-        JsonNode matchInfo = getMatchService.getMatch(matchId);
+
+        JsonNode matchInfo = getMatchInfoWithAPI.getMatch(matchId);
         Match.MatchBuilder matchBuilder = Match.builder()
                 .matchId(matchId)
                 .gameStartTimestamp(matchInfo.path("gameStartTimestamp").asLong())
                 .gameType(determineGameType(matchInfo));
         JsonNode participants = matchInfo.path("participants");
+
         for (JsonNode participant : participants) {
             if (isDesiredSummoner(participant, summonerName, summonerTag)) {
                 populateMatchDetails(matchBuilder, participant);
@@ -75,8 +79,7 @@ public class CreateMatchService {
         long kills = participant.path("kills").asLong();
         long deaths = participant.path("deaths").asLong();
         long assists = participant.path("assists").asLong();
-        DecimalFormat df = DataUtil.getDecimalFormat();
-        return (deaths == 0) ? "perfect" : df.format((double) (kills + assists) / deaths);
+        return dataUtil.calculateKDA(kills,deaths,assists);
     }
 
     private String extractMainRune(JsonNode participant) {

@@ -27,5 +27,4 @@ public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
         // 리다이렉트 수행
         response.sendRedirect(targetUrl);
     }
-
 }

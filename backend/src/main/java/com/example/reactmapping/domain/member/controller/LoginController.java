@@ -1,12 +1,10 @@
 package com.example.reactmapping.domain.member.controller;
-import com.example.reactmapping.domain.Image.service.ImageService;
 import com.example.reactmapping.domain.member.dto.LoginInfo;
 import com.example.reactmapping.domain.member.dto.LoginRequestDto;
 import com.example.reactmapping.domain.member.dto.LoginResponseDto;
 import com.example.reactmapping.global.norm.Token;
 import com.example.reactmapping.domain.member.service.LoginService;
 import com.example.reactmapping.global.security.cookie.CookieUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,7 +38,6 @@ public class LoginController {
         cookie.setPath("/");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
-
         log.info("로그인 완료");
         return ResponseEntity.ok().body(new LoginResponseDto(loginInfo.getAccessToken(), loginInfo.getUsername(), loginInfo.getSummonerInfoDto(), loginInfo.getMemberDto()));
     }

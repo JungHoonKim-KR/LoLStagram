@@ -2,12 +2,13 @@ package com.example.reactmapping.domain.lol.summonerInfo.service;
 
 import com.example.reactmapping.domain.lol.dto.MostChampion;
 import com.example.reactmapping.domain.lol.match.entity.Match;
+import com.example.reactmapping.domain.lol.match.riotAPI.GetMatchInfoWithAPI;
 import com.example.reactmapping.domain.lol.match.service.CompareMatchService;
 import com.example.reactmapping.domain.lol.match.service.CreateMatchService;
 import com.example.reactmapping.domain.lol.match.service.GetMatchService;
 import com.example.reactmapping.domain.lol.match.service.UpdateMatchService;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
-import com.example.reactmapping.domain.lol.summonerInfo.riotApi.GetSummonerInfoWithApi;
+import com.example.reactmapping.domain.lol.summonerInfo.riotAPI.GetSummonerInfoWithApi;
 import com.example.reactmapping.domain.lol.summonerInfo.util.SummonerUtil;
 import com.example.reactmapping.global.norm.LOL;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.List;
 @Slf4j
 @Transactional
 public class UpdateSummonerInfo {
+    private final GetMatchInfoWithAPI getMatchInfoWithAPI;
     private final CompareMatchService compareMatchService;
     private final UpdateMatchService updateMatchService;
     private final SummonerUtil summonerUtil;
@@ -50,7 +52,7 @@ public class UpdateSummonerInfo {
     }
 
     private List<Match> getNewMatchList(SummonerInfo summonerInfo, int newGameCount) {
-        List<String> matchIds = getMatchService.getMatchIdList(summonerInfo.getPuuId(), 0, newGameCount);
+        List<String> matchIds = getMatchInfoWithAPI.getMatchIdList(summonerInfo.getPuuId(), 0, newGameCount);
         List<Match> newMatchList = getNewMatchList(summonerInfo, matchIds);
         return newMatchList;
     }

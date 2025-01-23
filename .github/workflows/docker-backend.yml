@@ -16,22 +16,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Docker Buildx 설정
+      # 2. SSH 키 설정 (AWS EC2 접속용)
+      - name: Setup SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.AWS_EC2_HOST }} >> ~/.ssh/known_hosts
+
+      # 3. Docker Buildx 설정
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      # 3. Docker 로그인 (Docker Hub 또는 Private Registry)
+      # 4. Docker 로그인 (Docker Hub 또는 Private Registry)
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # 4. Docker 이미지 빌드 및 푸시
+      # 5. Docker 이미지 빌드 및 푸시
       - name: Build and Push Docker Images
         run: |
           # 현재 활성 환경 확인
-          CURRENT_ENV=$(ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_USERNAME }}@${{ secrets.AWS_EC2_HOST }} "cat /home/ubuntu/active.txt")
+          CURRENT_ENV=$(ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no ${{ secrets.AWS_EC2_USERNAME }}@${{ secrets.AWS_EC2_HOST }} "cat /home/ubuntu/active.txt")
           
           if [ "$CURRENT_ENV" == "blue" ]; then
             NEW_ENV="green"
@@ -49,13 +57,13 @@ jobs:
           # Docker 이미지 푸시
           docker push junghoonkim/backend:${IMAGE_TAG}
 
-      # 5. 배포 서버에 SSH로 접속하여 최신 Docker 이미지 배포
+      # 6. 배포 서버에 SSH로 접속하여 최신 Docker 이미지 배포
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.AWS_EC2_HOST }}
           username: ${{ secrets.AWS_EC2_USERNAME }}
-          key: ${{ secrets.AWS_EC2_KEY }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /home/ubuntu
 
@@ -77,14 +85,18 @@ jobs:
             docker compose pull backend_${NEW_ENV}
             docker compose up -d backend_${NEW_ENV}
 
-            # Nginx 설정 파일 업데이트
-            sed -i "s/server backend_${ACTIVE_ENV}:808[0-1];/server backend_${NEW_ENV}:808${NEW_ENV == 'green' ? '1' : '0'};/" nginx.conf
+            # Nginx 설정 파일 업데이트 (이전 서버에서 새로운 서버로 전환)
+            docker exec frontend sh -c sed -i 's|^\(\s*server backend_${ACTIVE_ENV}:\)|#\1|' /etc/nginx/conf.d/default.conf && sed -i 's|^#\(\s*server backend_${NEW_ENV}:\)|\1|' /etc/nginx/conf.d/default.conf
 
             # Nginx 리로드
-            docker compose exec nginx nginx -s reload
+            docker exec frontend nginx -t && docker exec frontend nginx -s reload
 
             # 활성 환경 업데이트
             echo $NEW_ENV > /home/ubuntu/active.txt
-            # 이전 환경 중지
-            PREV_ENV=$ACTIVE_ENV
-            docker compose stop backend_${PREV_ENV}
+
+              # 이전 환경 중지 (존재하는 경우에만)
+            if docker compose ps | grep -q "backend_${ACTIVE_ENV}"; then
+              docker compose stop backend_${ACTIVE_ENV}
+            else
+              echo "No running container found for backend_${ACTIVE_ENV}, skipping stop."
+            fi

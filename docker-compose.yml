@@ -13,12 +13,6 @@ services:
   
       
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
-        REACT_APP_OAUTH2_REDIRECT_URI: ${REACT_APP_OAUTH2_REDIRECT_URI}
     image: junghoonkim/frontend:latest
     container_name: frontend
     ports:
@@ -41,12 +35,13 @@ services:
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
 
 
     ports:
       - 8080:8080
+      - 9292:9292
     depends_on:
       - db
     networks:

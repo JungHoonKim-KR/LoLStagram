@@ -7,9 +7,8 @@ on:
     paths:
       - 'backend/**'
 
-
 jobs:
-  run-on-merge:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -29,19 +28,63 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       # 4. Docker 이미지 빌드 및 푸시
-      - name: Build and Push Docker Image
+      - name: Build and Push Docker Images
         run: |
-          docker build -t junghoonkim/backend:latest ./backend
-          docker push junghoonkim/backend:latest
+          # 현재 활성 환경 확인
+          CURRENT_ENV=$(ssh -i ~/.ssh/id_rsa ${{ secrets.AWS_EC2_USERNAME }}@${{ secrets.AWS_EC2_HOST }} "cat /home/ubuntu/active.txt")
+          
+          if [ "$CURRENT_ENV" == "blue" ]; then
+            NEW_ENV="green"
+            IMAGE_TAG="green"
+          else
+            NEW_ENV="blue"
+            IMAGE_TAG="blue"
+          fi
+
+          echo "Deploying to $NEW_ENV environment."
+
+          # Docker 이미지 빌드
+          docker build -t junghoonkim/backend:${IMAGE_TAG} ./backend
+
+          # Docker 이미지 푸시
+          docker push junghoonkim/backend:${IMAGE_TAG}
 
       # 5. 배포 서버에 SSH로 접속하여 최신 Docker 이미지 배포
       - name: Deploy to Server
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{secrets.AWS_EC2_HOST}}
-          username: ${{secrets.AWS_EC2_USERNAME}}
-          key: ${{secrets.AWS_EC2_KEY}}
+          host: ${{ secrets.AWS_EC2_HOST }}
+          username: ${{ secrets.AWS_EC2_USERNAME }}
+          key: ${{ secrets.AWS_EC2_KEY }}
           script: |
-            docker compose pull backend
-            docker compose down backend || true  # backend 컨테이너 중지 및 삭제
-            docker compose up -d backend
+            cd /home/ubuntu
+
+            # 현재 활성 환경 확인
+            ACTIVE_ENV=$(cat /home/ubuntu/active.txt)
+            if [ "$ACTIVE_ENV" == "blue" ]; then
+              NEW_ENV="green"
+              NEW_PORT=8081
+              IMAGE_TAG="green"
+            else
+              NEW_ENV="blue"
+              NEW_PORT=8080
+              IMAGE_TAG="blue"
+            fi
+
+            echo "Deploying to $NEW_ENV environment."
+
+            # 새로운 백엔드 컨테이너 업데이트
+            docker compose pull backend_${NEW_ENV}
+            docker compose up -d backend_${NEW_ENV}
+
+            # Nginx 설정 파일 업데이트
+            sed -i "s/server backend_${ACTIVE_ENV}:808[0-1];/server backend_${NEW_ENV}:808${NEW_ENV == 'green' ? '1' : '0'};/" nginx.conf
+
+            # Nginx 리로드
+            docker compose exec nginx nginx -s reload
+
+            # 활성 환경 업데이트
+            echo $NEW_ENV > /home/ubuntu/active.txt
+            # 이전 환경 중지
+            PREV_ENV=$ACTIVE_ENV
+            docker compose stop backend_${PREV_ENV}

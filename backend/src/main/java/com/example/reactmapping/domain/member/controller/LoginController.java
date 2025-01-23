@@ -29,7 +29,6 @@ public class LoginController {
         return ResponseEntity.ok().body(new LoginResponseDto(loginInfo.getAccessToken(), loginInfo.getUsername(), loginInfo.getSummonerInfoDto(), loginInfo.getMemberDto()));
     }
 
-
     @PostMapping("/oauthLogin")
     public ResponseEntity<?> oauthLogin(@CookieValue(name = Token.TokenName.accessToken, defaultValue = "NO") String accessToken,
                                         HttpServletResponse response){

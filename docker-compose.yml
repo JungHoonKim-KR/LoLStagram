@@ -11,8 +11,13 @@ services:
     networks:
       - lolstagram
   
-      
   frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        REACT_APP_API_BASE_URL: ${REACT_APP_API_BASE_URL}
+        REACT_APP_OAUTH2_REDIRECT_URI: ${REACT_APP_OAUTH2_REDIRECT_URI}
     image: junghoonkim/frontend:latest
     container_name: frontend
     ports:
@@ -37,7 +42,7 @@ services:
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
       - AWS_SECRET_KEY=${AWS_SECRET_KEY}
-
+      - AWS_CLOUDFRONT_URL=${AWS_CLOUDFRONT_URL}
 
     ports:
       - 8080:8080

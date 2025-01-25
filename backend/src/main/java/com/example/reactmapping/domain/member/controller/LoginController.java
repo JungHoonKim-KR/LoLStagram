@@ -5,6 +5,9 @@ import com.example.reactmapping.domain.member.dto.LoginResponseDto;
 import com.example.reactmapping.global.norm.Token;
 import com.example.reactmapping.domain.member.service.LoginService;
 import com.example.reactmapping.global.security.cookie.CookieUtil;
+import io.micrometer.core.annotation.Counted;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.prometheus.client.Counter;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +23,9 @@ import org.springframework.web.bind.annotation.*;
 public class LoginController {
     private final LoginService loginService;
     private final CookieUtil cookieUtil;
+
+
+    @Counted(value = "login_normal_count", extraTags = {"endpoint","login"})
     @Operation(summary = "로그인")
     @PostMapping("/normal")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto, HttpServletResponse httpServletResponse) {

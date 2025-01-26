@@ -63,7 +63,7 @@ cloud:
       auto: false
 
 origin:
-  client: "http://ec2-3-39-119-168.ap-northeast-2.compute.amazonaws.com:3000"
+  client: "http://ec2-3-39-119-168.ap-northeast-2.compute.amazonaws.com:3030"
   server: "http://ec2-3-39-119-168.ap-northeast-2.compute.amazonaws.com:8080"
 
 management:

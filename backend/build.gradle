@@ -67,6 +67,8 @@ dependencies {
     //Monitoring
     implementation 'org.springframework.boot:spring-boot-starter-actuator' //actuator 추가
     implementation 'io.micrometer:micrometer-registry-prometheus' //추가
+    implementation 'com.github.loki4j:loki-logback-appender:1.4.0'
+
 }
 
 tasks.named('test') {

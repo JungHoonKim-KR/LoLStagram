@@ -1,5 +1,5 @@
-## 배포 주소 : http://3.39.119.168:3000/ <br>
-## 임시 모니터링 : http://ec2-52-79-231-150.ap-northeast-2.compute.amazonaws.com:3000/d/spring_boot_21/spring-boot-2-1-system-monitor?orgId=1&refresh=5s
+## 배포 주소 : http://ec2-3-39-119-168.ap-northeast-2.compute.amazonaws.com:3030/ <br>
+## 임시 모니터링 : [http://ec2-3-39-119-168.ap-northeast-2.compute.amazonaws.com:3000/](http://ec2-3-39-119-168.ap-northeast-2.compute.amazonaws.com:3000/d/spring_boot_21/spring-boot-2-1-system-monitor?orgId=1&refresh=5s)
 주의 사항 필독 ! 
 - 첫 로그인 시 네트워크 환경마다 시간 차이가 많이 발생합니다. 평균 4초 정도 소요됩니다.
 - 회원가입 시 닉네임과 태그명의 대소문자나 공백을 잘 확인해주세요.

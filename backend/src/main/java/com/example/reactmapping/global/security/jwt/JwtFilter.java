@@ -61,13 +61,11 @@ public class JwtFilter extends OncePerRequestFilter {
                     filterChain.doFilter(request, response);
                     return;
                 }
-                log.error("{} is wrong", Auth.Authentication.name());
+                log.warn("{} is wrong", Auth.Authentication.name());
                 throw new AppException(ErrorCode.ACCESS_ERROR, "권한 없음");
             } else {
                 accessToken = authenticationInfo.accessToken;
                 refreshToken = authenticationInfo.refreshToken;
-                log.info("accessToken : {}", accessToken);
-                log.info("refreshToken : {}", refreshToken);
             }
             // end 1
             if (isLogout(request, response, filterChain, requestUrl, accessToken)) return;
@@ -101,13 +99,12 @@ public class JwtFilter extends OncePerRequestFilter {
                 throw new AppException(ErrorCode.BAD_REQUEST, "잘못된 로그인 요청입니다.");
             }  else if (jwtService.findToken(refreshToken, Token.TokenType.REFRESH.name()).isPresent()) {
                 regenerateAccessToken(request, response, userEmail);
-                log.info("{} 정상", Token.TokenName.refreshToken);
             } else {
                 throw new AppException(ErrorCode.NOTFOUND, "잘못된 토큰 정보입니다.");
             }
 
         }else if (jwtService.isBlacklisted(accessToken)) {
-            log.error("{} 로그아웃 처리된 토큰", accessToken);
+            log.warn("{} 로그아웃 처리된 토큰", accessToken);
             throw new AppException(ErrorCode.BAD_REQUEST, "이미 로그아웃된 토큰입니다.");
         }else{
             setAuthentication(userEmail, request);
@@ -128,12 +125,12 @@ public class JwtFilter extends OncePerRequestFilter {
         String newAccessToken = jwtService.regenerateAccessToken(userEmail);
         response.setHeader(Token.TokenType.ACCESS.name(), newAccessToken);
         setAuthentication(userEmail, request);
-        log.info("재발급 : {}", newAccessToken);
+        log.info("토큰 재발급");
     }
 
     private AuthenticationInfo extractAuthorizationInfo(HttpServletRequest request) {
         String authorization = request.getHeader(Auth.Authorization.name());
-        log.info("{} : {}", Auth.Authorization.name(), authorization);
+//        log.info("{} : {}", Auth.Authorization.name(), authorization);
         if (authorization == null || !authorization.startsWith("Bearer ")) {
             return null;
         } else {

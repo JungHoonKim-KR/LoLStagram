@@ -3,7 +3,6 @@ package com.example.reactmapping.domain.lol.summonerInfo.service;
 import com.example.reactmapping.domain.lol.dto.MostChampion;
 import com.example.reactmapping.domain.lol.match.riotAPI.GetMatchInfoWithAPI;
 import com.example.reactmapping.domain.lol.match.service.CreateMatchService;
-import com.example.reactmapping.domain.lol.match.service.GetMatchService;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.BasicInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.RecentRecord;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
@@ -25,26 +24,29 @@ import java.util.List;
 @Slf4j
 public class CreateSummonerInfoService {
     private final CreateMatchService createMatchService;
-    private final GetMatchInfoWithAPI getMatchInfoWithAPI;
     private final GetSummonerInfoWithApi getSummonerInfoWithApi;
     private final SummonerUtil summonerUtil;
     private final SummonerInfoService summonerInfoService;
+    private final GetMatchInfoWithAPI getMatchInfoWithAPI;
     public SummonerInfo createSummonerInfo(String puuId, String summonerName, String summonerTag) {
-        log.info("소환사 생성 시작");
         if(puuId == null)
             puuId = getSummonerInfoWithApi.getPuuId(summonerName, summonerTag);
+
         String summonerId = getSummonerInfoWithApi.getSummonerId(puuId);
         BasicInfo summonerBasic = getSummonerInfoWithApi.getSummonerBasic(summonerId, summonerTag);
-
-        List<Match> matchList = new LinkedList<>();
         List<String> matchIds = getMatchInfoWithAPI.getMatchIdList(puuId, 0, LOL.gameCount);
 
-        log.info("매치 객체 생성"); // 시간 많이 걸림
-        for (String matchId : matchIds) {
-            Match match = createMatchService.createMatch(matchId, summonerName, summonerTag);
-            matchList.add(match);
-        }
+//        n번 API 호출 : 비효율적
+//        List<Match> matchList = new LinkedList<>();
 
+//        log.info("매치 객체 생성"); // 시간 많이 걸림
+//        for (String matchId : matchIds) {
+//            Match match = createMatchService.createMatch(matchId, summonerName, summonerTag);
+//            matchList.add(match);
+//        }
+
+        // 병렬 처리
+        List<Match> matchList = createMatchService.createMatchParallel(matchIds, summonerName, summonerTag);
         RecentRecord recentRecord = summonerUtil.createRecentRecord(matchList);
         List<MostChampion> mostChampions = summonerUtil.calcMostChampion(matchList);
 

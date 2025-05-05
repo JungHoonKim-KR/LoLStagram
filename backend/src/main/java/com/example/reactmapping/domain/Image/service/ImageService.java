@@ -45,7 +45,6 @@ public class ImageService {
     }
 
     public Map<String, String> findUrlsByTypeAndKeys(String type, List<String>keys){
-        log.info("뭔가 발생?");
         List<String[]> urlsByTypeAndKeys = imageRepository.findUrlsByTypeAndKeys(type, keys);
         return urlsByTypeAndKeys.stream().collect(Collectors.toMap(
                 obj -> obj[0],

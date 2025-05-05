@@ -6,13 +6,13 @@ import com.example.reactmapping.global.norm.Token;
 import com.example.reactmapping.domain.member.service.LoginService;
 import com.example.reactmapping.global.security.cookie.CookieUtil;
 import io.micrometer.core.annotation.Counted;
-import io.micrometer.core.instrument.MeterRegistry;
-import io.prometheus.client.Counter;
+
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +33,11 @@ public class LoginController {
         httpServletResponse.addCookie(cookieUtil.createCookie(Token.TokenName.refreshToken,loginInfo.getRefreshToken()));
         log.info("로그인 완료");
         return ResponseEntity.ok().body(new LoginResponseDto(loginInfo.getAccessToken(), loginInfo.getUsername(), loginInfo.getSummonerInfoDto(), loginInfo.getMemberDto()));
+    }
+
+    @GetMapping("/trigger-runtime-exception")
+    public String triggerRuntimeException() {
+        throw new RuntimeException("Test RuntimeException");
     }
 
     @PostMapping("/oauthLogin")

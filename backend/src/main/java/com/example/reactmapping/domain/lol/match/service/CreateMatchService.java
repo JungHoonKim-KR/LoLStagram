@@ -3,15 +3,23 @@ package com.example.reactmapping.domain.lol.match.service;
 import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.example.reactmapping.domain.lol.match.riotAPI.GetMatchInfoWithAPI;
 import com.example.reactmapping.domain.lol.util.DataUtil;
+import com.example.reactmapping.global.exception.AppException;
+import com.example.reactmapping.global.exception.ErrorCode;
 import com.example.reactmapping.global.norm.LOL;
 import com.fasterxml.jackson.databind.JsonNode;
+import io.github.resilience4j.ratelimiter.RateLimiter;
+import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.text.DecimalFormat;
+import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -22,6 +30,51 @@ import java.util.stream.IntStream;
 public class CreateMatchService {
     private final GetMatchInfoWithAPI getMatchInfoWithAPI;
     private final DataUtil dataUtil;
+    private final RateLimiter limiter = RateLimiter.of("riot-api", RateLimiterConfig.custom()
+            .limitForPeriod(20)                         // 최대 20개
+            .limitRefreshPeriod(Duration.ofSeconds(1)) // 1초 단위 리셋
+            .timeoutDuration(Duration.ofMillis(500))   // 대기 시간 초과 시 예외
+            .build());
+
+    public List<Match> createMatchParallel(List<String> matchIdList, String summonerName, String summonerTag) {
+        ExecutorService executor = Executors.newFixedThreadPool(3); // 10~20도 OK
+
+        List<CompletableFuture<Match>> matchList = matchIdList.stream()
+                .map(matchId -> CompletableFuture.supplyAsync(() -> {
+                    try {
+                        // ✅ RateLimiter 안에서 실행
+                        return RateLimiter.decorateSupplier(limiter, () ->
+                                createMatch(matchId, summonerName, summonerTag)
+                        ).get();
+                    } catch (Exception e) {
+                        log.warn("matchId: {} 처리 실패 - {}", matchId, e.getMessage());
+
+                        throw new AppException(ErrorCode.BAD_REQUEST, "서버 에러");
+//                        return null;
+                    }
+                }, executor))
+                .toList();
+
+        return matchList.stream()
+                .map(CompletableFuture::join)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+//    public List<Match> createMatchParallel(List<String>matchIdList, String summonerName, String summonerTag){
+//        try{
+//
+//        List<CompletableFuture<Match>> matchList = matchIdList.stream()
+//                .map(matchId -> CompletableFuture.supplyAsync(() -> createMatch(matchId, summonerName, summonerTag)))
+//                .toList();
+//        return matchList.stream()
+//                .map(CompletableFuture :: join)
+//                .collect(Collectors.toList());
+//        }
+//        catch (Exception e){
+//            throw new AppException(ErrorCode.BAD_REQUEST, "내부 에러");
+//        }
+//    }
 
     public Match createMatch(String matchId, String summonerName, String summonerTag) {
 
@@ -60,8 +113,8 @@ public class CreateMatchService {
         }
     }
     private boolean isDesiredSummoner(JsonNode participant, String summonerName, String summonerTag) {
-        return participant.path(LOL.RiotIdGameName).asText().equalsIgnoreCase(summonerName)
-                && participant.path(LOL.RiotIdTagline).asText().equals(summonerTag);
+        return participant.path("riotIdGameName").asText().equalsIgnoreCase(summonerName)
+                && participant.path("riotIdTagline").asText().equals(summonerTag);
     }
     private void populateMatchDetails(Match.MatchBuilder matchBuilder, JsonNode participant) {
         matchBuilder.kills(participant.path("kills").asLong())

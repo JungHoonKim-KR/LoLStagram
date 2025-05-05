@@ -32,9 +32,8 @@ public class JwtService {
     }
 
     public String regenerateAccessToken(String userEmail) {
-        log.info("{} 확인, {} 재발급", Token.TokenName.refreshToken, Token.TokenName.accessToken);
         String newAccessToken = jwtUtil.createToken(userEmail, Token.TokenType.ACCESS.name());
-        log.info("재발급 {} : " + newAccessToken, Token.TokenName.accessToken);
+        log.info("{}의 토큰 재발급", Token.TokenName.accessToken);
         return newAccessToken;
     }
 }

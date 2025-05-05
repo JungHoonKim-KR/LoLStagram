@@ -42,13 +42,13 @@ public class UpdateSummonerInfo {
         return summonerInfo;
     }
     private void updateSummonerInfo(int newGameCount, SummonerInfo summonerInfo) {
-            List<Match> newMatchList = getNewMatchList(summonerInfo, newGameCount);
+        List<Match> newMatchList = getNewMatchList(summonerInfo, newGameCount);
 
-            summonerInfo.updateBasicInfo(getSummonerInfoWithApi.getSummonerBasic(summonerInfo.getSummonerId(), summonerInfo.getSummonerTag()));
-            updateMatchService.updateMatches(summonerInfo, newMatchList);
+        summonerInfo.updateBasicInfo(getSummonerInfoWithApi.getSummonerBasic(summonerInfo.getSummonerId(), summonerInfo.getSummonerTag()));
+        updateMatchService.updateMatches(summonerInfo, newMatchList);
 
-            updateMostChampionList(summonerInfo);
-            updateRecentRecord(summonerInfo);
+        updateMostChampionList(summonerInfo);
+        updateRecentRecord(summonerInfo);
     }
 
     private List<Match> getNewMatchList(SummonerInfo summonerInfo, int newGameCount) {
@@ -69,7 +69,7 @@ public class UpdateSummonerInfo {
     }
     private void updateRecentRecord(SummonerInfo summonerInfo){
         log.info("updateRecentRecord");
-         summonerInfo.updateRecentRecord(summonerUtil.createRecentRecord(summonerInfo.getMatchList()));
+        summonerInfo.updateRecentRecord(summonerUtil.createRecentRecord(summonerInfo.getMatchList()));
     }
     private void updateMostChampionList(SummonerInfo summonerInfo) {
         log.info("calMostChamp");

@@ -46,7 +46,7 @@ public class LoLDataDownloader {
             downloadSummonerSpells();
             downloadRunes();
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

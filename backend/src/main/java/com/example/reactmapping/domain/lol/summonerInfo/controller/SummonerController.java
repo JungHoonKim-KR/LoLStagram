@@ -1,6 +1,7 @@
 package com.example.reactmapping.domain.lol.summonerInfo.controller;
 
 import com.example.reactmapping.domain.Image.service.ImageService;
+import com.example.reactmapping.domain.lol.LoLDataDownloader;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerInfoDto;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDto;
@@ -10,6 +11,7 @@ import com.example.reactmapping.domain.lol.summonerInfo.service.SummonerInfoServ
 import com.example.reactmapping.domain.lol.summonerInfo.service.UpdateSummonerInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -23,7 +25,7 @@ public class SummonerController {
     private final SummonerInfoService summonerInfoService;
     private final ImageService imageService;
     private final CreateSummonerInfoService createSummonerInfoService;
-
+    private final LoLDataDownloader loLDataDownloader;
     @PutMapping("/update")
     public SummonerInfoDto update(@RequestBody UpdateRequestDto updateRequestDto) {
         SummonerInfo summonerInfoById = summonerInfoService.findSummonerInfoById(updateRequestDto.getSummonerId());
@@ -40,6 +42,12 @@ public class SummonerController {
         SummonerInfo summonerInfo = summonerInfoOptional.orElseGet(() -> createSummonerInfoService.createSummonerInfo(null, summonerNameAndTagDto.getSummonerName(), summonerNameAndTagDto.getSummonerTag()));
         log.info("소환사 검색 완료");
         return SummonerInfoDto.entityToDto(summonerInfo, imageService);
+    }
+
+    @GetMapping("/enrollalldata")
+    public ResponseEntity<?> enrollAll(){
+        loLDataDownloader.run();
+        return ResponseEntity.status(200).body("업데이트 완료");
     }
 
 }

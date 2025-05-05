@@ -21,6 +21,6 @@ public class GetMatchInfoWithAPI {
     // 최근 대전기록 가져오기
     public List<String> getMatchIdList(String puuId, int startGame, int count) {
         String Url = String.format("/lol/match/v5/matches/by-puuid/%s/ids?start=%s&count=%s", puuId, startGame, count);
-        return loLApiUtil.createWebClient(LOL.BaseUrlAsia, Url).bodyToMono(List.class).block();
+        return loLApiUtil.createWebClient(LOL.BaseUrlAsia, Url).retrieve().bodyToMono(List.class).block();
     }
 }

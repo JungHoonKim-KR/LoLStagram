@@ -18,19 +18,15 @@ import java.util.stream.IntStream;
 @Slf4j
 @Transactional
 public class CompareMatchService {
-    // 최신 경기 리스트 10개 중 마지막 경기를 가져옴
+    // 최신 경기 리스트 20개 중 마지막 경기를 가져옴
     // 이 마지막 경기가 현재 저장된 리스트의 몇번 인덱스에 포함되는지
     // ex) 4번이면 0~3의 경기 즉 4개의 경기가 갱신이 안됨.
     private final GetMatchInfoWithAPI getMatchInfoWithAPI;
-    private final GetMatchService getMatchService;
     private final MatchService matchService;
 
     public int getCountNewMatch(String puuId, String summonerId) {
-        log.info("gameCount start");
         String targetMatchId = getMatchInfoWithAPI.getMatchIdList(puuId, LOL.LastIndex, 1).get(0);
-        log.info("find match");
         List<Match> matchList = matchService.findAllBySummonerId(summonerId);
-        log.info("cal gameCount");
         Integer gameCount = getGameCount(matchList, targetMatchId);
         return Objects.requireNonNullElse(gameCount, LOL.gameCount);
     }

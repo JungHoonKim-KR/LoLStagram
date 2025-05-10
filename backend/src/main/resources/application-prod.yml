@@ -64,7 +64,7 @@ cloud:
     s3:
       bucket: ddoons-bucket
     cloudfront:
-      domain: ${AWS_CLOUDFRONT_URL}
+      domain: https://d1mzmki4hbyzz1.cloudfront.net
     region:
       static: ap-northeast-2
     stack:

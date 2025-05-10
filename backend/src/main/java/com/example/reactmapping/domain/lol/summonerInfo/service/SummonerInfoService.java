@@ -33,6 +33,7 @@ public class SummonerInfoService {
         summonerInfoRepository.save(summonerInfo);
     }
     @Async
+    @Transactional
     public CompletableFuture<SummonerInfo> saveAsync(SummonerInfo summonerInfo) {
         saveSummonerInfo(summonerInfo); // void 메서드지만 실제 저장은 이 시점에 완료
         return CompletableFuture.completedFuture(summonerInfo); // 저장된 객체를 반환 반환을 해야 뒤에 thenAccept를 활용할 수 있음

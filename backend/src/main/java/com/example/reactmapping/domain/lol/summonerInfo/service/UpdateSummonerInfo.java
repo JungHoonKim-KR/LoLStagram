@@ -68,13 +68,10 @@ public class UpdateSummonerInfo {
         return compareMatchService.getCountNewMatch(summonerInfo.getPuuId(), summonerInfo.getSummonerId());
     }
     private void updateRecentRecord(SummonerInfo summonerInfo){
-        log.info("updateRecentRecord");
         summonerInfo.updateRecentRecord(summonerUtil.createRecentRecord(summonerInfo.getMatchList()));
     }
     private void updateMostChampionList(SummonerInfo summonerInfo) {
-        log.info("calMostChamp");
         List<MostChampion> mostChampionList = summonerUtil.calcMostChampion(summonerInfo.getMatchList());
-        log.info("mapping mostChamp");
         summonerInfo.updateMostChampion(mostChampionList);
     }
 }

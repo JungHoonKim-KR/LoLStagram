@@ -33,6 +33,7 @@ public class UpdateSummonerInfo {
     private final CreateMatchService createMatchService;
     private final SummonerInfoService summonerInfoService;
     private final ImageService imageService;
+
     public SummonerInfoDto updateSummonerInfoAndGetDto(SummonerInfo summonerInfo) {
         SummonerInfo entity = summonerInfoService.findSummonerInfoById(summonerInfo.getSummonerId());
         SummonerInfo updated = getUpdatedSummonerInfo(entity); // entity가 최신이면 그대로 반환
@@ -47,7 +48,7 @@ public class UpdateSummonerInfo {
             return summonerInfo;
         }
         updateSummonerInfo(newGameCount, summonerInfo);
-        summonerInfoService.saveAsync(summonerInfo);
+        summonerInfoService.saveAsync(summonerInfo).thenRun(()->log.info("소환사 저장완료"));
         return summonerInfo;
     }
     private void updateSummonerInfo(int newGameCount, SummonerInfo summonerInfo) {

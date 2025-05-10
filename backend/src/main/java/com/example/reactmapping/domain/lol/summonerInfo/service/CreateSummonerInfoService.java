@@ -72,7 +72,7 @@ public class CreateSummonerInfoService {
         for(Match match : matchList) {
             match.setSummonerInfo(summonerInfo);
         }
-        summonerInfoService.saveAsync(summonerInfo);
+        summonerInfoService.saveAsync(summonerInfo).thenRun(()->log.info("소환사 저장 완료"));
         log.info("소환사 생성 완료");
         return summonerInfo;
     }

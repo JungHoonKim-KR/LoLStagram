@@ -49,7 +49,7 @@ const Box1 = () => {
                     />
                     {showBox3 && searchResult && (
                         <Box3
-                            key={searchResult.leagueId}
+                            key={searchResult.summonerId}
                             summerInfo={searchResult}
                             type="search"
                             label="searchResult"

@@ -35,7 +35,8 @@ public class GetMatchService {
         log.info(String.valueOf(pageable.getPageNumber()));
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.DESC, "gameStartTimestamp"));
         Page<Match> content = matchService.findAll(spec, pageRequest);
-        List<MatchDto> MatchDtos = MatchDto.entityToDto(content.getContent(), imageService);
+
+        List<MatchDto> MatchDtos = MatchDto.entityToDto(content.getContent(), imageService.getImageURLMaps(content.getContent()));
 
         return new MatchResultDto(MatchDtos,content.isLast(),type);
     }

@@ -2,13 +2,16 @@ package com.example.reactmapping.domain.Image.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.example.reactmapping.domain.Image.dto.ImageResourceUrlMaps;
 import com.example.reactmapping.domain.Image.entity.Image;
 import com.example.reactmapping.domain.Image.repository.ImageJDBCRepository;
 import com.example.reactmapping.domain.Image.repository.ImageRepository;
+import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.example.reactmapping.global.etcConfig.S3Config;
 
 import java.util.concurrent.CompletableFuture;
 
+import com.example.reactmapping.global.norm.LOL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +25,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,9 +41,24 @@ public class ImageService {
     private final ImageJDBCRepository imageJDBCRepository;
     private final AmazonS3Client s3Client;
 
+
     public String getImageURL(String type, String name) {
         return imageRepository.findUrlByTypeAndName(type, name).orElse(null);
     }
+
+    public ImageResourceUrlMaps getImageURLMaps(List<Match>matchList){
+        List<String> championKeys = matchList.stream().map(Match::getChampionName).distinct().toList();
+        List<String> runeKeys = matchList.stream().flatMap(match -> Stream.of(match.getMainRune(), match.getSubRune())).distinct().toList();
+        List<String> itemKeys = matchList.stream().flatMap(match -> match.getItemList().stream()).distinct().toList();
+        List<String> spellKeys = matchList.stream().flatMap(match -> match.getSummonerSpellList().stream()).distinct().toList();
+
+        Map<String, String> championURLMap = findUrlsByTypeAndKeys(LOL.ResourceType.CHAMPION.getType(), championKeys);
+        Map<String, String> runeURLMap = findUrlsByTypeAndKeys(LOL.ResourceType.RUNE.getType(), runeKeys);
+        Map<String, String> itemURLMap = findUrlsByTypeAndKeys(LOL.ResourceType.ITEM.getType(), itemKeys);
+        Map<String, String> spellURLMap = findUrlsByTypeAndKeys(LOL.ResourceType.SPELL.getType(), spellKeys);
+        return new ImageResourceUrlMaps(championURLMap, runeURLMap, itemURLMap, spellURLMap);
+    }
+
     public List<String> findAllName(String type) {
         return imageRepository.findAllName(type);
     }

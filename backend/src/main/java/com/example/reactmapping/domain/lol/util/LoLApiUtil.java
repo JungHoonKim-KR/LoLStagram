@@ -79,7 +79,6 @@ public JsonNode getJsonResponse(String baseUrl, String url, String errorMessage)
                 )
                 .bodyToMono(String.class)
                 .block();
-
         return objectMapper.readTree(body);
     } catch (Exception e) {
         throw new RuntimeException("JSON 파싱 또는 통신 실패", e);

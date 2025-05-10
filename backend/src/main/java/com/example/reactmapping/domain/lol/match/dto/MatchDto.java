@@ -1,9 +1,8 @@
 package com.example.reactmapping.domain.lol.match.dto;
 
 import com.example.reactmapping.StringListConverter;
-import com.example.reactmapping.domain.Image.service.ImageService;
+import com.example.reactmapping.domain.Image.dto.ImageResourceUrlMaps;
 import com.example.reactmapping.domain.lol.match.entity.Match;
-import com.example.reactmapping.global.norm.LOL;
 import jakarta.persistence.Convert;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +12,6 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Getter
 @NoArgsConstructor
@@ -36,16 +34,11 @@ public class MatchDto {
     private String result;
 
     // 엔티티 리스트를 DTO 리스트로 변환
-    public static List<MatchDto> entityToDto(List<Match> matchList, ImageService imageService) {
-        List<String> championKeys = matchList.stream().map(Match::getChampionName).distinct().toList();
-        List<String> runeKeys = matchList.stream().flatMap(match -> Stream.of(match.getMainRune(), match.getSubRune())).distinct().toList();
-        List<String> itemKeys = matchList.stream().flatMap(match -> match.getItemList().stream()).distinct().toList();
-        List<String> spellKeys = matchList.stream().flatMap(match -> match.getSummonerSpellList().stream()).distinct().toList();
-
-        Map<String, String> championURLMap = imageService.findUrlsByTypeAndKeys(LOL.ResourceType.CHAMPION.getType(), championKeys);
-        Map<String, String> runeURLMap = imageService.findUrlsByTypeAndKeys(LOL.ResourceType.RUNE.getType(), runeKeys);
-        Map<String, String> itemURLMap = imageService.findUrlsByTypeAndKeys(LOL.ResourceType.ITEM.getType(), itemKeys);
-        Map<String, String> spellURLMap = imageService.findUrlsByTypeAndKeys(LOL.ResourceType.SPELL.getType(), spellKeys);
+    public static List<MatchDto> entityToDto(List<Match> matchList, ImageResourceUrlMaps imageResourceUrlMaps) {
+        Map<String, String> championURLMap = imageResourceUrlMaps.championURLMap();
+        Map<String, String> runeURLMap = imageResourceUrlMaps.runeURLMap();
+        Map<String, String> itemURLMap = imageResourceUrlMaps.itemURLMap();
+        Map<String, String> spellURLMap = imageResourceUrlMaps.spellURLMap();
 
         return matchList.stream()
                 .map(match -> {

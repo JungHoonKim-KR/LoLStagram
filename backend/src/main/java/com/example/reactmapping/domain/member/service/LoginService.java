@@ -67,7 +67,7 @@ public class LoginService {
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .username(member.getUsername())
-                .summonerInfoDto(SummonerInfoDto.entityToDto(summonerInfo, imageService))
+                .summonerInfoDto(SummonerInfoDto.entityToDto(summonerInfo, imageService.getImageURLMaps(summonerInfo.getMatchList())))
                 .memberDto(memberDto)
                 .build();
     }

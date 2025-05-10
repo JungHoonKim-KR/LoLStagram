@@ -1,12 +1,14 @@
 package com.example.reactmapping.domain.lol.summonerInfo.service;
 
+import com.example.reactmapping.domain.Image.dto.ImageResourceUrlMaps;
+import com.example.reactmapping.domain.Image.service.ImageService;
 import com.example.reactmapping.domain.lol.dto.MostChampion;
 import com.example.reactmapping.domain.lol.match.entity.Match;
 import com.example.reactmapping.domain.lol.match.riotAPI.GetMatchInfoWithAPI;
 import com.example.reactmapping.domain.lol.match.service.CompareMatchService;
 import com.example.reactmapping.domain.lol.match.service.CreateMatchService;
-import com.example.reactmapping.domain.lol.match.service.GetMatchService;
 import com.example.reactmapping.domain.lol.match.service.UpdateMatchService;
+import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerInfoDto;
 import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.riotAPI.GetSummonerInfoWithApi;
 import com.example.reactmapping.domain.lol.summonerInfo.util.SummonerUtil;
@@ -29,8 +31,16 @@ public class UpdateSummonerInfo {
     private final SummonerUtil summonerUtil;
     private final GetSummonerInfoWithApi getSummonerInfoWithApi;
     private final CreateMatchService createMatchService;
-    private final GetMatchService getMatchService;
     private final SummonerInfoService summonerInfoService;
+    private final ImageService imageService;
+    private final SummonerAsyncService summonerAsyncService;
+    public SummonerInfoDto updateSummonerInfoAndGetDto(SummonerInfo summonerInfo) {
+        SummonerInfo entity = summonerInfoService.findSummonerInfoById(summonerInfo.getSummonerId());
+        SummonerInfo updated = getUpdatedSummonerInfo(entity); // entity가 최신이면 그대로 반환
+        ImageResourceUrlMaps urlMaps = imageService.getImageURLMaps(updated.getMatchList());
+
+        return SummonerInfoDto.entityToDto(updated, urlMaps);
+    }
 
     public SummonerInfo getUpdatedSummonerInfo(SummonerInfo summonerInfo){
         int newGameCount = getNewGameCount(summonerInfo);
@@ -38,7 +48,7 @@ public class UpdateSummonerInfo {
             return summonerInfo;
         }
         updateSummonerInfo(newGameCount, summonerInfo);
-        summonerInfoService.saveSummonerInfo(summonerInfo);
+        summonerAsyncService.saveAsync(summonerInfo);
         return summonerInfo;
     }
     private void updateSummonerInfo(int newGameCount, SummonerInfo summonerInfo) {

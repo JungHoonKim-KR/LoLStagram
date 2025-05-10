@@ -1,6 +1,7 @@
 package com.example.reactmapping.domain.member.entity;
 
 import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
+import com.example.reactmapping.domain.lol.summonerInfo.service.SummonerInfoService;
 import com.example.reactmapping.domain.post.entity.Post;
 import com.example.reactmapping.domain.post.entity.PostComment;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,7 +33,7 @@ public class Member {
     // 단 ALL을 하게 될 경우 member 삭제 시 summoner까지 같이 삭제되면 데이터 무결성에 어긋남. (member가 "다"의 관계이기 때문에 다른 member에 영향이 감)
     @Setter
     @Schema(description = "소환사 아이디")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "summoner_id")
     private SummonerInfo summonerInfo;
 
@@ -55,5 +56,9 @@ public class Member {
         this.emailId = emailId;
         this.username = username;
     };
+
+    public void updateSummonerInfo(SummonerInfo summonerInfo){
+        this.summonerInfo = summonerInfo;
+    }
 
 }

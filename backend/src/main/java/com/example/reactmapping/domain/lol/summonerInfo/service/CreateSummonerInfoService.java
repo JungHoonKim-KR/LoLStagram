@@ -32,7 +32,6 @@ public class CreateSummonerInfoService {
     private final SummonerInfoService summonerInfoService;
     private final GetMatchInfoWithAPI getMatchInfoWithAPI;
     private final ImageService imageService;
-    private final SummonerAsyncService summonerAsyncService;
 
     public SummonerInfoDto getOrCreateSummonerDto(SummonerNameAndTagDto dto) {
         SummonerInfo entity = summonerInfoService
@@ -73,7 +72,7 @@ public class CreateSummonerInfoService {
         for(Match match : matchList) {
             match.setSummonerInfo(summonerInfo);
         }
-        summonerAsyncService.saveAsync(summonerInfo);
+        summonerInfoService.saveAsync(summonerInfo);
         log.info("소환사 생성 완료");
         return summonerInfo;
     }

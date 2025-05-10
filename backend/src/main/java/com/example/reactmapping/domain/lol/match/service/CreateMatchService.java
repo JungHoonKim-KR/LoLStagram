@@ -54,7 +54,8 @@ public class CreateMatchService {
                     }
                 }, executor))
                 .toList();
-
+        // CompletableFuture 객체가 matchId의 순서를 가지고 있고 CompletableFuture::join을 통해 해당 순서의 데이터가 응답될 때 까지 기다림으로써 순서를 유지하는 구조
+        // 다시 말해 supplyAsync(비동기)로 match 생성을 요청해 놓고 return문에서 데이터를 대기하고 있음
         return matchList.stream()
                 .map(CompletableFuture::join)
                 .filter(Objects::nonNull)
@@ -91,6 +92,7 @@ public class CreateMatchService {
                 break;
             }
         }
+        log.info("createMatch : {}", matchId);
         return matchBuilder.build();
     }
     private String determineGameType(JsonNode matchInfo) {

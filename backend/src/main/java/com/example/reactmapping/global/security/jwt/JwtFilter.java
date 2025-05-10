@@ -115,6 +115,7 @@ public class JwtFilter extends OncePerRequestFilter {
         AntPathMatcher pathMatcher = new AntPathMatcher();
         for (String path : URL.Permit.PATHS) {
             if (pathMatcher.match(path, url)) {
+                log.info("확인~!");
                 return true;
             }
         }

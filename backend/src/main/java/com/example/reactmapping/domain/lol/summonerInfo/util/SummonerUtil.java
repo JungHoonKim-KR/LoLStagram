@@ -82,10 +82,6 @@ public class SummonerUtil {
         DecimalFormat df = dataUtil.getDecimalFormat();
         return Double.parseDouble(df.format(winCount / count * 100));
     }
-    private double calKda(Long totalkill, Long totaldeath, Long totalassist) {
-        DecimalFormat df = dataUtil.getDecimalFormat();
-        return Double.parseDouble(df.format(((double) (totalkill + totalassist)) / ((double) totaldeath)));
-    }
     private Long calWin(List<Match> MatchList) {
         Long win = 0L;
         for (Match Match : MatchList) {

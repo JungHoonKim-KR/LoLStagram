@@ -14,16 +14,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class JoinService {
     private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final SummonerInfoService summonerInfoService;
     private final CreateSummonerInfoService createSummonerInfoService;
+
+    @Transactional
     public Member join(JoinDTO dto, String puuId) {
         // 회원 아이디가 이미 존재하는지
         if (memberRepository.findMemberByEmailId(dto.getEmailId()).isPresent()) {

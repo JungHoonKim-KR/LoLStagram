@@ -16,7 +16,6 @@ import com.example.reactmapping.global.norm.LOL;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +33,6 @@ public class UpdateSummonerInfo {
     private final ImageService imageService;
     private final AsyncSaveSummoner asyncSaveSummoner;
 
-    @Transactional
     public SummonerInfoDto updateSummonerInfoAndGetDto(SummonerInfo summonerInfo) {
         SummonerInfo entity = summonerInfoService.findSummonerInfoById(summonerInfo.getSummonerId());
 

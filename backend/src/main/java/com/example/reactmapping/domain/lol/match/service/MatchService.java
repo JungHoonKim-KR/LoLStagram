@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 public class MatchService {
     private final MatchRepository matchRepository;
 

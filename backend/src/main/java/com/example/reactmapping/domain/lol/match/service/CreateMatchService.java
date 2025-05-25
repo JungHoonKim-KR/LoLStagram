@@ -12,7 +12,6 @@ import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.util.List;
@@ -25,7 +24,6 @@ import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 @Slf4j
 public class CreateMatchService {
     private final GetMatchInfoWithAPI getMatchInfoWithAPI;
@@ -50,7 +48,6 @@ public class CreateMatchService {
                         log.warn("matchId: {} 처리 실패 - {}", matchId, e.getMessage());
 
                         throw new AppException(ErrorCode.BAD_REQUEST, "서버 에러");
-//                        return null;
                     }
                 }, executor))
                 .toList();
@@ -92,7 +89,6 @@ public class CreateMatchService {
                 break;
             }
         }
-        log.info("createMatch : {}", matchId);
         return matchBuilder.build();
     }
     private String determineGameType(JsonNode matchInfo) {

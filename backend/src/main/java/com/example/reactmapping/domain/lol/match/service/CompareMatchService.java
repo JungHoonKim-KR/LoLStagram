@@ -16,7 +16,6 @@ import java.util.stream.IntStream;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
 public class CompareMatchService {
     // 최신 경기 리스트 20개 중 마지막 경기를 가져옴
     // 이 마지막 경기가 현재 저장된 리스트의 몇번 인덱스에 포함되는지

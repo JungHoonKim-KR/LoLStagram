@@ -7,7 +7,6 @@ import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDt
 import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +15,6 @@ public class SearchService {
     private final ImageService imageService;
     private final CreateSummonerInfoService createSummonerInfoService;
 
-    @Transactional
     public SummonerInfoDto getOrCreateSummonerDto(SummonerNameAndTagDto dto) {
         SummonerInfo entity = summonerInfoService
                 .findSummonerInfoBySummonerNameAndTag(dto)

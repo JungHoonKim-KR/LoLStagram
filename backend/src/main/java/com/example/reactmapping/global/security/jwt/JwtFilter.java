@@ -9,6 +9,8 @@ import com.example.reactmapping.global.norm.Token;
 import com.example.reactmapping.global.norm.URL;
 import com.example.reactmapping.global.security.cookie.CookieUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -71,7 +73,7 @@ public class JwtFilter extends OncePerRequestFilter {
             if (isLogout(request, response, filterChain, requestUrl, accessToken)) return;
 
             // 2 : 엑세스 토큰이 만료됐는가
-            isTokenValid(request, jwtUtil.getUserEmail(refreshToken),accessToken, response, refreshToken);
+            isTokenValid(request,accessToken, response, refreshToken);
 
             filterChain.doFilter(request, response);
         } catch (AppException e) {
@@ -89,11 +91,12 @@ public class JwtFilter extends OncePerRequestFilter {
         return false;
     }
 
-    private void isTokenValid(HttpServletRequest request, String userEmail, String accessToken, HttpServletResponse response, String refreshToken) throws IOException {
+    private void isTokenValid(HttpServletRequest request, String accessToken, HttpServletResponse response, String refreshToken) throws IOException {
+        String userEmail = null;
 
         // 엑세스 토큰이 만료
         if (jwtUtil.isExpired(accessToken)) {
-
+            userEmail = jwtUtil.getUserEmail(accessToken);
             // 리프레쉬가 만료됐는가?
             if (jwtUtil.isExpired(refreshToken)) {
                 throw new AppException(ErrorCode.BAD_REQUEST, "잘못된 로그인 요청입니다.");

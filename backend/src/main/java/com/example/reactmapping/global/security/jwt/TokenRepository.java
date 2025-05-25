@@ -33,11 +33,11 @@ public class TokenRepository {
     public void registerBlacklist(String token){
 
         ValueOperations valueOperations = redisTemplate.opsForValue();
-        Date expirationTime  = jwtUtil.getTokenTime(token);
-        if(expirationTime == null){
+        if(jwtUtil.isExpired(token)){
             log.info("Token is already expired. No need to add to blacklist.");
             return;
         }
+        Date expirationTime  = jwtUtil.getTokenTime(token);
         long expireTime = expirationTime.getTime();
         long now = System.currentTimeMillis();
         valueOperations.set(jwtUtil.getUserEmail(token) + ":blackList" ,token, expireTime - now ,TimeUnit.MILLISECONDS);

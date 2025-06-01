@@ -17,11 +17,13 @@ import java.util.List;
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
+    @Column(name = "member_id", nullable = false, unique = true)
     private Long id;
     @Schema(description = "회원 이메일")
+    @Column(unique = true, nullable = false)
     private String emailId;
     @Schema(description = "회원 비밀번호")
+    @Column(unique = true, nullable = false)
     private String password;
     @Schema(description = "회원 이름")
     private String username;

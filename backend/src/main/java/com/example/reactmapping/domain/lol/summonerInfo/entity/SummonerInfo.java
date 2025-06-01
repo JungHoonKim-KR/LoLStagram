@@ -16,7 +16,7 @@ import java.util.List;
 @Entity
 public class SummonerInfo {
     @Id
-    @Column(name = "summoner_id")
+    @Column(name = "summoner_id", nullable = false, unique = true)
     private String summonerId;
     private String summonerName;
     private String summonerTag;

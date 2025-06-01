@@ -16,7 +16,9 @@ import java.util.List;
 public class Match{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true, nullable = false)
     private Long id;
+    @Column(unique = true, nullable = false)
     private String matchId;
     private Long gameStartTimestamp;
     private Long kills;

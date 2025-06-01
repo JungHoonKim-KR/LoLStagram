@@ -41,13 +41,14 @@ public class UpdateSummonerInfo {
         if (newGameCount == LOL.Up_To_Date) {
             updatedSummonerInfo = entity;
         } else {
+            entity.updateBasicInfo(getSummonerInfoWithApi.getSummonerBasic(summonerInfo.getSummonerId(), summonerInfo.getSummonerTag()));
+
             List<String> matchIds = getMatchInfoWithAPI.getMatchIdList(summonerInfo.getPuuId(), 0, newGameCount);
             List<Match> newMatchList = new ArrayList<>();
             for (String matchId : matchIds) {
                 newMatchList.add(createMatchService.createMatch(matchId, summonerInfo.getSummonerName(), summonerInfo.getSummonerTag()));
             }
 
-            entity.updateBasicInfo(getSummonerInfoWithApi.getSummonerBasic(summonerInfo.getSummonerId(), summonerInfo.getSummonerTag()));
             updateMatchService.updateMatches(entity, newMatchList);
 
             List<MostChampion> mostChampionList = summonerUtil.calcMostChampion(entity.getMatchList());

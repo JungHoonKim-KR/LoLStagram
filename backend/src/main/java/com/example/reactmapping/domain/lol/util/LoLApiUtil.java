@@ -5,10 +5,8 @@ import com.example.reactmapping.global.exception.ErrorCode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 @Component
@@ -25,6 +23,47 @@ public class LoLApiUtil {
                 .header("Accept-Charset", "application/x-www-form-urlencoded; charset=UTF-8")
                 .header("Origin", "https://developer.riotgames.com")
                 .header("X-Riot-Token", "RGAPI-8ffbfd5a-0b81-41f7-8083-6d26ad910aea");
+    }
+
+    public JsonNode getJsonResponse(String baseUrl, String url, String errorMessage) {
+        try {
+            String body = createWebClient(baseUrl, url)
+                    .retrieve()
+                    // ① statusCode 파라미터는 HttpStatusCode이므로, 바로 isError() 또는 수치 비교
+                    .onStatus(
+                            status -> status.is4xxClientError(),
+                            clientResponse -> clientResponse
+                                    .bodyToMono(String.class)
+                                    .flatMap(bodyText -> {
+                                        // ② 여기서는 ClientResponse 참조 가능
+                                        log.warn("API 오류: status={}, body={}",
+                                                clientResponse.statusCode(), bodyText);
+                                        return Mono.error(new AppException(
+                                                ErrorCode.NOTFOUND,
+                                                errorMessage + " [HTTP " + clientResponse.statusCode() + "]"
+                                        ));
+                                    })
+                    )
+                    .onStatus(
+                            status -> status.is5xxServerError(),
+                            clientResponse -> clientResponse
+                                    .bodyToMono(String.class)
+                                    .flatMap(bodyText -> {
+                                        // ② 여기서는 ClientResponse 참조 가능
+                                        log.warn("API 오류: status={}, body={}",
+                                                clientResponse.statusCode(), bodyText);
+                                        return Mono.error(new AppException(
+                                                ErrorCode.NOTFOUND,
+                                                "외부 API에서 에러가 발생했습니다." + " [HTTP " + clientResponse.statusCode() + "]"
+                                        ));
+                                    })
+                    )
+                    .bodyToMono(String.class)
+                    .block();
+            return objectMapper.readTree(body);
+        } catch (Exception e) {
+            throw new RuntimeException("JSON 파싱 또는 통신 실패", e);
+        }
     }
 
 //        public JsonNode getJsonResponse(String baseUrl, String url, String errorMessage) {
@@ -58,34 +97,6 @@ public class LoLApiUtil {
 //        String[] parts = url.split("/");
 //        return parts.length > 0 ? parts[parts.length - 1] : "unknown";
 //    }
-public JsonNode getJsonResponse(String baseUrl, String url, String errorMessage) {
-    try {
-        String body = createWebClient(baseUrl, url)
-                .retrieve()
-                // ① statusCode 파라미터는 HttpStatusCode이므로, 바로 isError() 또는 수치 비교
-                .onStatus(
-                        status -> status.is4xxClientError() || status.is5xxServerError(),
-                        clientResponse -> clientResponse
-                                .bodyToMono(String.class)
-                                .flatMap(bodyText -> {
-                                    // ② 여기서는 ClientResponse 참조 가능
-                                    log.warn("API 오류: status={}, body={}",
-                                            clientResponse.statusCode(), bodyText);
-                                    return Mono.error(new AppException(
-                                            ErrorCode.NOTFOUND,
-                                            errorMessage + " [HTTP " + clientResponse.statusCode() + "]"
-                                    ));
-                                })
-                )
-                .bodyToMono(String.class)
-                .block();
-        return objectMapper.readTree(body);
-    } catch (Exception e) {
-        throw new RuntimeException("JSON 파싱 또는 통신 실패", e);
-    }
-}
-
-
 
 
 }

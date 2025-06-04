@@ -13,9 +13,11 @@ import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.riotAPI.GetSummonerInfoWithApi;
 import com.example.reactmapping.domain.lol.summonerInfo.util.SummonerUtil;
 import com.example.reactmapping.global.norm.LOL;
+import io.github.resilience4j.ratelimiter.RateLimiter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +34,7 @@ public class UpdateSummonerInfo {
     private final SummonerInfoService summonerInfoService;
     private final ImageService imageService;
     private final AsyncSaveSummoner asyncSaveSummoner;
+    private final RateLimiter limiter;
 
     public SummonerInfoDto updateSummonerInfoAndGetDto(SummonerInfo summonerInfo) {
         SummonerInfo entity = summonerInfoService.findSummonerInfoById(summonerInfo.getSummonerId());
@@ -41,13 +44,17 @@ public class UpdateSummonerInfo {
         if (newGameCount == LOL.Up_To_Date) {
             updatedSummonerInfo = entity;
         } else {
-            entity.updateBasicInfo(getSummonerInfoWithApi.getSummonerBasic(summonerInfo.getSummonerId(), summonerInfo.getSummonerTag()));
+            RateLimiter.decorateSupplier(limiter, () ->
+                    entity.updateBasicInfo(getSummonerInfoWithApi.getSummonerBasic(summonerInfo.getSummonerId()))
+            ).get();
+            List<String> matchIds = RateLimiter.decorateSupplier(limiter, () ->
+                    getMatchInfoWithAPI.getMatchIdList(summonerInfo.getPuuId(), 0, newGameCount)
+            ).get();
+            List<Match> newMatchList = createMatchService.createMatchParallel(matchIds, summonerInfo.getSummonerName(), summonerInfo.getSummonerTag());
 
-            List<String> matchIds = getMatchInfoWithAPI.getMatchIdList(summonerInfo.getPuuId(), 0, newGameCount);
-            List<Match> newMatchList = new ArrayList<>();
-            for (String matchId : matchIds) {
-                newMatchList.add(createMatchService.createMatch(matchId, summonerInfo.getSummonerName(), summonerInfo.getSummonerTag()));
-            }
+//            for (String matchId : matchIds) {
+//                newMatchList.add(createMatchService.createMatch(matchId, summonerInfo.getSummonerName(), summonerInfo.getSummonerTag()));
+//            }
 
             updateMatchService.updateMatches(entity, newMatchList);
 

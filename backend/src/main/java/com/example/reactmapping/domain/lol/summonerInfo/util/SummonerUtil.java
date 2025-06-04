@@ -60,6 +60,7 @@ public class SummonerUtil {
     public RecentRecord createRecentRecord(List<Match> matchList) {
         long totalkill = 0, totaldeath = 0, totalassist = 0;
         for (Match match : matchList) {
+            log.info("{}, {}", match.getMatchId(), match.getKills());
             totalkill += match.getKills();
             totaldeath += match.getDeaths();
             totalassist += match.getAssists();

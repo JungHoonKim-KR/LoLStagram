@@ -66,8 +66,9 @@ public class SummonerInfo {
         this.mostChampionList = mostChampionList;
     }
 
-    public void updateBasicInfo(BasicInfo basicInfo){
+    public BasicInfo updateBasicInfo(BasicInfo basicInfo){
         this.basicInfo = basicInfo;
+        return this.basicInfo;
     }
     public void updateMatchList(List<Match> updatedMatchList) {
         this.matchList = updatedMatchList;

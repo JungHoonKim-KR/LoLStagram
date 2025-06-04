@@ -28,25 +28,30 @@ import java.util.stream.IntStream;
 public class CreateMatchService {
     private final GetMatchInfoWithAPI getMatchInfoWithAPI;
     private final DataUtil dataUtil;
-    private final RateLimiter limiter = RateLimiter.of("riot-api", RateLimiterConfig.custom()
-            .limitForPeriod(20)                         // 최대 20개
-            .limitRefreshPeriod(Duration.ofSeconds(1)) // 1초 단위 리셋
-            .timeoutDuration(Duration.ofMillis(500))   // 대기 시간 초과 시 예외
-            .build());
+    private final RateLimiter limiter;
 
     public List<Match> createMatchParallel(List<String> matchIdList, String summonerName, String summonerTag) {
-        ExecutorService executor = Executors.newFixedThreadPool(3); // 10~20도 OK
+        ExecutorService executor = Executors.newFixedThreadPool(10); // 10~20도 OK
 
         List<CompletableFuture<Match>> matchList = matchIdList.stream()
                 .map(matchId -> CompletableFuture.supplyAsync(() -> {
                     try {
-                        // ✅ RateLimiter 안에서 실행
+                        log.info("{}", matchId);
+                        log.info("Using RateLimiter: name={}, hashcode={}",
+                                limiter.getName(),
+                                System.identityHashCode(limiter));
+                        log.info("RateLimiter config: limitForPeriod={}, refreshPeriod={}, timeout={}",
+                                limiter.getRateLimiterConfig().getLimitForPeriod(),
+                                limiter.getRateLimiterConfig().getLimitRefreshPeriod(),
+                                limiter.getRateLimiterConfig().getTimeoutDuration());
+//                         ✅ RateLimiter 안에서 실행
                         return RateLimiter.decorateSupplier(limiter, () ->
                                 createMatch(matchId, summonerName, summonerTag)
                         ).get();
+//                        limiter.wait();
+//                        return createMatch(matchId, summonerName, summonerTag);
                     } catch (Exception e) {
                         log.warn("matchId: {} 처리 실패 - {}", matchId, e.getMessage());
-
                         throw new AppException(ErrorCode.BAD_REQUEST, "서버 에러");
                     }
                 }, executor))

@@ -42,39 +42,17 @@ public class CreateSummonerInfoService {
             ).get();
         else puuId = optionalPuuId;
         String summonerId = RateLimiter.decorateSupplier(limiter, ()->
-                getSummonerInfoWithApi.getSummonerId(puuId)
-                ).get();
-        log.info("summonerId");
-        log.info("Using RateLimiter: name={}, hashcode={}",
-                limiter.getName(),
-                System.identityHashCode(limiter));
-        log.info("RateLimiter config: limitForPeriod={}, refreshPeriod={}, timeout={}",
-                limiter.getRateLimiterConfig().getLimitForPeriod(),
-                limiter.getRateLimiterConfig().getLimitRefreshPeriod(),
-                limiter.getRateLimiterConfig().getTimeoutDuration());
+                getSummonerInfoWithApi.getSummonerId(puuId))
+                .get();
+
         BasicInfo summonerBasic = RateLimiter.decorateSupplier(limiter, ()->
                 getSummonerInfoWithApi.getSummonerBasic(summonerId)
                 ).get();
 
-        log.info("summonerBasic");
-        log.info("Using RateLimiter: name={}, hashcode={}",
-                limiter.getName(),
-                System.identityHashCode(limiter));
-        log.info("RateLimiter config: limitForPeriod={}, refreshPeriod={}, timeout={}",
-                limiter.getRateLimiterConfig().getLimitForPeriod(),
-                limiter.getRateLimiterConfig().getLimitRefreshPeriod(),
-                limiter.getRateLimiterConfig().getTimeoutDuration());
         List<String> matchIds = RateLimiter.decorateSupplier(limiter, ()->
                 getMatchInfoWithAPI.getMatchIdList(puuId, 0, LOL.gameCount)
                 ).get();
-        log.info("matchID");
-        log.info("Using RateLimiter: name={}, hashcode={}",
-                limiter.getName(),
-                System.identityHashCode(limiter));
-        log.info("RateLimiter config: limitForPeriod={}, refreshPeriod={}, timeout={}",
-                limiter.getRateLimiterConfig().getLimitForPeriod(),
-                limiter.getRateLimiterConfig().getLimitRefreshPeriod(),
-                limiter.getRateLimiterConfig().getTimeoutDuration());
+
         List<Match> matchList = createMatchService.createMatchParallel(matchIds, summonerName, summonerTag);
 
         RecentRecord recentRecord = summonerUtil.createRecentRecord(matchList);

@@ -5,6 +5,7 @@ import com.example.reactmapping.domain.lol.summonerInfo.entity.SummonerInfo;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerInfoDto;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.SummonerNameAndTagDto;
 import com.example.reactmapping.domain.lol.summonerInfo.dto.UpdateRequestDto;
+import com.example.reactmapping.domain.lol.summonerInfo.facade.SearchFacade;
 import com.example.reactmapping.domain.lol.summonerInfo.service.SearchService;
 import com.example.reactmapping.domain.lol.summonerInfo.service.SummonerInfoService;
 import com.example.reactmapping.domain.lol.summonerInfo.service.UpdateSummonerInfo;
@@ -20,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 public class SummonerController {
     private final UpdateSummonerInfo updateSummonerInfo;
     private final SummonerInfoService summonerInfoService;
-    private final SearchService searchService;
+    private final SearchFacade searchFacade;
     private final LoLDataDownloader loLDataDownloader;
     @PutMapping("/update")
     public SummonerInfoDto update(@RequestBody UpdateRequestDto updateRequestDto) {
@@ -33,7 +34,7 @@ public class SummonerController {
 
     @PostMapping("/search")
     public SummonerInfoDto search(@RequestBody SummonerNameAndTagDto summonerNameAndTagDto){
-        SummonerInfoDto summonerInfoDto = searchService.getOrCreateSummonerDto(summonerNameAndTagDto);
+        SummonerInfoDto summonerInfoDto = searchFacade.getOrCreateSummonerDto(summonerNameAndTagDto);
         log.info("소환사 검색 완료");
         return summonerInfoDto;
     }

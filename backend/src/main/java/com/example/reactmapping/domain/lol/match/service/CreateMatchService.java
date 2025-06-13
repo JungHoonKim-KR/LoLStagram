@@ -8,12 +8,10 @@ import com.example.reactmapping.global.exception.ErrorCode;
 import com.example.reactmapping.global.norm.LOL;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.github.resilience4j.ratelimiter.RateLimiter;
-import io.github.resilience4j.ratelimiter.RateLimiterConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -36,14 +34,6 @@ public class CreateMatchService {
         List<CompletableFuture<Match>> matchList = matchIdList.stream()
                 .map(matchId -> CompletableFuture.supplyAsync(() -> {
                     try {
-                        log.info("{}", matchId);
-                        log.info("Using RateLimiter: name={}, hashcode={}",
-                                limiter.getName(),
-                                System.identityHashCode(limiter));
-                        log.info("RateLimiter config: limitForPeriod={}, refreshPeriod={}, timeout={}",
-                                limiter.getRateLimiterConfig().getLimitForPeriod(),
-                                limiter.getRateLimiterConfig().getLimitRefreshPeriod(),
-                                limiter.getRateLimiterConfig().getTimeoutDuration());
 //                         ✅ RateLimiter 안에서 실행
                         return RateLimiter.decorateSupplier(limiter, () ->
                                 createMatch(matchId, summonerName, summonerTag)
